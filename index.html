@@ -88,6 +88,16 @@
       }
     </style>
   </head>
+      <script>
+        function sendMail() {
+            var name = document.getElementById('name').value;
+            var email = document.getElementById('email').value;
+            var message = document.getElementById('message').value;
+            var subject = "New message from " + name;
+            var body = "Name: " + name + "%0D%0AEmail: " + email + "%0D%0AMessage: " + message;
+            window.location.href = "mailto:your-email@example.com?subject=" + subject + "&body=" + body;
+        }
+    </script>
   <body>
     <header>
       <h1>Lukmançylyk elektron kitaphanasy</h1>
