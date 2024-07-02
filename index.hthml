@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Медицинская Электронная Библиотека</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        margin: 0;
+        padding: 0;
+      }
+      header {
+        background: #333;
+        color: #fff;
+        padding: 10px 0;
+        text-align: center;
+      }
+      header h1 {
+        margin: 0;
+        font-size: 2.5em;
+      }
+      nav {
+        background: #444;
+        color: #fff;
+        padding: 10px;
+        text-align: center;
+      }
+      nav a {
+        color: #fff;
+        margin: 0 10px;
+        text-decoration: none;
+        font-size: 1.2em;
+      }
+      nav a:hover {
+        text-decoration: underline;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
+        background: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      section {
+        margin-bottom: 20px;
+      }
+      section h2 {
+        color: #333;
+        border-bottom: 2px solid #f4f4f4;
+        padding-bottom: 10px;
+      }
+      footer {
+        background: #333;
+        color: #fff;
+        text-align: center;
+        padding: 10px 0;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      .form-group button {
+        padding: 10px 20px;
+        background: #333;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .form-group button:hover {
+        background: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Медицинская Электронная Библиотека</h1>
+    </header>
+    <nav>
+      <a href="#about">О библиотеке</a>
+      <a href="#features">Особенности</a>
+      <a href="#priorities">Приоритеты</a>
+      <a href="#education">Образование</a>
+      <a href="#contact">Контакты</a>
+    </nav>
+    <div class="container">
+      <section id="about">
+        <h2>О библиотеке</h2>
+        <p>
+          Наша медицинская электронная библиотека предоставляет доступ к
+          широкому спектру медицинской литературы и ресурсов.
+        </p>
+      </section>
+      <section id="features">
+        <h2>Особенности</h2>
+        <p>
+          Современные технологии и обширная база данных делают нашу библиотеку
+          незаменимым ресурсом для врачей и студентов.
+        </p>
+      </section>
+      <section id="priorities">
+        <h2>Приоритеты</h2>
+        <p>
+          Наши приоритеты включают предоставление высококачественных материалов
+          и поддержку пользователей.
+        </p>
+      </section>
+      <section id="education">
+        <h2>Образование</h2>
+        <p>
+          Мы предлагаем образовательные ресурсы для студентов и профессионалов в
+          области медицины.
+        </p>
+      </section>
+      <section id="contact">
+        <h2>Контакты</h2>
+        <form>
+          <div class="form-group">
+            <label for="name">Имя:</label>
+            <input type="text" id="name" name="name" />
+          </div>
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" />
+          </div>
+          <div class="form-group">
+            <label for="message">Сообщение:</label>
+            <textarea id="message" name="message"></textarea>
+          </div>
+          <div class="form-group">
+            <button type="submit">Отправить</button>
+          </div>
+        </form>
+      </section>
+    </div>
+    <footer>
+      <p>&copy; 2024 Медицинская Электронная Библиотека</p>
+    </footer>
+  </body>
+</html>
