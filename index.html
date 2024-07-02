@@ -1,176 +1,98 @@
 <!DOCTYPE html>
-<html lang="tm">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Lukmançylyk elektron kitaphanasy</title>
-    <style>
-      body {
-        font-family: "Arial", sans-serif;
-        background-color: #f4f4f4;
-        color: #333;
-        margin: 0;
-        padding: 0;
-      }
-      header {
-        background: #333;
-        color: #fff;
-        padding: 10px 0;
-        text-align: center;
-      }
-      header h1 {
-        margin: 0;
-        font-size: 2.5em;
-      }
-      nav {
-        background: #444;
-        color: #fff;
-        padding: 10px;
-        text-align: center;
-      }
-      nav a {
-        color: #fff;
-        margin: 0 10px;
-        text-decoration: none;
-        font-size: 1.2em;
-      }
-      nav a:hover {
-        text-decoration: underline;
-      }
-      .container {
-        max-width: 1200px;
-        margin: 20px auto;
-        padding: 20px;
-        background: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      }
-      section {
-        margin-bottom: 20px;
-      }
-      section h2 {
-        color: #333;
-        border-bottom: 2px solid #f4f4f4;
-        padding-bottom: 10px;
-      }
-      footer {
-        background: #333;
-        color: #fff;
-        text-align: center;
-        padding: 10px 0;
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-      }
-      .form-group {
-        margin-bottom: 15px;
-      }
-      .form-group label {
-        display: block;
-        margin-bottom: 5px;
-      }
-      .form-group input,
-      .form-group textarea {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-      }
-      .form-group button {
-        padding: 10px 20px;
-        background: #333;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-      .form-group button:hover {
-        background: #555;
-      }
-    </style>
-  </head>
-      <script>
-        function sendMail() {
-            var name = document.getElementById('name').value;
-            var email = document.getElementById('email').value;
-            var message = document.getElementById('message').value;
-            var subject = "New message from " + name;
-            var body = "Name: " + name + "%0D%0AEmail: " + email + "%0D%0AMessage: " + message;
-            window.location.href = "mailto:tdlipfmdm@gmail.com?subject=" + subject + "&body=" + body;
-        }
-    </script>
-  <body>
-    <header>
-      <h1>Lukmançylyk elektron kitaphanasy</h1>
-    </header>
-    <nav>
-      <a href="#about">Kitaphana barada</a>
-      <a href="#features">Aýratynlyklary</a>
-      <a href="#priorities">Artykmaçlygy</a>
-      <a href="#education">Ylym we bilim</a>
-      <a href="#contact">Habarlaşyň</a>
-    </nav>
-    <div class="container">
-      <section id="about">
-        <h2>Kitaphana barada</h2>
-        <p>
-21-nji asyryň Lukmançylyk Kitaphanasyna hoş geldiňiz!
-
-🔹 Lukmançylygyň ähli ugurlary boýunça 1000-den gowrak kitap
-
-🔹 Amatly we düşnükli interfeýs
-
-🔹 Internetsiz hemişe we hemme ýerde elýeterli
-        </p>
-      </section>
-      <section id="features">
-        <h2>Aýratynlyklary</h2>
-        <p>
-         21-nji asyryň Lukmançylyk Kitaphanasy — bilim hemişe elýeterde!
-        </p>
-      </section>
-      <section id="priorities">
-        <h2>Artykmaçlygy</h2>
-        <p>
-         Biziň artykmaçlyklarymyz:
-
-Lukmançylygyň ähli ugurlary: Okuwda we hünär tejribesinde kömek!
-Düşnükli interfeýs: Zerur maglumaty aňsatlyk bilen tapyň we kitaphanada gezim ediň.
-Howpsuzlyk we gizlinlik: Ähli maglumatlar siziň enjamyňyzda saklanýar.
-        </p>
-      </section>
-      <section id="education">
-        <h2>Ylym we bilim</h2>
-        <p>
-          Zerur lukmançylyk bilimlerini elýeterde saklamak mümkinçiligini elden berme!
-
-Biziň lukmançylyk kitaphanamyzyny şu gün ýükläň we bilimler we hünär ösüşi dünýäňize syýahatyňyzy başlaň!
-        </p>
-      </section>
-      <section id="contact">
-        <h2>Habarlaşyň</h2>
-<form onsubmit="sendMail(); return false;">
-  <div class="form-group">      
-  <label for="name">Adyňyz:</label>
-  </div>
-  <div class="form-group">
-        <input type="text" id="name" name="name" required>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Медицинская электронная библиотека - Удобный и понятный интерфейс с медицинскими знаниями всегда под рукой." />
+  <title>Медицинская электронная библиотека</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="scripts.js" defer></script>
+</head>
+<body>
+  <header role="banner">
+    <h1>Медицинская электронная библиотека</h1>
+  </header>
+  <nav role="navigation">
+    <a href="#about">О библиотеке</a>
+    <a href="#features">Особенности</a>
+    <a href="#priorities">Приоритеты</a>
+    <a href="#education">Образование</a>
+    <a href="#gallery">Галерея</a>
+    <a href="#contact">Контакты</a>
+  </nav>
+  <main class="container">
+    <section id="about" aria-labelledby="about-heading">
+      <h2 id="about-heading">О библиотеке</h2>
+      <p>Добро пожаловать в Медицинскую Библиотеку XXI века!</p>
+      <ul>
+        <li>Более 1000 книг по всем направлениям медицины</li>
+        <li>Удобный и понятный интерфейс</li>
+        <li>Доступность без интернета всегда и везде</li>
+      </ul>
+    </section>
+    <section id="features" aria-labelledby="features-heading">
+      <h2 id="features-heading">Особенности</h2>
+      <p>Медицинская Библиотека XXI века — знания всегда под рукой!</p>
+    </section>
+    <section id="priorities" aria-labelledby="priorities-heading">
+      <h2 id="priorities-heading">Приоритеты</h2>
+      <p>Наши приоритеты:</p>
+      <ul>
+        <li>Все направления медицины: Помощь в учебе и профессиональной практике!</li>
+        <li>Понятный интерфейс: Легко находите необходимую информацию и ориентируйтесь в библиотеке.</li>
+        <li>Безопасность и конфиденциальность: Все данные хранятся на вашем устройстве.</li>
+      </ul>
+    </section>
+    <section id="education" aria-labelledby="education-heading">
+      <h2 id="education-heading">Образование</h2>
+      <p>Не упустите возможность держать медицинские знания под рукой!</p>
+      <p>Скачайте нашу медицинскую библиотеку сегодня и начните свое путешествие в мир знаний и профессионального развития!</p>
+    </section>
+    <section id="gallery" aria-labelledby="gallery-heading">
+      <h2 id="gallery-heading">Галерея</h2>
+      <div class="slideshow-container">
+        <div class="mySlides fade">
+          <img src="image1.jpg" style="width:100%">
         </div>
-  <div class="form-group">
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
+        <div class="mySlides fade">
+          <img src="image2.jpg" style="width:100%">
         </div>
-  <div class="form-group">
-        <label for="message">Habaryňyz:</label>
-        <textarea id="message" name="message" required></textarea>
+        <div class="mySlides fade">
+          <img src="image3.jpg" style="width:100%">
         </div>
-  <div class="form-group">
-        <button type="submit">Ugrat</button>
-  </div>
-    </form>
-      </section>
-    </div>
-    <footer>
-      <p>&copy; 2024 Lukmançylyk elektron kitaphanasy</p>
-    </footer>
-  </body>
+        <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+        <a class="next" onclick="plusSlides(1)">&#10095;</a>
+      </div>
+      <br>
+      <div style="text-align:center">
+        <span class="dot" onclick="currentSlide(1)"></span> 
+        <span class="dot" onclick="currentSlide(2)"></span> 
+        <span class="dot" onclick="currentSlide(3)"></span> 
+      </div>
+    </section>
+    <section id="contact" aria-labelledby="contact-heading">
+      <h2 id="contact-heading">Контакты</h2>
+      <form onsubmit="sendMail(); return false;">
+        <div class="form-group">
+          <label for="name">Ваше имя:</label>
+          <input type="text" id="name" name="name" required aria-required="true">
+        </div>
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" required aria-required="true">
+        </div>
+        <div class="form-group">
+          <label for="message">Ваше сообщение:</label>
+          <textarea id="message" name="message" required aria-required="true"></textarea>
+        </div>
+        <div class="form-group">
+          <button type="submit">Отправить</button>
+        </div>
+      </form>
+    </section>
+  </main>
+  <footer role="contentinfo">
+    <p>&copy; 2024 Медицинская электронная библиотека</p>
+  </footer>
+</body>
 </html>
