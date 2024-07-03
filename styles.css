@@ -96,27 +96,31 @@ footer {
 
 /* Стили для слайдера */
 .slider {
-  position: relative;
+ position: relative;
   max-width: 100%;
   margin: auto;
   overflow: hidden;
 }
 
 .slides {
-  width: 100%;
-            max-width: 100%; /* Максимальная ширина контейнера */
-            margin: 0 auto; /* Центрирование контейнера */
-  display: flex;
+ display: flex;
   transition: transform 0.5s ease-in-out;
+  width: 300%;
 }
 # gallery{
             max-width: 100%;
             height: auto;
         }
 .slide {
-            max-width: 100%;
-            height: auto;
+          min-width: 100%;
+  box-sizing: border-box;
         }
+.slide img {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
 
 .prev, .next {
   cursor: pointer;
