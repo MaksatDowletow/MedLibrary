@@ -109,7 +109,10 @@ footer {
   display: flex;
   transition: transform 0.5s ease-in-out;
 }
-# gallery
+# gallery{
+            max-width: 100%;
+            height: auto;
+        }
 .slide {
             max-width: 100%;
             height: auto;
