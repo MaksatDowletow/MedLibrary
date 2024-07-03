@@ -1,56 +1,58 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="tk">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Медицинская электронная библиотека - Удобный и понятный интерфейс с медицинскими знаниями всегда под рукой." />
-  <title>Медицинская электронная библиотека</title>
+  <meta name="description" content="Lukmançylyk elektron kitaphanasy - Удобный и понятный интерфейс с медицинскими знаниями всегда под рукой." />
+  <title>Lukmançylyk elektron kitaphanasy</title>
   <link rel="stylesheet" href="styles.css" />
   <script src="scripts.js" defer></script>
 </head>
 <body>
   <header role="banner">
-    <h1>Медицинская электронная библиотека</h1>
+    <h1>Lukmançylyk elektron kitaphanasy</h1>
   </header>
   <nav role="navigation">
-    <a href="#about">О библиотеке</a>
-    <a href="#features">Особенности</a>
-    <a href="#priorities">Приоритеты</a>
-    <a href="#education">Образование</a>
-    <a href="#contact">Контакты</a>
+    <a href="#about">Kitaphana barada</a>
+    <a href="#features">Aýratynlyklary</a>
+    <a href="#priorities">Artykmaçlyklary</a>
+    <a href="#education">Ylym we bilim</a>
+    <a href="#contact">Habarlaşmak üçin:</a>
   </nav>
   <main class="container">
     <section id="about" aria-labelledby="about-heading">
-      <h2 id="about-heading">О библиотеке</h2>
-      <p>Добро пожаловать в Медицинскую Библиотеку XXI века!</p>
+      <h2 id="about-heading">Kitaphana barada</h2>
+      <p> XXI asyryň döwrebap lukmançylyk kitaphanasyna HOŞ GELDIŇIZ!</p>
       <ul>
-        <li>Более 1000 книг по всем направлениям медицины</li>
-        <li>Удобный и понятный интерфейс</li>
-        <li>Доступность без интернета всегда и везде</li>
+        <li>Lukmançylygyň ähli ugurlaryndan 1000 den köp kitaby internetsiz okamaklyga mamkinçilik</li>
+        <li>Amatly we düşnükli interfeýs </li>
+        <li>Islendik kompýuterde birigip, ulanmaga mamkinçilik</li>
       </ul>
     </section>
     <section id="features" aria-labelledby="features-heading">
-      <h2 id="features-heading">Особенности</h2>
-      <p>Медицинская Библиотека XXI века — знания всегда под рукой!</p>
+      <h2 id="features-heading">Aýratynlyklary</h2>
+      <p>Häzirki zaman kitaphana, döwrebap kitaplar!</p>
     </section>
     <section id="priorities" aria-labelledby="priorities-heading">
-      <h2 id="priorities-heading">Приоритеты</h2>
-      <p>Наши приоритеты:</p>
+      <h2 id="priorities-heading">Artykmaçlyklary</h2>
+      <p>Kitaphananyň artykmançlygy:</p>
       <ul>
-        <li>Все направления медицины: Помощь в учебе и профессиональной практике!</li>
-        <li>Понятный интерфейс: Легко находите необходимую информацию и ориентируйтесь в библиотеке.</li>
-        <li>Безопасность и конфиденциальность: Все данные хранятся на вашем устройстве.</li>
+        <li>Lukmançylygyň ähli ugyrlary: Okuwda we hünär işiňizde kömek!</li>
+        <li>Düşünükli interfeýs: Gerekli maglumaty ýeňil tapmak we tiz açmak.</li>
+        <li>Kitabyň tekstine gözleg: kitapda ýazylan islendik ýazga gözleg bermek.</li>
+        <li>Howpsuzluk we goraglylyk: Ähli maglumatlar siziň öz eliňizde.</li>
       </ul>
     </section>
     <section id="education" aria-labelledby="education-heading">
-      <h2 id="education-heading">Образование</h2>
-      <p>Не упустите возможность держать медицинские знания под рукой!</p>
-      <p>Скачайте нашу медицинскую библиотеку сегодня и начните свое путешествие в мир знаний и профессионального развития!</p>
+      <h2 id="education-heading">Ylym we bilim</h2>
+      <p> Ähli lukmançylyk maglumatlaryny elýeter ýerde saklamak mümkinçiligini elden bermäň!</p>
+      <p>Biziň lukmançylyk kitaphanamyzyny şu gün ýükläň we bilimler dünýäsine hem-de
+          hünär ösüşiňize syýahatyňyzy başlaň!</p>
     </section>
     
     <!-- Начало слайдера -->
     <section id="gallery" aria-labelledby="gallery-heading">
-      <h2 id="gallery-heading">Галерея</h2>
+      <h2 id="gallery-heading">Suratlar</h2>
       <div class="slider">
         <div class="slides">
           <div class="slide"><img src="1.png" alt="Изображение 1"></div>
@@ -67,28 +69,33 @@
     <!-- Конец слайдера -->
     
     <section id="contact" aria-labelledby="contact-heading">
-      <h2 id="contact-heading">Контакты</h2>
+      <h2 id="contact-heading">Habarlaşmak üçin:</h2>
       <form onsubmit="sendMail(); return false;">
         <div class="form-group">
-          <label for="name">Ваше имя:</label>
+          <label for="name">Biziň telefon belgimiz:</label>
+          <p>Bizň telefon belgimiz: <a href="tel:+99362234094">+99362234094 Maksat</a></p>
+          <p> <a href="tel:+99365671264">+99365761264 Batyr </a></p>
+        </div>
+        <div class="form-group">
+          <label for="name">Siziň Adyňyz:</label>
           <input type="text" id="name" name="name" required aria-required="true">
         </div>
         <div class="form-group">
-          <label for="email">Email:</label>
+          <label for="email">Email adresiňiz:</label>
           <input type="email" id="email" name="email" required aria-required="true">
         </div>
         <div class="form-group">
-          <label for="message">Ваше сообщение:</label>
+          <label for="message">Siziň habaryňyz:</label>
           <textarea id="message" name="message" required aria-required="true"></textarea>
         </div>
         <div class="form-group">
-          <button type="submit">Отправить</button>
+          <button type="submit">Ugratmak</button>
         </div>
       </form>
     </section>
   </main>
   <footer role="contentinfo">
-    <p>&copy; 2024 Медицинская электронная библиотека</p>
+    <p>&copy; 2024 Lukmançylyk elektron kitaphanasy</p>
   </footer>
 </body>
 </html>
