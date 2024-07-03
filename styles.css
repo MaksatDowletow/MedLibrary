@@ -104,7 +104,7 @@ footer {
 
 .slides {
   width: 100%;
-            max-width: 600px; /* Максимальная ширина контейнера */
+            max-width: 100%; /* Максимальная ширина контейнера */
             margin: 0 auto; /* Центрирование контейнера */
   display: flex;
   transition: transform 0.5s ease-in-out;
