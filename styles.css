@@ -143,3 +143,47 @@ footer {
 .prev:hover, .next:hover {
   background-color: rgba(0,0,0,0.8);
 }
+body {
+  font-family: Arial, sans-serif;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #f8f9fa;
+}
+
+.language-switcher button {
+  margin-left: 5px;
+}
+
+nav {
+  margin-top: 10px;
+  background-color: #e9ecef;
+  padding: 10px;
+  display: flex;
+  justify-content: space-around;
+}
+
+main {
+  padding: 20px;
+}
+
+section {
+  margin-bottom: 20px;
+}
+
+.gallery-slider {
+  display: flex;
+  overflow: auto;
+  gap: 10px;
+}
+
+.slide {
+  min-width: 300px;
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+}
