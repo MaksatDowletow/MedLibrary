@@ -129,31 +129,30 @@
       </div>
     </section>
     <!-- Конец слайдера -->
-    
+
+    <!-- Начало секции контактов -->
     <section id="contact" aria-labelledby="contact-heading">
-      <h2 id="contact-heading">Контакты</h2>
-      <form onsubmit="sendMail(); return false;">
-        <div class="form-group">
-          <label for="name">Ваше имя:</label>
-          <input type="text" id="name" name="name" required aria-required="true">
-        </div>
-        <div class="form-group">
-          <label for="email">Email:</label>
-          <input type="email" id="email" name="email" required aria-required="true">
-        </div>
-        <div class="form-group">
-          <label for="message">Ваше сообщение:</label>
-          <textarea id="message" name="message" required aria-required="true"></textarea>
-        </div>
-        <div class="form-group">
-          <button type="submit">Отправить</button>
-        </div>
-      </form>
+      <h2 id="contact-heading" data-lang="ru">Контакты</h2>
+      <h2 id="contact-heading" data-lang="en" hidden>Contact</h2>
+      <h2 id="contact-heading" data-lang="tm" hidden>Habarlaşyň</h2>
+      <p data-lang="ru">Вы можете связаться с нами по следующим номерам телефонов:</p>
+      <p data-lang="en" hidden>You can contact us at the following phone numbers:</p>
+      <p data-lang="tm" hidden>Biziň bilen aşakdaky telefon belgileri arkaly habarlaşyp bilersiňiz:</p>
+      <ul>
+        <li data-lang="ru">Максат: +99362234094</li>
+        <li data-lang="en" hidden>Maksat: +99362234094</li>
+        <li data-lang="tm" hidden>Maksat: +99362234094</li>
+        <li data-lang="ru">Батыр: +99365671264</li>
+        <li data-lang="en" hidden>Batyr: +99365671264</li>
+        <li data-lang="tm" hidden>Batyr: +99365671264</li>
+      </ul>
     </section>
-    
+    <!-- Конец секции контактов -->
   </main>
   <footer role="contentinfo">
-    <p>&copy; 2024 Медицинская электронная библиотека. Все права защищены.</p>
+    <p data-lang="ru">&copy; 2024 Медицинская электронная библиотека. Все права защищены.</p>
+    <p data-lang="en" hidden>&copy; 2024 Medical e-Library. All rights reserved.</p>
+    <p data-lang="tm" hidden>&copy; 2024 Elektron lukmançylyk kitaphanasy. Ähli hukuklar goralan.</p>
   </footer>
 </body>
 </html>
