@@ -7,33 +7,29 @@ function sendMail() {
   window.location.href = "mailto:tdlipfmdm@gmail.com?subject=" + subject + "&body=" + body;
 }
 
-let slideIndex = 0;
-showSlides();
-
-function showSlides() {
-  let slides = document.getElementsByClassName("slide");
-  for (let i = 0; i < slides.length; i++) {
-    slides[i].style.display = "none";  
-  }
-  slideIndex++;
-  if (slideIndex > slides.length) {slideIndex = 1}    
-  slides[slideIndex-1].style.display = "block";  
-  setTimeout(showSlides, 10000); // Change image every 5 seconds
-}
+let slideIndex = 1;
+showSlides(slideIndex);
 
 function plusSlides(n) {
   showSlides(slideIndex += n);
 }
 
-function setLanguage(lang) {
-  document.querySelectorAll('[data-lang]').forEach(element => {
-    if (element.dataset.lang === lang) {
-      element.hidden = false;
-    } else {
-      element.hidden = true;
-    }
-  });
+function currentSlide(n) {
+  showSlides(slideIndex = n);
 }
 
-// Установить язык по умолчанию (например, русский)
-setLanguage('tm');
+function showSlides(n) {
+  let slides = document.getElementsByClassName("slide");
+  if (n > slides.length) {slideIndex = 1}    
+  if (n < 1) {slideIndex = slides.length}
+  for (let i = 0; i < slides.length; i++) {
+    slides[i].style.display = "none";  
+  }
+  slides[slideIndex-1].style.display = "block";  
+}
+
+function setLanguage(language) {
+  document.querySelectorAll('[data-lang]').forEach(element => {
+    element.hidden = element.getAttribute('data-lang') !== language;
+  });
+}
