@@ -10,4 +10,4 @@ function setLanguage(lang) {
 }
 
 // Установить язык по умолчанию (например, русский)
-setLanguage('ru');
+setLanguage('tm');
