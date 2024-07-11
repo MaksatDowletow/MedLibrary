@@ -80,3 +80,24 @@ footer {
   bottom: 0;
   width: 100%;
 }
+
+@media (max-width: 768px) {
+  nav a {
+    float: none;
+    width: 100%;
+  }
+
+  .slide {
+    height: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  header h1 {
+    font-size: 1.5em;
+  }
+
+  .slide {
+    height: 150px;
+  }
+}
