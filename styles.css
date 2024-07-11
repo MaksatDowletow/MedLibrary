@@ -96,26 +96,24 @@ footer {
 
 /* Стили для слайдера */
 .slider {
- position: relative;
+  position: relative;
   max-width: 100%;
   margin: auto;
   overflow: hidden;
 }
 
 .slides {
- display: flex;
+  display: flex;
   transition: transform 0.5s ease-in-out;
-  width: 100%;
+  width: 300%;
 }
-# gallery{
-            max-width: 100%;
-            height: auto;
-        }
+
 .slide {
-          min-width: 100%;
+  min-width: 100%;
   box-sizing: border-box;
-        }
-.slides img {
+}
+
+.slide img {
   width: 100%;
   height: auto;
   display: block;
