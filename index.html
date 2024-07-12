@@ -1,166 +1,143 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Медицинская электронная библиотека - Удобный и понятный интерфейс с медицинскими знаниями всегда под рукой." />
-  <title data-lang="ru">Медицинская электронная библиотека</title>
-  <title data-lang="en" hidden>Medical e-Library</title>
-  <title data-lang="tm" hidden>Elektron lukmançylyk kitaphanasy</title>
-  <link rel="stylesheet" href="styles.css" />
-  <script src="scripts.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Медицинская электронная библиотека</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="scripts.js"></script>
 </head>
 <body>
-  <header role="banner">
-    <h1 data-lang="ru">Медицинская электронная библиотека</h1>
-    <h1 data-lang="en" hidden>Medical e-Library</h1>
-    <h1 data-lang="tm" hidden>Elektron lukmançylyk kitaphanasy</h1>
-    <div class="language-switcher">
-      <button onclick="setLanguage('ru')">RU</button>
-      <button onclick="setLanguage('en')">EN</button>
-      <button onclick="setLanguage('tm')">TM</button>
-    </div>
+  <header>
+    <h1 data-lang="ru" class="lang">Медицинская электронная библиотека</h1>
+    <h1 data-lang="en" class="lang">Medical e-Library</h1>
+    <h1 data-lang="tm" class="lang">Elektron lukmançylyk kitaphanasy</h1>
   </header>
-  <nav role="navigation">
-    <a href="#about" data-lang="ru">О библиотеке</a>
-    <a href="#about" data-lang="en" hidden>About</a>
-    <a href="#about" data-lang="tm" hidden>Kitaphana barada</a>
-    <a href="#features" data-lang="ru">Особенности</a>
-    <a href="#features" data-lang="en" hidden>Features</a>
-    <a href="#features" data-lang="tm" hidden>Aýratynlyklary</a>
-    <a href="#priorities" data-lang="ru">Приоритеты</a>
-    <a href="#priorities" data-lang="en" hidden>Priorities</a>
-    <a href="#priorities" data-lang="tm" hidden>Artykmaçlygy</a>
-    <a href="#education" data-lang="ru">Образование</a>
-    <a href="#education" data-lang="en" hidden>Education</a>
-    <a href="#education" data-lang="tm" hidden>Ylym we bilim</a>
-    <a href="#gallery" data-lang="ru">Галерея</a>
-    <a href="#gallery" data-lang="en" hidden>Gallery</a>
-    <a href="#gallery" data-lang="tm" hidden>Galereýa</a>
-    <a href="#contact" data-lang="ru">Контакты</a>
-    <a href="#contact" data-lang="en" hidden>Contact</a>
-    <a href="#contact" data-lang="tm" hidden>Habarlaşyň</a>
+  <nav>
+    <a href="#about" data-lang="ru" class="lang">О библиотеке</a>
+    <a href="#about" data-lang="en" class="lang">About</a>
+    <a href="#about" data-lang="tm" class="lang">Kitaphana barada</a>
+
+    <a href="#features" data-lang="ru" class="lang">Особенности</a>
+    <a href="#features" data-lang="en" class="lang">Features</a>
+    <a href="#features" data-lang="tm" class="lang">Aýratynlyklary</a>
+
+    <a href="#priorities" data-lang="ru" class="lang">Преимущества</a>
+    <a href="#priorities" data-lang="en" class="lang">Priorities</a>
+    <a href="#priorities" data-lang="tm" class="lang">Artykmaçlygy</a>
+
+    <a href="#education" data-lang="ru" class="lang">Наука и образование</a>
+    <a href="#education" data-lang="en" class="lang">Education</a>
+    <a href="#education" data-lang="tm" class="lang">Ylym we bilim</a>
+
+    <a href="#contact" data-lang="ru" class="lang">Контакты</a>
+    <a href="#contact" data-lang="en" class="lang">Contact</a>
+    <a href="#contact" data-lang="tm" class="lang">Habarlaşyň</a>
   </nav>
   <main class="container">
     <section id="about" aria-labelledby="about-heading">
-      <h2 id="about-heading" data-lang="ru">О библиотеке</h2>
-      <h2 id="about-heading" data-lang="en" hidden>About</h2>
-      <h2 id="about-heading" data-lang="tm" hidden>Kitaphana barada</h2>
-      <p data-lang="ru">Добро пожаловать в Медицинскую Библиотеку XXI века!</p>
-      <p data-lang="en" hidden>Welcome to the 21st Century Medical Library!</p>
-      <p data-lang="tm" hidden>21-nji asyryň Lukmançylyk Kitaphanasyna hoş geldiňiz!</p>
-      <ul data-lang="ru">
-        <li>Более 1000 книг по всем направлениям медицины</li>
-        <li>Удобный и понятный интерфейс</li>
-        <li>Доступность без интернета всегда и везде</li>
-      </ul>
-      <ul data-lang="en" hidden>
-        <li>Over 1000 books in all fields of medicine</li>
-        <li>Convenient and easy-to-use interface</li>
-        <li>Always and everywhere available offline</li>
-      </ul>
-      <ul data-lang="tm" hidden>
-        <li>Lukmançylygyň ähli ugurlary boýunça 1000-den gowrak kitap</li>
-        <li>Amatly we düşnükli interfeýs</li>
-        <li>Internetsiz hemişe we hemme ýerde elýeterli</li>
-      </ul>
+      <h2 id="about-heading" data-lang="ru" class="lang">О библиотеке</h2>
+      <h2 id="about-heading" data-lang="en" class="lang">About</h2>
+      <h2 id="about-heading" data-lang="tm" class="lang">Kitaphana barada</h2>
+      <p data-lang="ru" class="lang">
+        Добро пожаловать в библиотеку 21-го века! <br>
+        🔹 Более 1000 книг по всем направлениям медицины <br>
+        🔹 Удобный и понятный интерфейс <br>
+        🔹 Доступно всегда и везде без интернета
+      </p>
+      <p data-lang="en" class="lang" hidden>
+        Welcome to the 21st Century Library! <br>
+        🔹 Over 1000 books in all areas of medicine <br>
+        🔹 Convenient and user-friendly interface <br>
+        🔹 Always and everywhere available offline
+      </p>
+      <p data-lang="tm" class="lang" hidden>
+        21-nji asyryň Lukmançylyk Kitaphanasyna hoş geldiňiz! <br>
+        🔹 Lukmançylygyň ähli ugurlary boýunça 1000-den gowrak kitap <br>
+        🔹 Amatly we düşnükli interfeýs <br>
+        🔹 Internetsiz hemişe we hemme ýerde elýeterli
+      </p>
     </section>
     <section id="features" aria-labelledby="features-heading">
-      <h2 id="features-heading" data-lang="ru">Особенности</h2>
-      <h2 id="features-heading" data-lang="en" hidden>Features</h2>
-      <h2 id="features-heading" data-lang="tm" hidden>Aýratynlyklary</h2>
-      <p data-lang="ru">Медицинская Библиотека XXI века — знания всегда под рукой!</p>
-      <p data-lang="en" hidden>The 21st Century Medical Library — knowledge always at hand!</p>
-      <p data-lang="tm" hidden>21-nji asyryň Lukmançylyk Kitaphanasy — bilim hemişe elýeterde!</p>
+      <h2 id="features-heading" data-lang="ru" class="lang">Особенности</h2>
+      <h2 id="features-heading" data-lang="en" class="lang" hidden>Features</h2>
+      <h2 id="features-heading" data-lang="tm" class="lang" hidden>Aýratynlyklary</h2>
+      <p data-lang="ru" class="lang">
+        Электронная медицинская библиотека — знания всегда под рукой!
+      </p>
+      <p data-lang="en" class="lang" hidden>
+        Electronic Medical Library — knowledge always at your fingertips!
+      </p>
+      <p data-lang="tm" class="lang" hidden>
+        21-nji asyryň Lukmançylyk Kitaphanasy — bilim hemişe elýeterde!
+      </p>
     </section>
     <section id="priorities" aria-labelledby="priorities-heading">
-      <h2 id="priorities-heading" data-lang="ru">Приоритеты</h2>
-      <h2 id="priorities-heading" data-lang="en" hidden>Priorities</h2>
-      <h2 id="priorities-heading" data-lang="tm" hidden>Artykmaçlygy</h2>
-      <p data-lang="ru">Наши приоритеты:</p>
-      <p data-lang="en" hidden>Our priorities:</p>
-      <p data-lang="tm" hidden>Biziň artykmaçlyklarymyz:</p>
-      <ul data-lang="ru">
-        <li>Все направления медицины: Помощь в учебе и профессиональной практике!</li>
-        <li>Понятный интерфейс: Легко находите необходимую информацию и ориентируйтесь в библиотеке.</li>
-        <li>Безопасность и конфиденциальность: Все данные хранятся на вашем устройстве.</li>
-      </ul>
-      <ul data-lang="en" hidden>
-        <li>All fields of medicine: Help in study and professional practice!</li>
-        <li>Easy-to-use interface: Easily find the necessary information and navigate the library.</li>
-        <li>Security and privacy: All data is stored on your device.</li>
-      </ul>
-      <ul data-lang="tm" hidden>
-        <li>Lukmançylygyň ähli ugurlary: Okuwda we hünär tejribesinde kömek!</li>
-        <li>Düşnükli interfeýs: Zerur maglumaty aňsatlyk bilen tapyň we kitaphanada gezim ediň.</li>
-        <li>Howpsuzlyk we gizlinlik: Ähli maglumatlar siziň enjamyňyzda saklanýar.</li>
-      </ul>
+      <h2 id="priorities-heading" data-lang="ru" class="lang">Преимущества</h2>
+      <h2 id="priorities-heading" data-lang="en" class="lang" hidden>Priorities</h2>
+      <h2 id="priorities-heading" data-lang="tm" class="lang" hidden>Artykmaçlygy</h2>
+      <p data-lang="ru" class="lang">
+        Наши преимущества: <br>
+        🔹 Все направления медицины: Помощь в учебе и профессиональной практике! <br>
+        🔹 Понятный интерфейс: Легко находите нужную информацию и ориентируйтесь в библиотеке. <br>
+        🔹 Безопасность и конфиденциальность: Все данные хранятся на вашем устройстве.
+      </p>
+      <p data-lang="en" class="lang" hidden>
+        Our advantages: <br>
+        🔹 All areas of medicine: Help in study and professional practice! <br>
+        🔹 User-friendly interface: Easily find the information you need and navigate the library. <br>
+        🔹 Security and privacy: All data is stored on your device.
+      </p>
+      <p data-lang="tm" class="lang" hidden>
+        Biziň artykmaçlyklarymyz: <br>
+        🔹 Lukmançylygyň ähli ugurlary: Okuwda we hünär tejribesinde kömek! <br>
+        🔹 Düşnükli interfeýs: Zerur maglumaty aňsatlyk bilen tapyň we kitaphanada gezim ediň. <br>
+        🔹 Howpsuzlyk we gizlinlik: Ähli maglumatlar siziň enjamyňyzda saklanýar.
+      </p>
     </section>
     <section id="education" aria-labelledby="education-heading">
-      <h2 id="education-heading" data-lang="ru">Образование</h2>
-      <h2 id="education-heading" data-lang="en" hidden>Education</h2>
-      <h2 id="education-heading" data-lang="tm" hidden>Ylym we bilim</h2>
-      <p data-lang="ru">Не упустите возможность держать медицинские знания под рукой!</p>
-      <p data-lang="en" hidden>Do not miss the opportunity to keep medical knowledge at hand!</p>
-      <p data-lang="tm" hidden>Zerur lukmançylyk bilimlerini elýeterde saklamak mümkinçiligini elden berme!</p>
-      <p data-lang="ru">Скачайте нашу медицинскую библиотеку сегодня и начните свое путешествие в мир знаний и профессионального развития!</p>
-      <p data-lang="en" hidden>Download our medical library today and start your journey into the world of knowledge and professional development!</p>
-      <p data-lang="tm" hidden>Biziň lukmançylyk kitaphanamyzyny şu gün ýükläň we bilimler we hünär ösüşi dünýäňize syýahatyňyzy başlaň!</p>
+      <h2 id="education-heading" data-lang="ru" class="lang">Наука и образование</h2>
+      <h2 id="education-heading" data-lang="en" class="lang" hidden>Education</h2>
+      <h2 id="education-heading" data-lang="tm" class="lang" hidden>Ylym we bilim</h2>
+      <p data-lang="ru" class="lang">
+        Не упустите возможность держать медицинские знания под рукой! <br>
+        Загрузите нашу медицинскую библиотеку сегодня и начните путешествие в мир знаний и профессионального роста!
+      </p>
+      <p data-lang="en" class="lang" hidden>
+        Don't miss the opportunity to keep medical knowledge at your fingertips! <br>
+        Download our medical library today and start your journey into the world of knowledge and professional growth!
+      </p>
+      <p data-lang="tm" class="lang" hidden>
+        Zerur lukmançylyk bilimlerini elýeterde saklamak mümkinçiligini elden berme! <br>
+        Biziň lukmançylyk kitaphanamyzyny şu gün ýükläň we bilimler we hünär ösüşi dünýäňize syýahatyňyzy başlaň!
+      </p>
     </section>
-    
     <!-- Начало слайдера -->
-    <section id="gallery" aria-labelledby="gallery-heading">
-      <h2 id="gallery-heading" data-lang="ru">Галерея</h2>
-      <h2 id="gallery-heading" data-lang="en" hidden>Gallery</h2>
-      <h2 id="gallery-heading" data-lang="tm" hidden>Galereýa</h2>
-      <div class="gallery-slider">
-        <div class="slide" style="background-image: url('1.png');"></div>
-        <div class="slide" style="background-image: url('2.png');"></div>
-        <div class="slide" style="background-image: url('3.png');"></div>
-        <div class="slide" style="background-image: url('4.png');"></div>
-        <div class="slide" style="background-image: url('5.png');"></div>
-        <div class="slide" style="background-image: url('6.png');"></div>
+    <section id="gallery" aria-labelledby="gallery-heading" class="gallery-slider">
+      <h2 id="gallery-heading" data-lang="ru" class="lang">Галерея</h2>
+      <h2 id="gallery-heading" data-lang="en" class="lang" hidden>Gallery</h2>
+      <h2 id="gallery-heading" data-lang="tm" class="lang" hidden>Suratlar</h2>
+      <div class="slide">
+        <img src="1.pmg" alt="Description 1" data-lang="ru" class="lang">
+        <img src="1-en.pmg" alt="Description 1" data-lang="en" class="lang" hidden>
+        <img src="1-tm.pmg" alt="Description 1" data-lang="tm" class="lang" hidden>
       </div>
-      <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-      <a class="next" onclick="plusSlides(1)">&#10095;</a>
-    </section>
-    <!-- Конец слайдера -->
-    <section id="contact" aria-labelledby="contact-heading">
-      <h2 id="contact-heading" data-lang="ru">Контакты</h2>
-      <h2 id="contact-heading" data-lang="en" hidden>Contact</h2>
-      <h2 id="contact-heading" data-lang="tm" hidden>Habarlaşyň</h2>
-      <form onsubmit="sendMail(); return false;">
-        <label for="name" data-lang="ru">Имя:</label>
-        <label for="name" data-lang="en" hidden>Name:</label>
-        <label for="name" data-lang="tm" hidden>Adyňyz:</label>
-        <input type="text" id="name" name="name" required />
-
-        <label for="email" data-lang="ru">Email:</label>
-        <label for="email" data-lang="en" hidden>Email:</label>
-        <label for="email" data-lang="tm" hidden>Email:</label>
-        <input type="email" id="email" name="email" required />
-
-        <label for="message" data-lang="ru">Сообщение:</label>
-        <label for="message" data-lang="en" hidden>Message:</label>
-        <label for="message" data-lang="tm" hidden>Habaryňyz:</label>
-        <textarea id="message" name="message" required></textarea>
-
-        <button type="submit" data-lang="ru">Отправить</button>
-        <button type="submit" data-lang="en" hidden>Send</button>
-        <button type="submit" data-lang="tm" hidden>Ibermek</button>
-      </form>
-      <p data-lang="ru">Телефон: +99362234094 Максат</p>
-      <p data-lang="ru">Телефон: +99365671264 Батыр</p>
-      <p data-lang="en" hidden>Phone: +99362234094 Maksat</p>
-      <p data-lang="en" hidden>Phone: +99365671264 Batyr</p>
-      <p data-lang="tm" hidden>Telefon: +99362234094 Maksat</p>
-      <p data-lang="tm" hidden>Telefon: +99365671264 Batyr</p>
+      <div class="slide" hidden>
+        <img src="2.pmg" alt="Description 2" data-lang="ru" class="lang">
+        <img src="2-en.pmg" alt="Description 2" data-lang="en" class="lang" hidden>
+        <img src="2-tm.pmg" alt="Description 2" data-lang="tm" class="lang" hidden>
+      </div>
+      <!-- Добавьте больше слайдов по необходимости -->
+      <button class="prev" onclick="plusSlides(-1)">&#10094;</button>
+      <button class="next" onclick="plusSlides(1)">&#10095;</button>
     </section>
   </main>
-  <footer role="contentinfo">
-    <p data-lang="ru">Медицинская электронная библиотека © 2024</p>
-    <p data-lang="en" hidden>Medical e-Library © 2024</p>
-    <p data-lang="tm" hidden>Elektron lukmançylyk kitaphanasy © 2024</p>
+  <footer>
+    <select id="language-select">
+      <option value="ru">Русский</option>
+      <option value="en">English</option>
+      <option value="tm">Türkmençe</option>
+    </select>
   </footer>
 </body>
 </html>
