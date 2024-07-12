@@ -1,51 +1,58 @@
+.lang {
+  display: none;
+}
+
+.lang[data-lang="ru"] {
+  display: block;
+}
+
+/* Основные стили */
 body {
   font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
+  line-height: 1.6;
 }
 
 header {
-  background-color: #4CAF50;
-  color: white;
-  padding: 1em;
+  background: #333;
+  color: #fff;
+  padding: 1rem 0;
   text-align: center;
 }
 
 nav {
-  background-color: #333;
-  overflow: hidden;
+  background: #555;
+  color: #fff;
+  display: flex;
+  justify-content: space-around;
+  padding: 1rem 0;
 }
 
 nav a {
-  display: block;
-  color: white;
-  text-align: center;
-  padding: 14px 16px;
+  color: #fff;
   text-decoration: none;
-  float: left;
-}
-
-nav a:hover {
-  background-color: #ddd;
-  color: black;
 }
 
 .container {
-  padding: 20px;
+  padding: 2rem;
+}
+
+footer {
+  text-align: center;
+  margin-top: 2rem;
 }
 
 .gallery-slider {
   position: relative;
-  max-width: 100%;
+  max-width: 600px;
   margin: auto;
 }
 
 .slide {
   display: none;
+}
+
+.slide img {
   width: 100%;
-  height: 400px;
-  background-size: cover;
-  background-position: center;
 }
 
 .prev, .next {
@@ -54,6 +61,7 @@ nav a:hover {
   top: 50%;
   width: auto;
   padding: 16px;
+  margin-top: -22px;
   color: white;
   font-weight: bold;
   font-size: 18px;
@@ -69,35 +77,4 @@ nav a:hover {
 
 .prev:hover, .next:hover {
   background-color: rgba(0,0,0,0.8);
-}
-
-footer {
-  background-color: #333;
-  color: white;
-  text-align: center;
-  padding: 10px;
-  position: relative;
-  bottom: 0;
-  width: 100%;
-}
-
-@media (max-width: 768px) {
-  nav a {
-    float: none;
-    width: 100%;
-  }
-
-  .slide {
-    height: 200px;
-  }
-}
-
-@media (max-width: 480px) {
-  header h1 {
-    font-size: 1.5em;
-  }
-
-  .slide {
-    height: 150px;
-  }
 }
