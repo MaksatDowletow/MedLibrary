@@ -1,15 +1,10 @@
-.lang {
-  display: none;
-}
-
-.lang[data-lang="ru"] {
-  display: block;
-}
-
 /* Основные стили */
 body {
   font-family: Arial, sans-serif;
   line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
 }
 
 header {
@@ -25,6 +20,7 @@ nav {
   display: flex;
   justify-content: space-around;
   padding: 1rem 0;
+  flex-wrap: wrap;
 }
 
 nav a {
@@ -34,16 +30,23 @@ nav a {
 
 .container {
   padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 footer {
   text-align: center;
   margin-top: 2rem;
+  padding: 1rem;
+  background: #333;
+  color: #fff;
 }
 
 .gallery-slider {
   position: relative;
-  max-width: 600px;
+  max-width: 100%;
   margin: auto;
 }
 
@@ -77,4 +80,13 @@ footer {
 
 .prev:hover, .next:hover {
   background-color: rgba(0,0,0,0.8);
+}
+
+/* Скрытие языковых элементов */
+.lang {
+  display: none;
+}
+
+.lang[data-lang="ru"] {
+  display: block;
 }
