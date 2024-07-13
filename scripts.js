@@ -48,3 +48,13 @@ function sendMail() {
   const body = "Имя: " + name + "%0D%0AEmail: " + email + "%0D%0AСообщение: " + message;
   window.location.href = "mailto:tdlipfmdm@gmail.com?subject=" + subject + "&body=" + body;
 }
+function searchOnPage() {
+  var searchText = document.getElementById('searchInput').value;
+  var elements = document.getElementsByTagName('p');
+
+  for (var i = 0; i < elements.length; i++) {
+    var text = elements[i].innerHTML;
+    var replacedText = text.replace(new RegExp(searchText, 'gi'), '<span class="highlight">$&</span>');
+    elements[i].innerHTML = replacedText;
+  }
+}
