@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Медицинская электронная библиотека</title>
+    <title>Kitaplar</title>
     <link rel="stylesheet" href="styles.css" />
     <script defer src="scripts.js"></script>
   </head>
@@ -18,6 +18,12 @@
       <h1 data-lang="en" class="lang">Medical e-Library</h1>
       <h1 data-lang="tm" class="lang">Elektron lukmançylyk kitaphanasy</h1>
     </header>
+    <form action="/search" method="get">
+  <label for="search">Search:</label>
+  <input type="search" id="search" name="q" placeholder="Gözle...">
+  <button type="submit">Gözle</button>
+</form>
+
     <nav>
       <a href="#about" data-lang="ru" class="lang">О библиотеке</a>
       <a href="#about" data-lang="en" class="lang">About</a>
