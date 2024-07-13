@@ -27,7 +27,35 @@ nav a {
   color: #fff;
   text-decoration: none;
 }
+/* Основные стили для ссылок в навигационном меню */
+nav {
+  background: #555;
+  color: #fff;
+  display: flex;
+  justify-content: space-around;
+  padding: 1rem 0;
+  flex-wrap: wrap;
+}
 
+nav a {
+  color: #fff;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  transition: background-color 0.3s ease;
+}
+
+nav a:hover {
+  background-color: #333;
+}
+
+/* Скрытие языковых элементов */
+.lang {
+  display: none;
+}
+
+.lang[data-lang="ru"] {
+  display: block;
+}
 .container {
   padding: 2rem;
   max-width: 1200px;
