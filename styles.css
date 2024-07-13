@@ -118,3 +118,6 @@ footer {
 .lang[data-lang="ru"] {
   display: block;
 }
+ .highlight {
+    background-color: yellow;
+    font-weight: bold;
