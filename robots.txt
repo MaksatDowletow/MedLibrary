@@ -1,5 +1,0 @@
-User-agent: *
-Disallow: /private/
-Allow: /
-
-Sitemap: https://maksatdowletow.github.io/MedLibrary//sitemap.xml
