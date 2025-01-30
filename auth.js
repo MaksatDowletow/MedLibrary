@@ -14,7 +14,7 @@ const db = new sqlite3.Database("users.db");
 const SECRET_KEY = process.env.SECRET_KEY || "your_secret_key";
 
 app.use(express.json());
-app.use(cors({ origin: "http://localhost:5500", credentials: true }));
+app.use(cors({ origin: "https://maksatdowletow.github.io", credentials: true }));
 app.use(cookieParser());
 
 // Создание таблицы пользователей
@@ -57,7 +57,7 @@ app.post("/login", (req, res) => {
                 return res.status(400).json({ error: "Неверный email или пароль" });
             }
             const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: "1h" });
-            res.cookie("token", token, { httpOnly: true, secure: false });
+            res.cookie("token", token, { httpOnly: true, secure: true, sameSite: "None" });
             res.json({ message: "Вход выполнен!" });
         });
     } catch (error) {
@@ -82,7 +82,7 @@ app.get("/profile", (req, res) => {
 
 // Выход пользователя
 app.post("/logout", (req, res) => {
-    res.clearCookie("token");
+    res.clearCookie("token", { httpOnly: true, secure: true, sameSite: "None" });
     res.json({ message: "Вы вышли из системы" });
 });
 
