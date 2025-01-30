@@ -1,1 +1,28 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация и Вход</title>
+    <script defer src="auth.js"></script>
+</head>
+<body>
+    <h2>Регистрация</h2>
+    <form id="registerForm">
+        <input type="text" id="regName" placeholder="Имя" required>
+        <input type="email" id="regEmail" placeholder="Email" required>
+        <input type="password" id="regPassword" placeholder="Пароль" required>
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+
+    <h2>Вход</h2>
+    <form id="loginForm">
+        <input type="email" id="loginEmail" placeholder="Email" required>
+        <input type="password" id="loginPassword" placeholder="Пароль" required>
+        <button type="submit">Войти</button>
+    </form>
+
+    <p id="message"></p>
+</body>
+</html>
 
