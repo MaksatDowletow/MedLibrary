@@ -58,3 +58,10 @@ function searchOnPage() {
     elements[i].innerHTML = replacedText;
   }
 }
+document.getElementById("register").addEventListener("click", () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  createUserWithEmailAndPassword(auth, email, password)
+    .then(() => alert("Регистрация успешна!"))
+    .catch(error => alert(error.message));
+});
