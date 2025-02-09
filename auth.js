@@ -3,7 +3,7 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, si
 
 const firebaseConfig = {
   apiKey: "AIzaSyDoN-tRd3jwS66R2ebjAX3q8Kpcujva7xI",
-  authDomain: "https://maksatdowletow.github.io/MedLibrary/",
+  authDomain: "https://maksatdowletow.github.io/MedLibrary/auth.html",
   projectId: "medlib-8eafc",
 };
 
