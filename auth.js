@@ -1,7 +1,3 @@
-// Remove Firebase imports
-// import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-// import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-
 // Update the registration logic to use your own backend API
 document.getElementById("register").addEventListener("click", () => {
     const email = document.getElementById("email").value;
