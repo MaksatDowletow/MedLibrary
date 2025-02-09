@@ -2,9 +2,9 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "ТВОЙ_API_KEY",
-  authDomain: "ТВОЙ_DOMAIN",
-  projectId: "ТВОЙ_PROJECT_ID",
+  apiKey: "AIzaSyDoN-tRd3jwS66R2ebjAX3q8Kpcujva7xI",
+  authDomain: "https://maksatdowletow.github.io/MedLibrary/",
+  projectId: "medlib-8eafc",
 };
 
 const app = initializeApp(firebaseConfig);
