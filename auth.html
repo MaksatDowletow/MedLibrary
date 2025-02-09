@@ -41,61 +41,21 @@
 <body>
     <h2>Регистрация</h2>
     <form id="registerForm">
-        <input type="text" id="registerName" placeholder="Имя" required>
-        <input type="email" id="registerEmail" placeholder="Email" required>
-        <input type="password" id="registerPassword" placeholder="Пароль" required>
-        <button type="submit">Зарегистрироваться</button>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Пароль" required>
+        <button id="register" type="button">Зарегистрироваться</button>
         <div id="registerMessage" class="message"></div>
     </form>
 
     <h2>Вход</h2>
     <form id="loginForm">
-        <input type="email" id="loginEmail" placeholder="Email" required>
-        <input type="password" id="loginPassword" placeholder="Пароль" required>
-        <button type="submit">Войти</button>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Пароль" required>
+        <button id="login" type="button">Войти</button>
         <div id="loginMessage" class="message"></div>
     </form>
+    <button id="logout" type="button">Выйти</button>
 
-    <script>
-        const registerForm = document.getElementById('registerForm');
-        const loginForm = document.getElementById('loginForm');
-
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = document.getElementById('registerName').value;
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-
-            const response = await fetch('http://localhost:3000/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ name, email, password }),
-                credentials: 'include'
-            });
-
-            const result = await response.json();
-            document.getElementById('registerMessage').textContent = result.message || result.error;
-        });
-
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-
-            const response = await fetch('http://localhost:3000/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email, password }),
-                credentials: 'include'
-            });
-
-            const result = await response.json();
-            document.getElementById('loginMessage').textContent = result.message || result.error;
-        });
-    </script>
+    <script type="module" src="auth.js"></script>
 </body>
 </html>
