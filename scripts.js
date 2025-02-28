@@ -30,83 +30,84 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(showSlides, 10000); // Change image every 10 seconds
     }
   }
+const scriptURL = "https://script.google.com/macros/s/AKfycbzCUVMuM1EtBLG--X58nFfJiQkqCxxtF2hYs86L-YzW0XmUxC6XUTxtfqliLG7BGOvI/exec";  // Вставьте сюда ваш Web App URL
 
-  // Регистрация
-  const scriptURL = "https://script.google.com/macros/s/AKfycbzCUVMuM1EtBLG--X58nFfJiQkqCxxtF2hYs86L-YzW0XmUxC6XUTxtfqliLG7BGOvI/exec";  // Вставьте сюда ваш Web App URL
+// Регистрация пользователя
+function register() {
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
 
-  function register() {
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+  if (!username || !password) {
+    alert("Пожалуйста, заполните все поля!");
+    return;
+  }
 
-    if (!username || !password) {
-      alert("Пожалуйста, заполните все поля!");
-      return;
+  fetch(scriptURL, {
+    method: "POST",
+    body: JSON.stringify({ action: "register", username, password }),
+    headers: { "Content-Type": "application/json" }
+  })
+  .then(res => res.text())
+  .then(data => {
+    alert(data);
+    location.reload();  // Перезагрузка страницы
+  })
+  .catch(error => console.error("Error:", error));
+}
+
+// Вход пользователя
+function login() {
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+
+  fetch(scriptURL, {
+    method: "POST",
+    body: JSON.stringify({ action: "login", username, password }),
+    headers: { "Content-Type": "application/json" }
+  })
+  .then(res => res.text())
+  .then(data => {
+    if (data === "Login Success") {
+      localStorage.setItem("loggedInUser", username);
+      alert("Вы успешно вошли!");
+      location.reload();
+    } else {
+      alert("Неправильный логин или пароль!");
     }
+  })
+  .catch(error => console.error("Error:", error));
+}
 
-    fetch(scriptURL, {
-      method: "POST",
-      body: JSON.stringify({ action: "register", username, password }),
-      headers: { "Content-Type": "application/json" }
-    })
-    .then(res => res.text())
-    .then(data => {
-      alert(data);
-    })
-    .catch(error => console.error("Error:", error));
+// Проверка, если пользователь уже вошел
+function checkUser() {
+  const user = localStorage.getItem("loggedInUser");
+  if (user) {
+    document.getElementById("auth").innerHTML = `<h2>Добро пожаловать, ${user}!</h2>
+        <button onclick="logout()">Выйти</button>`;
   }
+}
 
-  // Вход
-  function login() {
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+function logout() {
+  localStorage.removeItem("loggedInUser");
+  location.reload();
+}
 
-    fetch(scriptURL, {
-      method: "POST",
-      body: JSON.stringify({ action: "login", username, password }),
-      headers: { "Content-Type": "application/json" }
-    })
-    .then(res => res.text())
-    .then(data => {
-      if (data === "Login Success") {
-        localStorage.setItem("loggedInUser", username);
-        alert("Вы успешно вошли!");
-        location.reload();
-      } else {
-        alert("Неправильный логин или пароль!");
-      }
-    })
-    .catch(error => console.error("Error:", error));
-  }
+// Отправка сообщения на email
+function sendMail() {
+  const name = document.getElementById('name').value;
+  const email = document.getElementById('email').value;
+  const message = document.getElementById('message').value;
+  const subject = "Новое сообщение от " + name;
+  const body = "Имя: " + name + "%0D%0AEmail: " + email + "%0D%0AСообщение: " + message;
+  window.location.href = "mailto:tdlipfmdm@gmail.com?subject=" + subject + "&body=" + body;
+}
 
-  // Проверка, если пользователь уже вошел
-  function checkUser() {
-    const user = localStorage.getItem("loggedInUser");
-    if (user) {
-      document.getElementById("auth").innerHTML = `<h2>Добро пожаловать, ${user}!</h2>
-          <button onclick="logout()">Выйти</button>`;
-    }
-  }
+// Проверка и добавление обработчиков событий
+document.getElementById("register")?.addEventListener("click", register);
+document.getElementById("login")?.addEventListener("click", login);
 
-  function logout() {
-    localStorage.removeItem("loggedInUser");
-    location.reload();
-  }
-
-  document.getElementById("register")?.addEventListener("click", register);
-  document.getElementById("login")?.addEventListener("click", login);
-
-  // Проверка пользователя после загрузки страницы
-  checkUser();
-
-  // Отправка сообщения на email
-  function sendMail() {
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const message = document.getElementById('message').value;
-    const subject = "Новое сообщение от " + name;
-    const body = "Имя: " + name + "%0D%0AEmail: " + email + "%0D%0AСообщение: " + message;
-    window.location.href = "mailto:tdlipfmdm@gmail.com?subject=" + subject + "&body=" + body;
-  }
+// Проверка пользователя после загрузки страницы
+checkUser();
 
   // Поиск на странице
   function searchOnPage() {
