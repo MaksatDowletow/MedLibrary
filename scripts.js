@@ -65,3 +65,62 @@ document.getElementById("register").addEventListener("click", () => {
     .then(() => alert("Регистрация успешна!"))
     .catch(error => alert(error.message));
 });
+const scriptURL = "https://script.google.com/macros/s/AKfycbzCUVMuM1EtBLG--X58nFfJiQkqCxxtF2hYs86L-YzW0XmUxC6XUTxtfqliLG7BGOvI/exec";  // Вставьте сюда ваш Web App URL
+
+function register() {
+    let username = document.getElementById("username").value;
+    let password = document.getElementById("password").value;
+
+    if (!username || !password) {
+        alert("Maglumatlary doly giriziň!");
+        return;
+    }
+
+    fetch(scriptURL, {
+        method: "POST",
+        body: JSON.stringify({ action: "register", username, password }),
+        headers: { "Content-Type": "application/json" }
+    })
+    .then(res => res.text())
+    .then(data => {
+        alert(data);
+    })
+    .catch(error => console.error("Error:", error));
+}
+
+function login() {
+    let username = document.getElementById("username").value;
+    let password = document.getElementById("password").value;
+
+    fetch(scriptURL, {
+        method: "POST",
+        body: JSON.stringify({ action: "login", username, password }),
+        headers: { "Content-Type": "application/json" }
+    })
+    .then(res => res.text())
+    .then(data => {
+        if (data === "Login Success") {
+            localStorage.setItem("loggedInUser", username);
+            alert("Giriş Üstünlikli!");
+            location.reload();
+        } else {
+            alert("Ulanyjy ady ýa-da açar söz nädogry!");
+        }
+    })
+    .catch(error => console.error("Error:", error));
+}
+
+function checkUser() {
+    let user = localStorage.getItem("loggedInUser");
+    if (user) {
+        document.getElementById("auth").innerHTML = `<h2>Hoş geldiňiz, ${user}!</h2>
+            <button onclick="logout()">Çykyş</button>`;
+    }
+}
+
+function logout() {
+    localStorage.removeItem("loggedInUser");
+    location.reload();
+}
+
+document.addEventListener("DOMContentLoaded", checkUser);
