@@ -30,71 +30,66 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Регистрация
-  const scriptURL = "ВАШ_URL_WEB_APP";  // Вставьте сюда ваш Web App URL
+const scriptURL = "https://script.google.com/macros/s/AKfycbzCUVMuM1EtBLG--X58nFfJiQkqCxxtF2hYs86L-YzW0XmUxC6XUTxtfqliLG7BGOvI/exec";  // Вставьте сюда ваш Web App URL
 
-  function register() {
+function register() {
     let username = document.getElementById("username").value;
     let password = document.getElementById("password").value;
 
     if (!username || !password) {
-      alert("Пожалуйста, заполните все поля!");
-      return;
+        alert("Maglumatlary doly giriziň!");
+        return;
     }
 
     fetch(scriptURL, {
-      method: "POST",
-      body: JSON.stringify({ action: "register", username, password }),
-      headers: { "Content-Type": "application/json" }
+        method: "POST",
+        body: JSON.stringify({ action: "register", username, password }),
+        headers: { "Content-Type": "application/json" }
     })
     .then(res => res.text())
     .then(data => {
-      alert(data);
+        alert(data);
     })
     .catch(error => console.error("Error:", error));
-  }
+}
 
-  // Вход
-  function login() {
+function login() {
     let username = document.getElementById("username").value;
     let password = document.getElementById("password").value;
 
     fetch(scriptURL, {
-      method: "POST",
-      body: JSON.stringify({ action: "login", username, password }),
-      headers: { "Content-Type": "application/json" }
+        method: "POST",
+        body: JSON.stringify({ action: "login", username, password }),
+        headers: { "Content-Type": "application/json" }
     })
     .then(res => res.text())
     .then(data => {
-      if (data === "Login Success") {
-        localStorage.setItem("loggedInUser", username);
-        alert("Вы успешно вошли!");
-        location.reload();
-      } else {
-        alert("Неправильный логин или пароль!");
-      }
+        if (data === "Login Success") {
+            localStorage.setItem("loggedInUser", username);
+            alert("Giriş Üstünlikli!");
+            location.reload();
+        } else {
+            alert("Ulanyjy ady ýa-da açar söz nädogry!");
+        }
     })
     .catch(error => console.error("Error:", error));
-  }
+}
 
-  // Проверка, если пользователь уже вошел
-  function checkUser() {
+function checkUser() {
     let user = localStorage.getItem("loggedInUser");
     if (user) {
-      document.getElementById("auth").innerHTML = `<h2>Добро пожаловать, ${user}!</h2>
-          <button onclick="logout()">Выйти</button>`;
+        document.getElementById("auth").innerHTML = `<h2>Hoş geldiňiz, ${user}!</h2>
+            <button onclick="logout()">Çykyş</button>`;
     }
-  }
+}
 
-  function logout() {
+function logout() {
     localStorage.removeItem("loggedInUser");
     location.reload();
-  }
+}
 
-  document.getElementById("register").addEventListener("click", register);
-  document.getElementById("login").addEventListener("click", login);
+document.addEventListener("DOMContentLoaded", checkUser);
 
-  // Проверка пользователя после загрузки страницы
-  checkUser();
 
   // Отправка сообщения на email
   function sendMail() {
