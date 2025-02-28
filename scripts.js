@@ -1,12 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
   const languageSelect = document.getElementById('language-select');
-  languageSelect.addEventListener('change', changeLanguage);
-
-  // Изначально установим русский язык
-  changeLanguage();
+  if (languageSelect) {
+    languageSelect.addEventListener('change', changeLanguage);
+    // Изначально установим русский язык
+    changeLanguage();
+  }
 
   function changeLanguage() {
-    const lang = languageSelect.value;
+    const lang = languageSelect ? languageSelect.value : 'ru';
     const elements = document.querySelectorAll('.lang');
     elements.forEach(element => {
       element.style.display = element.getAttribute('data-lang') === lang ? 'block' : 'none';
@@ -18,78 +19,84 @@ document.addEventListener('DOMContentLoaded', () => {
   showSlides();
 
   function showSlides() {
-    let i;
-    let slides = document.getElementsByClassName("slide");
-    for (i = 0; i < slides.length; i++) {
-      slides[i].style.display = "none";  
+    const slides = document.getElementsByClassName("slide");
+    if (slides.length > 0) {
+      Array.from(slides).forEach(slide => {
+        slide.style.display = "none";
+      });
+      slideIndex++;
+      if (slideIndex > slides.length) { slideIndex = 1; }
+      slides[slideIndex - 1].style.display = "block";
+      setTimeout(showSlides, 10000); // Change image every 10 seconds
     }
-    slideIndex++;
-    if (slideIndex > slides.length) {slideIndex = 1}    
-    slides[slideIndex-1].style.display = "block";  
-    setTimeout(showSlides, 10000); // Change image every 10 seconds
   }
 
   // Регистрация
-const scriptURL = "https://script.google.com/macros/s/AKfycbzCUVMuM1EtBLG--X58nFfJiQkqCxxtF2hYs86L-YzW0XmUxC6XUTxtfqliLG7BGOvI/exec";  // Вставьте сюда ваш Web App URL
+  const scriptURL = "https://script.google.com/macros/s/AKfycbzCUVMuM1EtBLG--X58nFfJiQkqCxxtF2hYs86L-YzW0XmUxC6XUTxtfqliLG7BGOvI/exec";  // Вставьте сюда ваш Web App URL
 
-function register() {
-    let username = document.getElementById("username").value;
-    let password = document.getElementById("password").value;
+  function register() {
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
 
     if (!username || !password) {
-        alert("Maglumatlary doly giriziň!");
-        return;
+      alert("Пожалуйста, заполните все поля!");
+      return;
     }
 
     fetch(scriptURL, {
-        method: "POST",
-        body: JSON.stringify({ action: "register", username, password }),
-        headers: { "Content-Type": "application/json" }
+      method: "POST",
+      body: JSON.stringify({ action: "register", username, password }),
+      headers: { "Content-Type": "application/json" }
     })
     .then(res => res.text())
     .then(data => {
-        alert(data);
+      alert(data);
     })
     .catch(error => console.error("Error:", error));
-}
+  }
 
-function login() {
-    let username = document.getElementById("username").value;
-    let password = document.getElementById("password").value;
+  // Вход
+  function login() {
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
 
     fetch(scriptURL, {
-        method: "POST",
-        body: JSON.stringify({ action: "login", username, password }),
-        headers: { "Content-Type": "application/json" }
+      method: "POST",
+      body: JSON.stringify({ action: "login", username, password }),
+      headers: { "Content-Type": "application/json" }
     })
     .then(res => res.text())
     .then(data => {
-        if (data === "Login Success") {
-            localStorage.setItem("loggedInUser", username);
-            alert("Giriş Üstünlikli!");
-            location.reload();
-        } else {
-            alert("Ulanyjy ady ýa-da açar söz nädogry!");
-        }
+      if (data === "Login Success") {
+        localStorage.setItem("loggedInUser", username);
+        alert("Вы успешно вошли!");
+        location.reload();
+      } else {
+        alert("Неправильный логин или пароль!");
+      }
     })
     .catch(error => console.error("Error:", error));
-}
+  }
 
-function checkUser() {
-    let user = localStorage.getItem("loggedInUser");
+  // Проверка, если пользователь уже вошел
+  function checkUser() {
+    const user = localStorage.getItem("loggedInUser");
     if (user) {
-        document.getElementById("auth").innerHTML = `<h2>Hoş geldiňiz, ${user}!</h2>
-            <button onclick="logout()">Çykyş</button>`;
+      document.getElementById("auth").innerHTML = `<h2>Добро пожаловать, ${user}!</h2>
+          <button onclick="logout()">Выйти</button>`;
     }
-}
+  }
 
-function logout() {
+  function logout() {
     localStorage.removeItem("loggedInUser");
     location.reload();
-}
+  }
 
-document.addEventListener("DOMContentLoaded", checkUser);
+  document.getElementById("register")?.addEventListener("click", register);
+  document.getElementById("login")?.addEventListener("click", login);
 
+  // Проверка пользователя после загрузки страницы
+  checkUser();
 
   // Отправка сообщения на email
   function sendMail() {
@@ -103,13 +110,16 @@ document.addEventListener("DOMContentLoaded", checkUser);
 
   // Поиск на странице
   function searchOnPage() {
-    var searchText = document.getElementById('searchInput').value;
-    var elements = document.getElementsByTagName('p');
+    const searchText = document.getElementById('searchInput').value;
+    const elements = document.getElementsByTagName('p');
 
-    for (var i = 0; i < elements.length; i++) {
-      var text = elements[i].innerHTML;
-      var replacedText = text.replace(new RegExp(searchText, 'gi'), '<span class="highlight">$&</span>');
-      elements[i].innerHTML = replacedText;
-    }
+    Array.from(elements).forEach(element => {
+      const text = element.innerHTML;
+      const replacedText = text.replace(new RegExp(searchText, 'gi'), '<span class="highlight">$&</span>');
+      element.innerHTML = replacedText;
+    });
   }
+
+  document.getElementById("sendMail")?.addEventListener("click", sendMail);
+  document.getElementById("searchButton")?.addEventListener("click", searchOnPage);
 });
