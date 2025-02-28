@@ -78,8 +78,7 @@ function sendMail() {
 document.getElementById("register")?.addEventListener("click", register);
 document.getElementById("login")?.addEventListener("click", login);
 
-// Проверка пользователя после загрузки страницы
-checkUser();
+
 
   // Поиск на странице
   function searchOnPage() {
