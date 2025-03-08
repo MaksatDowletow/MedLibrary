@@ -20,7 +20,6 @@
     </style>
 </head>
 <body>
-    <input type="file" id="upload" accept=".xls,.xlsx" />
     <table id="book-table">
         <thead>
             <tr>
@@ -38,29 +37,27 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
     <script>
-    document.getElementById('upload').addEventListener('change', function(e) {
-        var file = e.target.files[0];
-        var reader = new FileReader();
-        reader.onload = function(event) {
-            var data = new Uint8Array(event.target.result);
-            var workbook = XLSX.read(data, {type: 'array'});
-            var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-            var jsonData = XLSX.utils.sheet_to_json(firstSheet);
-            var tbody = document.querySelector('#book-table tbody');
-            tbody.innerHTML = '';
-            jsonData.forEach(function(row) {
-                var tr = document.createElement('tr');
-                tr.innerHTML = `<td>${row['Название книги']}</td>
-                                <td>${row['Имя автора']}</td>
-                                <td>${row['Издатель']}</td>
-                                <td>${row['Город публикации']}</td>
-                                <td>${row['Год публикации']}</td>
-                                <td>${row['Количество страниц']}</td>
-                                <td>${row['Язык книги']}</td>`;
-                tbody.appendChild(tr);
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('https://github.com/MaksatDowletow/MedLibrary/raw/main/Book.xls')
+            .then(response => response.arrayBuffer())
+            .then(data => {
+                var workbook = XLSX.read(data, {type: 'array'});
+                var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                var jsonData = XLSX.utils.sheet_to_json(firstSheet);
+                var tbody = document.querySelector('#book-table tbody');
+                tbody.innerHTML = '';
+                jsonData.forEach(function(row) {
+                    var tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${row['Название книги']}</td>
+                                    <td>${row['Имя автора']}</td>
+                                    <td>${row['Издатель']}</td>
+                                    <td>${row['Город публикации']}</td>
+                                    <td>${row['Год публикации']}</td>
+                                    <td>${row['Количество страниц']}</td>
+                                    <td>${row['Язык книги']}</td>`;
+                    tbody.appendChild(tr);
+                });
             });
-        };
-        reader.readAsArrayBuffer(file);
     });
     </script>
 </body>
