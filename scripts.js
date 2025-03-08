@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("register")?.addEventListener("click", register);
     document.getElementById("login")?.addEventListener("click", login);
 
-    document.getElementById('searchInput').addEventListener('input', function() {
+    document.getElementById('searchInputb').addEventListener('input', function() {
         var input, filter, table, tr, td, i, txtValue1, txtValue2;
         input = document.getElementById('searchInputb');
         filter = input.value.toUpperCase();
