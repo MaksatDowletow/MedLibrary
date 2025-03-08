@@ -79,16 +79,11 @@ document.getElementById("register")?.addEventListener("click", register);
 document.getElementById("login")?.addEventListener("click", login);
 
 
-
- document.getElementById('searchInput').addEventListener('input', function() {
+document.getElementById('searchInput').addEventListener('input', function() {
   var input, filter, table, tr, td, i, txtValue;
   input = document.getElementById('searchInput');
   filter = input.value.toUpperCase();
   table = document.querySelector('table tbody');
-  if (!table) {
-    console.error('Таблица не найдена');
-    return;
-  }
   tr = table.getElementsByTagName('tr');
 
   for (i = 0; i < tr.length; i++) {
