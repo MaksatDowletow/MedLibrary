@@ -122,7 +122,7 @@ fetch('Book.xls')
 .catch((error) => console.error("Error:", error));
 // Функция для фильтрации таблицы
       function filterTable() {
-        var input = document.getElementById("search-input");
+        var input = document.getElementById("search-inputb");
         var filter = input.value.toLowerCase();
         var table = document.getElementById("book-table");
         var tr = table.getElementsByTagName("tr");
