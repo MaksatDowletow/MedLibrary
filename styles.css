@@ -148,35 +148,6 @@ nav a:hover {
   background-color: #555;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 2rem 0;
-  background: #fff;
-}
-
-table, th, td {
-  border: 1px solid #ccc;
-}
-
-th, td {
-  padding: 1rem;
-  text-align: left;
-}
-
-th {
-  background: #333;
-  color: #fff;
-}
-
-tr:nth-child(even) {
-  background: #f4f4f4;
-}
-
-tr:hover {
-  background: #ddd;
-}
-
 .footer-container {
   display: flex;
   justify-content: space-between;
@@ -192,28 +163,7 @@ tr:hover {
 .footer-container a:hover {
   text-decoration: underline;
 }
-.table-container {
-  display: flex;
-  justify-content: center;
-}
-   table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            font-size: 18px;
-            text-align: left;
-        }
-        th, td {
-            padding: 12px;
-            border: 1px solid #ddd;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        tbody tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-    
+
 @media screen and (max-width: 600px) {
     body {
         font-size: 14px;
@@ -224,6 +174,6 @@ tr:hover {
     }
 }
 DIV.container {
-    min-height: 10em;
+ 
     display: table-cell;
     vertical-align: middle }
