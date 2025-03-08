@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('searchInput').addEventListener('input', function() {
         var input, filter, table, tr, td, i, txtValue1, txtValue2;
-        input = document.getElementById('searchInput');
+        input = document.getElementById('searchInputb');
         filter = input.value.toUpperCase();
         table = document.querySelector('table tbody');
         tr = table.getElementsByTagName('tr');
