@@ -92,8 +92,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    fetch('Book.xls')
-    .then(response => response.arrayBuffer())
+fetch('Book.xls')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response.arrayBuffer();
+    })
     .then(data => {
         var workbook = XLSX.read(data, { type: "array" });
         var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -113,7 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     })
     .catch((error) => console.error("Error:", error));
-
     function filterTable() {
         var input = document.getElementById("search-inputb");
         var filter = input.value.toLowerCase();
