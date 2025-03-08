@@ -1,200 +1,843 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Медицинская библиотека - Категории</title>
-    <style>
-        /* Reset стилей */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        /* Основные стили */
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            background: #f0f2f5;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Шапка */
-        header {
-            text-align: center;
-            padding: 2rem 0;
-            background: #1976d2;
-            color: white;
-            margin-bottom: 2rem;
-        }
-
-        /* Сетка категорий */
-        .category-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-            padding: 1rem;
-        }
-
-        /* Карточка категории */
-        .category-card {
-            background: white;
-            border-radius: 8px;
-            padding: 1.5rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-        }
-
-        .category-card:hover {
-            transform: translateY(-4px);
-        }
-
-        .category-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        /* Кнопки */
-        .button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: opacity 0.2s;
-        }
-
-        .button-primary {
-            background: #1976d2;
-            color: white;
-        }
-
-        .button-danger {
-            background: #d32f2f;
-            color: white;
-        }
-
-        .button:hover {
-            opacity: 0.9;
-        }
-
-        /* Мобильная адаптация */
-        @media (max-width: 768px) {
-            .category-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>Медицинская библиотека</h1>
-        <p>Категории учебных материалов</p>
-    </header>
-
-    <main class="container">
-        <div class="category-grid" id="categoryContainer">
-            <!-- Категории будут добавляться здесь -->
-        </div>
-
-        <div style="text-align: center; margin: 2rem 0;">
-            <button 
-                class="button button-primary"
-                onclick="handleAddCategory()"
-                aria-label="Добавить категорию"
-            >
-                + Новая категория
-            </button>
-        </div>
-    </main>
-
-    <script>
-        (function() {
-            'use strict';
-            
-            let categories = [];
-
-            function createCategoryElement(name) {
-                const card = document.createElement('div');
-                card.className = 'category-card';
-                
-                const html = `
-                    <div class="category-header">
-                        <h3>${escapeHtml(name)}</h3>
-                        <button 
-                            class="button button-danger" 
-                            onclick="handleDeleteCategory('${escapeHtml(name)}')"
-                        >
-                            Удалить
-                        </button>
-                    </div>
-                    <div class="category-content">
-                        <p>Книг: 0</p>
-                    </div>
-                `;
-                
-                card.innerHTML = html;
-                return card;
-            }
-
-            function escapeHtml(text) {
-                const map = {
-                    '&': '&amp;',
-                    '<': '&lt;',
-                    '>': '&gt;',
-                    '"': '&quot;',
-                    "'": '&#039;'
-                };
-                return text.replace(/[&<>"']/g, m => map[m]);
-            }
-
-            function handleAddCategory() {
-                const name = prompt('Введите название категории:');
-                if (!name || !name.trim()) {
-                    alert('Название не может быть пустым!');
-                    return;
-                }
-
-                if (categories.includes(name)) {
-                    alert('Категория с таким названием уже существует!');
-                    return;
-                }
-
-                categories.push(name);
-                const container = document.getElementById('categoryContainer');
-                container.appendChild(createCategoryElement(name));
-            }
-
-            function handleDeleteCategory(name) {
-                if (!confirm(`Удалить категорию "${name}"?`)) return;
-                categories = categories.filter(cat => cat !== name);
-                const cards = document.querySelectorAll('.category-card h3');
-                cards.forEach(card => {
-                    if (card.textContent === name) {
-                        card.closest('.category-card').remove();
-                    }
-                });
-            }
-
-            // Публикация функций в глобальную область видимости
-            window.handleAddCategory = handleAddCategory;
-            window.handleDeleteCategory = handleDeleteCategory;
-
-            // Инициализация демо-данных
-            ['Анатомия', 'Фармакология', 'Хирургия'].forEach(name => {
-                categories.push(name);
-                document.getElementById('categoryContainer')
-                    .appendChild(createCategoryElement(name));
-            });
-        })();
-    </script>
-</body>
-</html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><!-- saved from url=(0016)http://localhost --><html><head><title>Book Category</title><meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8"/><style type="text/css">.cs5C43E5F9 {color:#000000;background-color:#D3D3D3;border-left:#A9A9A9 1px solid;border-top:#A9A9A9 1px solid;border-right:#A9A9A9 1px solid;border-bottom:#A9A9A9 1px solid;font-family:Tahoma; font-size:11px; font-weight:normal; font-style:normal; padding-left:2px;}.cs42A12827 {color:#000000;background-color:#FFFFFF;border-left:#A9A9A9 1px solid;border-top:#A9A9A9 1px solid;border-right:#A9A9A9 1px solid;border-bottom:#A9A9A9 1px solid;font-family:Tahoma; font-size:11px; font-weight:normal; font-style:normal; padding-left:2px;}.cs40A57DD3 {color:#FFFFFF;background-color:#FFFFFF;border-left:#A9A9A9 1px solid;border-top:#A9A9A9 1px solid;border-right:#A9A9A9 1px solid;border-bottom:#A9A9A9 1px solid;font-family:'Times New Roman'; font-size:13px; font-weight:normal; font-style:normal; }.csF7D3565D {height:0px;width:0px;overflow:hidden;font-size:0px;line-height:0px;}</style></head><body leftMargin=10 topMargin=10 rightMargin=10 bottomMargin=10 style="background-color:#FFFFFF"><table cellpadding="0" cellspacing="0" border="0" style="border-width:0px;empty-cells:show;width:623px;height:3122px;position:relative;">
+<tr>
+<td style="width:0px;height:0px;"></td>
+<td style="height:0px;width:101px;"></td>
+<td style="height:0px;width:101px;"></td>
+<td style="height:0px;width:421px;"></td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:17px;"></td>
+<td class="cs5C43E5F9" style="width:97px;height:15px;line-height:13px;text-align:center;vertical-align:middle;"><nobr>Book&nbsp;Category&nbsp;Nam</nobr></td>
+<td class="cs5C43E5F9" style="width:97px;height:15px;line-height:13px;text-align:center;vertical-align:middle;"><nobr>Book&nbsp;Category&nbsp;Nam</nobr></td>
+<td class="cs5C43E5F9" style="width:417px;height:15px;line-height:13px;text-align:center;vertical-align:middle;"><nobr>Category&nbsp;Image</nobr></td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Акушерство&nbsp;и&nbsp;Гин</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Akuşer&#231;ilik&nbsp;we&nbsp;Gine</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/3057941295.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/3057941295.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Анатомия</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Anatomi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:190px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:39px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/1180427913.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/1180427913.png" style="width:39px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Ангиография</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Angiografi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:189px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:42px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/1165897346.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/1165897346.png" style="width:42px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Английский&nbsp;язык</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Iňlis&nbsp;dili</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:44px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/1941024873.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/1941024873.png" style="width:44px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Анестезиология</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Anesteziologi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:171px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:77px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/1018689110.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/1018689110.png" style="width:77px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Биохимия</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Biohimi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/1402932920.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/1402932920.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Внутренние&nbsp;болез</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>I&#231;&nbsp;keseller</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/2028563614.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/2028563614.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Военно-полевая&nbsp;т</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Harby-me&#253;dan&nbsp;tera</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/543008865.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/543008865.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Военно-полевая&nbsp;х</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Harby-me&#253;dan&nbsp;hiru</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:195px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:29px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/2452843750.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/2452843750.png" style="width:29px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Гастроэнтерологи</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Gastroenterologi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:171px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:77px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/1051481276.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/1051481276.png" style="width:77px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Гематология</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Gematologi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:190px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:39px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/1610971189.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/1610971189.png" style="width:39px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Гигиена</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Gigi&#253;ena</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:182px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:56px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/2895923962.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/2895923962.png" style="width:56px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Гистология,&nbsp;цитол</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Gistologi&#253;a,&nbsp;sitologi</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:169px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:81px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/774954143.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/774954143.png" style="width:81px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Детская&nbsp;хирургия</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>&#199;aga&nbsp;hirurgi&#253;asy</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/3042351764.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/3042351764.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Диетоло́гия</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Dietologi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/2246375561.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/2246375561.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Инфекционные&nbsp;бо</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>&#221;okan&#231;&nbsp;keseller</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/607250484.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/607250484.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Инфекционные&nbsp;бо</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>&#199;aga&nbsp;&#253;okan&#231;&nbsp;kesell</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/3440159791.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/3440159791.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>История&nbsp;медицин</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Lukman&#231;ylyk&nbsp;taryh</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/3126234105.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/3126234105.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Кардиология</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Kardiologi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/1939751333.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/1939751333.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Кардиохирургия</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Kardiohirurgi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/2854378076.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/2854378076.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Клиническая&nbsp;лабо</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Kliniki&nbsp;laborator&nbsp;dia</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:171px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:77px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/499357808.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/499357808.png" style="width:77px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Кожные&nbsp;и&nbsp;венерич</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Deri&nbsp;we&nbsp;weneriki&nbsp;ke</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/3469554649.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/3469554649.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Компютерная&nbsp;том</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Komp&#253;uter&nbsp;tomogr</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/997136343.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/997136343.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Латинский&nbsp;язык&nbsp;и&nbsp;</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Latin&nbsp;dili&nbsp;we&nbsp;lukma</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/229767343.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/229767343.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Лечебная&nbsp;физичес</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Bejeriş&nbsp;beden&nbsp;terbi</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:171px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:77px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/1852574366.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/1852574366.png" style="width:77px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Магнитно-резонан</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Magnit&nbsp;rezonans&nbsp;to</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/619700297.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/619700297.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Медицинская&nbsp;биол</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Lukmancylyk&nbsp;biolog</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/3395456304.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/3395456304.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Медицинская&nbsp;гене</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Lukman&#231;ykyk&nbsp;gene</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/2620418103.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/2620418103.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Медицинская&nbsp;и&nbsp;би</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Lukman&#231;ylyk&nbsp;we&nbsp;bi</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/322222428.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/322222428.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Медицинская&nbsp;имм</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Lukman&#231;ylyk&nbsp;immu</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:44px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/4290145247.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/4290145247.png" style="width:44px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Микробиология</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Mikrobiologi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/3577880979.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/3577880979.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Наркология</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Narkologi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/3309254638.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/3309254638.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Неврология</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Newrologi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:192px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:36px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/3858134201.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/3858134201.png" style="width:36px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Нейрохирургия</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Ne&#253;rohirurgi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/2845131663.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/2845131663.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Неонатология</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Neonatologi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/2524265260.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/2524265260.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Общая&nbsp;и&nbsp;медисинс</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Umumy&nbsp;we&nbsp;lukman</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/3735607505.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/3735607505.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Общая&nbsp;и&nbsp;неоргани</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Umumy&nbsp;we&nbsp;organik</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/2284268141.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/2284268141.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Онкология</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Onkologi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/1270325197.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/1270325197.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Ортопедия</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Ortopedi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/4177394293.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/4177394293.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Оториноларингол</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Gulak&nbsp;burun&nbsp;bokur</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/3200046163.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/3200046163.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Офтальмоло́гия</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>G&#246;z&nbsp;keselleri</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:179px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:61px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/4270992563.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/4270992563.png" style="width:61px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Патологическая&nbsp;а</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Patalogik&nbsp;anatomi&#253;</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/3162149793.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/3162149793.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Патологическая&nbsp;ф</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Patalogik&nbsp;fiziologi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/450464237.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/450464237.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Педиатрия</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Pediatri&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:191px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:38px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/325887106.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/325887106.png" style="width:38px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Пластическая&nbsp;хир</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Plastiki&nbsp;hirurgi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/142884100.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/142884100.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Пропедевтика&nbsp;вну</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>I&#231;&nbsp;keselleriň&nbsp;proped</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/1060623899.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/1060623899.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Пропедевтика&nbsp;дет</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>&#199;aga&nbsp;keselleriniň&nbsp;pr</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/1123320499.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/1123320499.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Психология&nbsp;и&nbsp;псих</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Psihologi&#253;a&nbsp;we&nbsp;psih</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/3585255561.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/3585255561.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Пульмонология</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Pulmonologi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/1126685154.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/1126685154.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Реанимация&nbsp;и&nbsp;инт</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Reanimasi&#253;a&nbsp;we&nbsp;int</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/3532206295.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/3532206295.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Ревматология</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Rewmatologi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:190px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:39px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/114650375.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/114650375.png" style="width:39px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Рентгенология&nbsp;и&nbsp;р</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Rentgenologi&#253;a&nbsp;we&nbsp;</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/2621053380.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/2621053380.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Сестринское&nbsp;дело</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Şepegat&nbsp;u&#253;asynyň&nbsp;i</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/3480552992.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/3480552992.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Социальная&nbsp;гигие</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Durmuş&nbsp;gigienasy&nbsp;</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/2318129096.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/2318129096.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Спортивная&nbsp;медиц</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Sport&nbsp;lukman&#231;ylygy</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:195px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:29px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/2066886526.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/2066886526.png" style="width:29px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Стоматология</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Stomatologi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/3297565841.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/3297565841.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Судебно-медицинс</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Kazy&#253;et&nbsp;lukman&#231;yly</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/1073882347.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/1073882347.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Топографическая&nbsp;</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Topografiki&nbsp;anatom</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:186px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:47px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/353603969.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/353603969.png" style="width:47px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Травматология</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Trawmatologi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:194px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:32px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/3289719942.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/3289719942.png" style="width:32px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Ультразвуковая&nbsp;ди</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Ultrases&nbsp;barlagy</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/2051069598.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/2051069598.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Урология</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Urologi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:190px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:40px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/3477842518.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/3477842518.png" style="width:40px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Фармакология</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Farmakologi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:171px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:77px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/566989179.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/566989179.png" style="width:77px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Физиология</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Fiziologi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:173px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:73px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/4240862795.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/4240862795.png" style="width:73px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Физиотерапия</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Fiziobejergi</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/1622783987.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/1622783987.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Фтизиатрия</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Ftiziatri&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/422823710.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/422823710.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Хирургия</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Hirurgi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/2733592542.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/2733592542.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Электрокардиогра</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Elektrokardiografi&#253;</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:176px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:67px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/3111653237.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/3111653237.png" style="width:67px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Эндокринология</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Endokrinologi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/2272527667.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/2272527667.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+<tr style="vertical-align:top;">
+<td style="width:0px;height:45px;"></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Эпидемиология</nobr></td>
+<td class="cs42A12827" style="width:97px;height:43px;line-height:13px;text-align:left;vertical-align:middle;"><nobr>Epidemiologi&#253;a</nobr></td>
+<td class="cs40A57DD3" style="width:419px;height:43px;text-align:left;vertical-align:top;"><div style="overflow:hidden;width:419px;height:43px;">
+<div style="margin-left:188px;overflow:hidden;display:table;">
+<div style="vertical-align:top;display:table-cell;">
+<!--[if lt IE 7]><img alt="" src="Book Category_files/4133685977.gif" style="width:43px;height:43px;filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='Book Category_files/2775117699.png',sizingMethod='scale');" /><div style="display:none"><![endif]--><img alt="" src="Book Category_files/2775117699.png" style="width:43px;height:43px;" /><!--[if lt IE 7]></div><![endif]--></div>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</body></html>
