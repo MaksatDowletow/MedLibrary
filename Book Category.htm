@@ -3,28 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Категории книг</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-            text-align: center;
-        }
-        img {
-            display: block;
-            margin: 0 auto;
-        }
-    </style>
+    <meta name="description" content="Lukmançylyk kitaphanasy - 1000-den gowrak kitaplara oflayn elýeterlik. Kitaplary gözlemek we kategoriýalar boýunça seretmek mümkinçiligi.">
+    <meta name="keywords" content="lukmançylyk, kitaplar, kategoriýalar, oflayn, bilim, Медицинская электронная библиотека">
+    <meta name="author" content="Maksat Döwletow" >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Медицинская электронная библиотека</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <header>
+    <select id="language-select">
+      <option value="tm">Türkmençe</option>
+      <option value="ru">Русский</option>
+      <option value="en">English</option>
+    </select>
+    <h2>Регистрация и Вход</h2>
+<div id="auth">
+        <h2>Регистрация</h2>
+        <input type="text" id="username" placeholder="Введите имя пользователя">
+        <input type="password" id="password" placeholder="Введите пароль">
+        <button onclick="register()">Регистрация</button>
+    </div>
+   
+    <h1 data-lang="ru" class="lang">Медицинская электронная библиотека</h1>
+    <h1 data-lang="en" class="lang">Medical e-Library</h1>
+    <h1 data-lang="tm" class="lang">Elektron lukmançylyk kitaphanasy</h1>
+  </header>
+  <nav>
+      <a href="index.html" data-lang="ru" class="lang">Главная</a>
+  <a href="index.html" data-lang="en" class="lang">Home</a>
+  <a href="index.html" data-lang="tm" class="lang">Baş sahypa</a>
+    <a href="#about" data-lang="ru" class="lang">О библиотеке</a>
+    <a href="#about" data-lang="en" class="lang">About</a>
+    <a href="#about" data-lang="tm" class="lang">Kitaphana barada</a>
+
+    <a href="#features" data-lang="ru" class="lang">Особенности</a>
+    <a href="#features" data-lang="en" class="lang">Features</a>
+    <a href="#features" data-lang="tm" class="lang">Aýratynlyklary</a>
+
+    <a href="#priorities" data-lang="ru" class="lang">Преимущества</a>
+    <a href="#priorities" data-lang="en" class="lang">Priorities</a>
+    <a href="#priorities" data-lang="tm" class="lang">Artykmaçlygy</a>
+
+    <a href="#education" data-lang="ru" class="lang">Наука и образование</a>
+    <a href="#education" data-lang="en" class="lang">Education</a>
+    <a href="#education" data-lang="tm" class="lang">Ylym we bilim</a>
+
+    <a href="#contact" data-lang="ru" class="lang">Контакты</a>
+    <a href="#contact" data-lang="en" class="lang">Contact</a>
+    <a href="#contact" data-lang="tm" class="lang">Habarlaşyň</a>
+  
+  <a href="Book Category.htm" data-lang="ru" class="lang">Категории книг</a>
+<a href="Book Category.htm" data-lang="ru" class="lang">Категории книг</a>
+<a href="Book Category.htm" data-lang="en" class="lang">Book Categories</a>
+<a href="Book Category.htm" data-lang="tm" class="lang">Kitap kategoriýalary</a>
+
+  <!-- Новая ссылка на страницу с книгами -->
+  <a href="books.html" data-lang="ru" class="lang">Список книг</a>
+  <a href="books.html" data-lang="en" class="lang">Book List</a>
+  <a href="books.html" data-lang="tm" class="lang">Kitaplar</a>
+    <a href="https://sites.google.com/view/lukmanylyksanlykitaphanasy/ba%C5%9F-sahypa" target="_blank" class="external-link" style="color: blue; font-weight: bold;">Другой сайт библиотеки</a>
+</nav>
     <table>
         <thead>
             <tr>
