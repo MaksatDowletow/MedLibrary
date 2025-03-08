@@ -192,7 +192,11 @@ tr:hover {
 .footer-container a:hover {
   text-decoration: underline;
 }
-table {
+.table-container {
+  display: flex;
+  justify-content: center;
+}
+   table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
