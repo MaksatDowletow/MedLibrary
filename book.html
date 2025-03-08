@@ -38,9 +38,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        fetch('https://github.com/MaksatDowletow/MedLibrary/raw/main/Book.xls')
-            .then(response => response.arrayBuffer())
-            .then(data => {
+        fetch('https://github.com/MaksatDowletow/MedLibrary/raw/main/Book.xls', { mode: 'no-cors' })
+    .then(response => response.arrayBuffer())
+    .then(data => {
+        // обработка данных
+    }); {
                 var workbook = XLSX.read(data, {type: 'array'});
                 var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                 var jsonData = XLSX.utils.sheet_to_json(firstSheet);
