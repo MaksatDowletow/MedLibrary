@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
       var jsonData = XLSX.utils.sheet_to_json(firstSheet);
       var tbody = document.querySelector("#book-table tbody");
       tbody.innerHTML = "";
-      jsonData.slice(0, 100).forEach(function (row) {
+      jsonData.slice(0, 1400).forEach(function (row) {
         var tr = document.createElement("tr");
         tr.innerHTML = `<td>${row["Название книги"]}</td>
                             <td>${row["Имя автора"]}</td>
