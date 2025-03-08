@@ -1,22 +1,30 @@
-/* Основные стили */
+/* Основные переменные */
+:root {
+    --main-bg-color: #333;
+    --secondary-bg-color: #555;
+    --text-color: #fff;
+    --hover-bg-color: #444;
+    --font-family: Arial, sans-serif;
+    --line-height: 1.6;
+    --transition: 0.3s ease;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
+    font-family: var(--font-family);
+    line-height: var(--line-height);
     margin: 0;
     padding: 0;
     background-color: #f4f4f4;
 }
 
-header {
-    background: #333;
-    color: #fff;
-    padding: 1rem 0;
+header, nav, footer {
+    background: var(--main-bg-color);
+    color: var(--text-color);
     text-align: center;
+    padding: 1rem 0;
 }
 
 nav {
-    background: #555;
-    color: #fff;
     display: flex;
     justify-content: space-around;
     padding: 1rem 0;
@@ -24,38 +32,14 @@ nav {
 }
 
 nav a {
-    color: #fff;
-    text-decoration: none;
-}
-
-/* Основные стили для ссылок в навигационном меню */
-nav {
-    background: #555;
-    color: #fff;
-    display: flex;
-    justify-content: space-around;
-    padding: 1rem 0;
-    flex-wrap: wrap;
-}
-
-nav a {
-    color: #fff;
+    color: var(--text-color);
     text-decoration: none;
     padding: 0.5rem 1rem;
-    transition: background-color 0.3s ease;
+    transition: background-color var(--transition);
 }
 
 nav a:hover {
-    background-color: #333;
-}
-
-/* Скрытие языковых элементов */
-.lang {
-    display: none;
-}
-
-.lang[data-lang="ru"] {
-    display: block;
+    background-color: var(--hover-bg-color);
 }
 
 .container {
@@ -70,8 +54,8 @@ footer {
     text-align: center;
     margin-top: 2rem;
     padding: 1rem;
-    background: #333;
-    color: #fff;
+    background: var(--main-bg-color);
+    color: var(--text-color);
 }
 
 .gallery-slider {
@@ -88,18 +72,17 @@ footer {
     width: 100%;
 }
 
-.prev,
-.next {
+.prev, .next {
     cursor: pointer;
     position: absolute;
     top: 50%;
     width: auto;
     padding: 16px;
     margin-top: -22px;
-    color: white;
+    color: var(--text-color);
     font-weight: bold;
     font-size: 18px;
-    transition: 0.6s ease;
+    transition: var(--transition);
     border-radius: 0 3px 3px 0;
     user-select: none;
 }
@@ -109,12 +92,10 @@ footer {
     border-radius: 3px 0 0 3px;
 }
 
-.prev:hover,
-.next:hover {
+.prev:hover, .next:hover {
     background-color: rgba(0, 0, 0, 0.8);
 }
 
-/* Скрытие языковых элементов */
 .lang {
     display: none;
 }
@@ -126,66 +107,31 @@ footer {
 .highlight {
     background-color: yellow;
     font-weight: bold;
+}
 
-    /* Основные стили */
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+}
+
+.footer-container a {
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.footer-container a:hover {
+    text-decoration: underline;
+}
+
+@media screen and (max-width: 600px) {
     body {
-        font-family: Arial, sans-serif;
-        line-height: 1.6;
-        margin: 0;
-        padding: 0;
-        background-color: #f4f4f4;
+        font-size: 14px;
     }
 
-    header,
-    nav,
-    footer {
-        background: #333;
-        color: #fff;
-        text-align: center;
-        padding: 1rem 0;
-    }
-
-    nav a {
-        color: #fff;
-        text-decoration: none;
-        padding: 0.5rem 1rem;
-        transition: background-color 0.3s ease;
-    }
-
-    nav a:hover {
-        background-color: #555;
-    }
-
-    .footer-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem;
-    }
-
-    .footer-container a {
-        color: #fff;
-        text-decoration: none;
-    }
-
-    .footer-container a:hover {
-        text-decoration: underline;
-    }
-
-    @media screen and (max-width: 600px) {
-        body {
-            font-size: 14px;
-        }
-
-        .container {
-            width: 100%;
-            padding: 10px;
-        }
-    }
-
-    DIV.container {
+    .container {
         width: 100%;
         padding: 10px;
-        display: table-cell;
-        vertical-align: middle
     }
+}
