@@ -129,7 +129,22 @@ fetch("Book.xls")
     });
   })
   .catch((error) => console.error("Error:", error));
+document.addEventListener("DOMContentLoaded", () => {
+  const labelSelect = document.getElementById("label-select");
+  if (labelSelect) {
+    labelSelect.addEventListener("change", changeLabel);
+    changeLabel();
+  }
 
+  function changeLabel() {
+    const label = labelSelect ? labelSelect.value : "default";
+    const elements = document.querySelectorAll(".label");
+    elements.forEach((element) => {
+      element.style.display =
+        element.getAttribute("data-label") === label ? "block" : "none";
+    });
+  }
+});
   
   function filterTable() {
     var input = document.getElementById("search-inputb");
