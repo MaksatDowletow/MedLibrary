@@ -1,65 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Books</title>
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid black;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <table id="book-table">
-        <thead>
-            <tr>
-                <th>Название книги</th>
-                <th>Имя автора</th>
-                <th>Издатель</th>
-                <th>Город публикации</th>
-                <th>Год публикации</th>
-                <th>Количество страниц</th>
-                <th>Язык книги</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
+      <thead>
+        <tr>
+          <th>Название книги</th>
+          <th>Имя автора</th>
+          <th>Издатель</th>
+          <th>Город публикации</th>
+          <th>Год публикации</th>
+          <th>Количество страниц</th>
+          <th>Язык книги</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
     </table>
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
     <script>
-document.addEventListener('DOMContentLoaded', function() {
-    fetch('https://github.com/MaksatDowletow/MedLibrary/raw/main/Book.xls')
-        .then(response => response.arrayBuffer())
-        .then(data => {
-            var workbook = XLSX.read(data, {type: 'array'});
+      document.addEventListener("DOMContentLoaded", function () {
+        fetch("https://github.com/MaksatDowletow/MedLibrary/raw/main/Book.xls")
+          .then((response) => response.arrayBuffer())
+          .then((data) => {
+            var workbook = XLSX.read(data, { type: "array" });
             var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
             var jsonData = XLSX.utils.sheet_to_json(firstSheet);
-            var tbody = document.querySelector('#book-table tbody');
-            tbody.innerHTML = '';
-            jsonData.forEach(function(row) {
-                var tr = document.createElement('tr');
-                tr.innerHTML = `<td>${row['Название книги']}</td>
-                                <td>${row['Имя автора']}</td>
-                                <td>${row['Издатель']}</td>
-                                <td>${row['Город публикации']}</td>
-                                <td>${row['Год публикации']}</td>
-                                <td>${row['Количество страниц']}</td>
-                                <td>${row['Язык книги']}</td>`;
-                tbody.appendChild(tr);
+            var tbody = document.querySelector("#book-table tbody");
+            tbody.innerHTML = "";
+            jsonData.forEach(function (row) {
+              var tr = document.createElement("tr");
+              tr.innerHTML = `<td>${row["Название книги"]}</td>
+                                <td>${row["Имя автора"]}</td>
+                                <td>${row["Издатель"]}</td>
+                                <td>${row["Город публикации"]}</td>
+                                <td>${row["Год публикации"]}</td>
+                                <td>${row["Количество страниц"]}</td>
+                                <td>${row["Язык книги"]}</td>`;
+              tbody.appendChild(tr);
             });
-        })
-        .catch(error => console.error('Error:', error));
-});
+          })
+          .catch((error) => console.error("Error:", error));
+      });
     </script>
-</body>
+  </body>
 </html>
