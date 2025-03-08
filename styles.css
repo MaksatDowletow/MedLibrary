@@ -1,179 +1,191 @@
 /* Основные стили */
 body {
-  font-family: Arial, sans-serif;
-  line-height: 1.6;
-  margin: 0;
-  padding: 0;
-  background-color: #f4f4f4;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
 }
 
 header {
-  background: #333;
-  color: #fff;
-  padding: 1rem 0;
-  text-align: center;
+    background: #333;
+    color: #fff;
+    padding: 1rem 0;
+    text-align: center;
 }
 
 nav {
-  background: #555;
-  color: #fff;
-  display: flex;
-  justify-content: space-around;
-  padding: 1rem 0;
-  flex-wrap: wrap;
+    background: #555;
+    color: #fff;
+    display: flex;
+    justify-content: space-around;
+    padding: 1rem 0;
+    flex-wrap: wrap;
 }
 
 nav a {
-  color: #fff;
-  text-decoration: none;
+    color: #fff;
+    text-decoration: none;
 }
+
 /* Основные стили для ссылок в навигационном меню */
 nav {
-  background: #555;
-  color: #fff;
-  display: flex;
-  justify-content: space-around;
-  padding: 1rem 0;
-  flex-wrap: wrap;
+    background: #555;
+    color: #fff;
+    display: flex;
+    justify-content: space-around;
+    padding: 1rem 0;
+    flex-wrap: wrap;
 }
 
 nav a {
-  color: #fff;
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  transition: background-color 0.3s ease;
+    color: #fff;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.3s ease;
 }
 
 nav a:hover {
-  background-color: #333;
+    background-color: #333;
 }
 
 /* Скрытие языковых элементов */
 .lang {
-  display: none;
+    display: none;
 }
 
 .lang[data-lang="ru"] {
-  display: block;
+    display: block;
 }
+
 .container {
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  background: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 footer {
-  text-align: center;
-  margin-top: 2rem;
-  padding: 1rem;
-  background: #333;
-  color: #fff;
+    text-align: center;
+    margin-top: 2rem;
+    padding: 1rem;
+    background: #333;
+    color: #fff;
 }
 
 .gallery-slider {
-  position: relative;
-  max-width: 100%;
-  margin: auto;
+    position: relative;
+    max-width: 100%;
+    margin: auto;
 }
 
 .slide {
-  display: none;
+    display: none;
 }
 
 .slide img {
-  width: 100%;
+    width: 100%;
 }
 
-.prev, .next {
-  cursor: pointer;
-  position: absolute;
-  top: 50%;
-  width: auto;
-  padding: 16px;
-  margin-top: -22px;
-  color: white;
-  font-weight: bold;
-  font-size: 18px;
-  transition: 0.6s ease;
-  border-radius: 0 3px 3px 0;
-  user-select: none;
+.prev,
+.next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 16px;
+    margin-top: -22px;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    transition: 0.6s ease;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
 }
 
 .next {
-  right: 0;
-  border-radius: 3px 0 0 3px;
+    right: 0;
+    border-radius: 3px 0 0 3px;
 }
 
-.prev:hover, .next:hover {
-  background-color: rgba(0,0,0,0.8);
+.prev:hover,
+.next:hover {
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
 /* Скрытие языковых элементов */
 .lang {
-  display: none;
+    display: none;
 }
 
 .lang[data-lang="ru"] {
-  display: block;
+    display: block;
 }
- .highlight {
+
+.highlight {
     background-color: yellow;
     font-weight: bold;
-   /* Основные стили */
-body {
-  font-family: Arial, sans-serif;
-  line-height: 1.6;
-  margin: 0;
-  padding: 0;
-  background-color: #f4f4f4;
-}
 
-header, nav, footer {
-  background: #333;
-  color: #fff;
-  text-align: center;
-  padding: 1rem 0;
-}
-
-nav a {
-  color: #fff;
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  transition: background-color 0.3s ease;
-}
-
-nav a:hover {
-  background-color: #555;
-}
-
-.footer-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-}
-
-.footer-container a {
-  color: #fff;
-  text-decoration: none;
-}
-
-.footer-container a:hover {
-  text-decoration: underline;
-}
-
-@media screen and (max-width: 600px) {
+    /* Основные стили */
     body {
-        font-size: 14px;
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
     }
-    .container {
+
+    header,
+    nav,
+    footer {
+        background: #333;
+        color: #fff;
+        text-align: center;
+        padding: 1rem 0;
+    }
+
+    nav a {
+        color: #fff;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        transition: background-color 0.3s ease;
+    }
+
+    nav a:hover {
+        background-color: #555;
+    }
+
+    .footer-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+    }
+
+    .footer-container a {
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .footer-container a:hover {
+        text-decoration: underline;
+    }
+
+    @media screen and (max-width: 600px) {
+        body {
+            font-size: 14px;
+        }
+
+        .container {
+            width: 100%;
+            padding: 10px;
+        }
+    }
+
+    DIV.container {
         width: 100%;
         padding: 10px;
+        display: table-cell;
+        vertical-align: middle
     }
-}
-DIV.container {
- 
-    display: table-cell;
-    vertical-align: middle }
