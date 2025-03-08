@@ -77,10 +77,10 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("login")?.addEventListener("click", login);
 
   document
-    .getElementById("searchInputb")
+    .getElementById("searchInput")
     .addEventListener("input", function () {
       var input, filter, table, tr, td, i, txtValue1, txtValue2;
-      input = document.getElementById("searchInputb");
+      input = document.getElementById("searchInput");
       filter = input.value.toUpperCase();
       table = document.querySelector("table tbody");
       tr = table.getElementsByTagName("tr");
