@@ -103,32 +103,34 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-  fetch("Book.xls")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Network response was not ok " + response.statusText);
-      }
-      return response.arrayBuffer();
-    })
-    .then((data) => {
-      var workbook = XLSX.read(data, { type: "array" });
-      var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-      var jsonData = XLSX.utils.sheet_to_json(firstSheet);
-      var tbody = document.querySelector("#book-table tbody");
-      tbody.innerHTML = "";
-      jsonData.slice(0, 1400).forEach(function (row) {
-        var tr = document.createElement("tr");
-        tr.innerHTML = `<td>${row["Название книги"]}</td>
-                            <td>${row["Имя автора"]}</td>
-                            <td>${row["Издатель"]}</td>
-                            <td>${row["Город публикации"]}</td>
-                            <td>${row["Год публикации"]}</td>
-                            <td>${row["Количество страниц"]}</td>
-                            <td>${row["Язык книги"]}</td>`;
-        tbody.appendChild(tr);
-      });
-    })
-    .catch((error) => console.error("Error:", error));
+fetch("Book.xls")
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error("Network response was not ok " + response.statusText);
+    }
+    return response.arrayBuffer();
+  })
+  .then((data) => {
+    var workbook = XLSX.read(data, { type: "array" });
+    var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+    var jsonData = XLSX.utils.sheet_to_json(firstSheet);
+    var tbody = document.querySelector("#book-table tbody");
+    tbody.innerHTML = "";
+    jsonData.slice(0, 1400).forEach(function (row) {
+      var tr = document.createElement("tr");
+      tr.innerHTML = `<td>${row["Название книги"]}</td>
+                          <td>${row["Имя автора"]}</td>
+                          <td>${row["Издатель"]}</td>
+                          <td>${row["Город публикации"]}</td>
+                          <td>${row["Год публикации"]}</td>
+                          <td>${row["Количество страниц"]}</td>
+                          <td>${row["Язык книги"]}</td>`;
+      tbody.appendChild(tr);
+    });
+  })
+  .catch((error) => console.error("Error:", error));
+
+  
   function filterTable() {
     var input = document.getElementById("search-inputb");
     var filter = input.value.toLowerCase();
