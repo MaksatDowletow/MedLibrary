@@ -1,8 +1,9 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => 
+    {
     const languageSelect = document.getElementById('language-select');
     if (languageSelect) {
       languageSelect.addEventListener('change', changeLanguage);
-      // Изначально установим русский язык
+     
       changeLanguage();
     }
   
@@ -14,7 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   
-    // Инициализация слайд-шоу
     let slideIndex = 0;
     showSlides();
   
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   document.addEventListener("DOMContentLoaded", function() {
-    // Ваш код регистрации
+
     const scriptURL = "https://script.google.com/macros/s/AKfycbzCUVMuM1EtBLG--X58nFfJiQkqCxxtF2hYs86L-YzW0XmUxC6XUTxtfqliLG7BGOvI/exec";
   
     function register() {
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const password = document.getElementById("password").value;
   
       if (!username || !password) {
-        alert("Пожалуйста, заполните все поля!");
+        alert('Пожалуйста, заполните все поля!');
         return;
       }
   
@@ -51,12 +51,12 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(res => res.text())
       .then(data => {
         alert(data);
-        location.reload();  // Перезагрузка страницы
+        location.reload();  
       })
       .catch(error => console.error("Error:", error));
     }
   
-    // Привязываем обработчик события к кнопке
+  
     const registerButton = document.getElementById("register");
     if (registerButton) {
       registerButton.addEventListener("click", register);
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   
   
-  // Отправка сообщения на email
+  
   function sendMail() {
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.href = "mailto:tdlipfmdm@gmail.com?subject=" + subject + "&body=" + body;
   }
   
-  // Проверка и добавление обработчиков событий
+
   document.getElementById("register")?.addEventListener("click", register);
   document.getElementById("login")?.addEventListener("click", login);
   
@@ -98,4 +98,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     }
-  });
+  })})
