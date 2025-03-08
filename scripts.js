@@ -99,3 +99,21 @@ document.addEventListener('DOMContentLoaded', () =>
       }
     }
   })})
+// Функция для фильтрации таблицы
+      function filterTable() {
+        var input = document.getElementById("search-input");
+        var filter = input.value.toLowerCase();
+        var table = document.getElementById("book-table");
+        var tr = table.getElementsByTagName("tr");
+        
+        for (var i = 1; i < tr.length; i++) {
+          tr[i].style.display = "none";
+          var td = tr[i].getElementsByTagName("td");
+          for (var j = 0; j < td.length; j++) {
+            if (td[j] && td[j].innerHTML.toLowerCase().indexOf(filter) > -1) {
+              tr[i].style.display = "";
+              break;
+            }
+          }
+        }
+      }
