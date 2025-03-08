@@ -80,22 +80,7 @@ document.getElementById("login")?.addEventListener("click", login);
 
 
 
-  // Поиск на странице
-  function searchOnPage() {
-    const searchText = document.getElementById('searchInput').value;
-    const elements = document.getElementsByTagName('p');
-
-    Array.from(elements).forEach(element => {
-      const text = element.innerHTML;
-      const replacedText = text.replace(new RegExp(searchText, 'gi'), '<span class="highlight">$&</span>');
-      element.innerHTML = replacedText;
-    });
-  }
-
-  document.getElementById("sendMail")?.addEventListener("click", sendMail);
-  document.getElementById("searchButton")?.addEventListener("click", searchOnPage);
-});
-document.getElementById('searchInput').addEventListener('input', function() {
+ document.getElementById('searchInput').addEventListener('input', function() {
   var input, filter, table, tr, td, i, txtValue;
   input = document.getElementById('searchInput');
   filter = input.value.toUpperCase();
@@ -103,10 +88,13 @@ document.getElementById('searchInput').addEventListener('input', function() {
   tr = table.getElementsByTagName('tr');
 
   for (i = 0; i < tr.length; i++) {
-    td = tr[i].getElementsByTagName('td')[0];
-    if (td) {
-      txtValue = td.textContent || td.innerText;
-      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+    // Получаем все ячейки строки
+    td = tr[i].getElementsByTagName('td');
+    if (td.length > 0) {
+      // Проверяем текст в первом и втором столбцах
+      txtValue1 = td[0].textContent || td[0].innerText;
+      txtValue2 = td[1].textContent || td[1].innerText;
+      if (txtValue1.toUpperCase().indexOf(filter) > -1 || txtValue2.toUpperCase().indexOf(filter) > -1) {
         tr[i].style.display = "";
       } else {
         tr[i].style.display = "none";
