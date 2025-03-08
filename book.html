@@ -1,27 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Books</title>
-    <style>
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      th,
-      td {
-        border: 1px solid black;
-        padding: 8px;
-        text-align: left;
-      }
-      th {
-        background-color: #f2f2f2;
-      }
-    </style>
-  </head>
-  <body>
-    <input type="text" id="search-input" placeholder="Поиск по таблице..." onkeyup="filterTable()">
+<html lang="en">    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Lukmançylyk kitaphanasy - 1000-den gowrak kitaplara oflayn elýeterlik. Kitaplary gözlemek we kategoriýalar boýunça seretmek mümkinçiligi.">
+    <meta name="keywords" content="lukmançylyk, kitaplar, kategoriýalar, oflayn, bilim, Медицинская электронная библиотека">
+    <meta name="author" content="Maksat Döwletow" >
+    <title>Медицинская электронная библиотека</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <select id="language-select">
+      <option value="tm">Türkmençe</option>
+      <option value="ru">Русский</option>
+      <option value="en">English</option>
+    </select>
+    <h1 data-lang="ru" class="lang">Категории книг</h1>
+    <h1 data-lang="en" class="lang">Book Categories</h1>
+    <h1 data-lang="tm" class="lang">Kitap kategoriýalary</h1>
+  </header>
+  <nav>
+    <a href="index.html" data-lang="ru" class="lang">Главная</a>
+    <a href="index.html" data-lang="en" class="lang">Home</a>
+    <a href="index.html" data-lang="tm" class="lang">Baş sahypa</a>
+    <a href="BookCategory.html" data-lang="ru" class="lang">Категории книг</a>
+    <a href="BookCategory.html" data-lang="en" class="lang">Book Categories</a>
+    <a href="BookCategory.html" data-lang="tm" class="lang">Kitap kategoriýalary</a>
+      <!-- Новая ссылка на страницу с книгами -->
+  <a href="book.html" data-lang="ru" class="lang">Список книг</a>
+  <a href="book.html" data-lang="en" class="lang">Book List</a>
+  <a href="book.html" data-lang="tm" class="lang">Kitaplar</a>
+    <a href="https://sites.google.com/view/lukmanylyksanlykitaphanasy/ba%C5%9F-sahypa" target="_blank" class="external-link" style="color: blue; font-weight: bold;">Другой сайт библиотеки</a>
+  </nav>
+    <nav>
+  <input type="text" id="searchInput" placeholder="Gözleg...">
+    </nav>
     <table id="book-table">
       <thead>
         <tr>
