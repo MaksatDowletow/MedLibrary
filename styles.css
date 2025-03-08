@@ -214,3 +214,12 @@ tr:hover {
             background-color: #f9f9f9;
         }
     
+@media screen and (max-width: 600px) {
+    body {
+        font-size: 14px;
+    }
+    .container {
+        width: 100%;
+        padding: 10px;
+    }
+}
