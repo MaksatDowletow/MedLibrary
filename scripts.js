@@ -91,8 +91,7 @@ document.getElementById('searchInput').addEventListener('input', function() {
     td = tr[i].getElementsByTagName('td');
     if (td.length > 0) {
       // Проверяем текст в первом и втором столбцах
-      txtValue1 = td[0].textContent || td[0].innerText;
-      txtValue2 = td[1].textContent || td[1].innerText;
+
       if (txtValue1.toUpperCase().indexOf(filter) > -1 || txtValue2.toUpperCase().indexOf(filter) > -1) {
         tr[i].style.display = "";
       } else {
