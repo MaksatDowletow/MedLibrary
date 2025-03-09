@@ -76,83 +76,80 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("register")?.addEventListener("click", register);
   document.getElementById("login")?.addEventListener("click", login);
 
-  document
-    .getElementById("searchInput")
-    .addEventListener("input", function () {
-      var input, filter, table, tr, td, i, txtValue1, txtValue2;
-      input = document.getElementById("searchInput");
-      filter = input.value.toUpperCase();
-      table = document.querySelector("table tbody");
-      tr = table.getElementsByTagName("tr");
+  document.getElementById("searchInput").addEventListener("input", function () {
+    var input, filter, table, tr, td, i, txtValue1, txtValue2;
+    input = document.getElementById("searchInput");
+    filter = input.value.toUpperCase();
+    table = document.querySelector("table tbody");
+    tr = table.getElementsByTagName("tr");
 
-      for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td");
-        if (td.length > 0) {
-          txtValue1 = td[0].textContent || td[0].innerText;
-          txtValue2 = td[1].textContent || td[1].innerText;
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td");
+      if (td.length > 0) {
+        txtValue1 = td[0].textContent || td[0].innerText;
+        txtValue2 = td[1].textContent || td[1].innerText;
 
-          if (
-            txtValue1.toUpperCase().indexOf(filter) > -1 ||
-            txtValue2.toUpperCase().indexOf(filter) > -1
-          ) {
-            tr[i].style.display = "";
-          } else {
-            tr[i].style.display = "none";
-          }
+        if (
+          txtValue1.toUpperCase().indexOf(filter) > -1 ||
+          txtValue2.toUpperCase().indexOf(filter) > -1
+        ) {
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
         }
       }
-    });
-
-fetch("Book.xls")
-  .then((response) => {
-    if (!response.ok) {
-      throw new Error("Network response was not ok " + response.statusText);
     }
-    return response.arrayBuffer();
-  })
-  .then((data) => {
-    var workbook = XLSX.read(data, { type: "array" });
-    var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-    var jsonData = XLSX.utils.sheet_to_json(firstSheet);
-    var tbody = document.querySelector("#book-table tbody");
-    tbody.innerHTML = "";
-    jsonData.slice(0, 1400).forEach(function (row) {
-      var tr = document.createElement("tr");
-      tr.innerHTML = `<td>${row["Название книги"]}</td>
+  });
+
+  fetch("Book.xls")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok " + response.statusText);
+      }
+      return response.arrayBuffer();
+    })
+    .then((data) => {
+      var workbook = XLSX.read(data, { type: "array" });
+      var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+      var jsonData = XLSX.utils.sheet_to_json(firstSheet);
+      var tbody = document.querySelector("#book-table tbody");
+      tbody.innerHTML = "";
+      jsonData.slice(0, 1400).forEach(function (row) {
+        var tr = document.createElement("tr");
+        tr.innerHTML = `<td>${row["Название книги"]}</td>
                           <td>${row["Имя автора"]}</td>
                           <td>${row["Издатель"]}</td>
                           <td>${row["Город публикации"]}</td>
                           <td>${row["Год публикации"]}</td>
                           <td>${row["Количество страниц"]}</td>
                           <td>${row["Язык книги"]}</td>`;
-      tbody.appendChild(tr);
-    });
-  })
-  .catch((error) => console.error("Error:", error));
-document.addEventListener("DOMContentLoaded", () => {
-  const labelSelect = document.getElementById("label-select");
-  if (labelSelect) {
-    labelSelect.addEventListener("change", changeLabel);
-    changeLabel();
-  }
+        tbody.appendChild(tr);
+      });
+    })
+    .catch((error) => console.error("Error:", error));
+  document.addEventListener("DOMContentLoaded", () => {
+    const labelSelect = document.getElementById("label-select");
+    if (labelSelect) {
+      labelSelect.addEventListener("change", changeLabel);
+      changeLabel();
+    }
 
- 
-  
-  function filterTable() {
-    var input = document.getElementById("search-inputb");
-    var filter = input.value.toLowerCase();
-    var table = document.getElementById("book-table");
-    var tr = table.getElementsByTagName("tr");
+    function filterTable() {
+      var input = document.getElementById("search-inputb");
+      var filter = input.value.toLowerCase();
+      var table = document.getElementById("book-table");
+      var tr = table.getElementsByTagName("tr");
 
-    for (var i = 1; i < tr.length; i++) {
-      tr[i].style.display = "none";
-      var td = tr[i].getElementsByTagName("td");
-      for (var j = 0; j < td.length; j++) {
-        if (td[j] && td[j].innerHTML.toLowerCase().indexOf(filter) > -1) {
-          tr[i].style.display = "";
-          break;
+      for (var i = 1; i < tr.length; i++) {
+        tr[i].style.display = "none";
+        var td = tr[i].getElementsByTagName("td");
+        for (var j = 0; j < td.length; j++) {
+          if (td[j] && td[j].innerHTML.toLowerCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+            break;
+          }
         }
       }
     }
-  }
+  });
 });
