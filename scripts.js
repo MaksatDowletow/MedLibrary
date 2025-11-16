@@ -29,41 +29,96 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   showSlides();
 
-  const scriptURL =
-    "https://script.google.com/macros/s/AKfycbzCUVMuM1EtBLG--X58nFfJiQkqCxxtF2hYs86L-YzW0XmUxC6XUTxtfqliLG7BGOvI/exec";
+  const registrationForm = document.getElementById("register-form");
+  if (registrationForm) {
+    const emailInput = document.getElementById("register-email");
+    const passwordInput = document.getElementById("register-password");
+    const confirmInput = document.getElementById("register-confirm");
+    const statusElement = document.getElementById("register-status");
+    const registerButton = document.getElementById("register-button");
+    const apiBase = (document.body?.dataset.apiBase || "").replace(/\/$/, "");
+    const registerEndpoint = `${apiBase || ""}/register`;
 
-  function register() {
-    const usernameInput = document.getElementById("username");
-    const passwordInput = document.getElementById("password");
-    if (!usernameInput || !passwordInput) {
-      return;
-    }
+    const updateStatus = (message, state) => {
+      if (!statusElement) {
+        return;
+      }
+      statusElement.textContent = message;
+      statusElement.classList.remove("success", "error", "pending");
+      if (state) {
+        statusElement.classList.add(state);
+      }
+    };
 
-    const username = usernameInput.value.trim();
-    const password = passwordInput.value.trim();
+    const setButtonState = (disabled) => {
+      if (registerButton) {
+        registerButton.disabled = disabled;
+      }
+    };
 
-    if (!username || !password) {
-      alert("Пожалуйста, заполните все поля!");
-      return;
-    }
+    const isEmailValid = (email) => /.+@.+\..+/.test(email);
 
-    fetch(scriptURL, {
-      method: "POST",
-      body: JSON.stringify({ action: "register", username, password }),
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((res) => res.text())
-      .then((data) => {
-        alert(data);
-        usernameInput.value = "";
-        passwordInput.value = "";
+    const submitRegistration = () => {
+      if (!emailInput || !passwordInput || !confirmInput) {
+        return;
+      }
+
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+      const confirmPassword = confirmInput.value.trim();
+
+      if (!isEmailValid(email)) {
+        updateStatus("Введите корректный email", "error");
+        return;
+      }
+
+      if (password.length < 6) {
+        updateStatus("Пароль должен содержать минимум 6 символов", "error");
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        updateStatus("Пароли не совпадают", "error");
+        return;
+      }
+
+      updateStatus("Создаем аккаунт...", "pending");
+      setButtonState(true);
+
+      fetch(registerEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       })
-      .catch((error) => console.error("Error:", error));
-  }
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Не удалось зарегистрировать пользователя");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          updateStatus(data.message || "Регистрация прошла успешно", "success");
+          registrationForm.reset();
+        })
+        .catch((error) => {
+          updateStatus(error.message || "Ошибка при регистрации", "error");
+        })
+        .finally(() => {
+          setButtonState(false);
+        });
+    };
 
-  const registerButton = document.getElementById("register-button");
-  if (registerButton) {
-    registerButton.addEventListener("click", register);
+    registrationForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      submitRegistration();
+    });
+
+    if (registerButton) {
+      registerButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        submitRegistration();
+      });
+    }
   }
 
   window.sendMail = () => {
