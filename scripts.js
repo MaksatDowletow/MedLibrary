@@ -9,6 +9,89 @@ const BOOK_TABLE_COLUMNS = [
   "Язык книги",
 ];
 
+const UI_TEXTS = {
+  tableLoading: {
+    ru: "Загружаем каталог...",
+    en: "Loading catalog...",
+    tm: "Katalogy ýükleýäris...",
+  },
+  tableEmpty: {
+    ru: "Каталог пуст",
+    en: "Catalog is empty",
+    tm: "Katalog boş",
+  },
+  tableShown: {
+    ru: "Показаны {count} записей",
+    en: "Showing {count} entries",
+    tm: "{count} ýazgy görkezildi",
+  },
+  tableFetchError: {
+    ru: "Не удалось загрузить каталог. Попробуйте позже.",
+    en: "Unable to load the catalog. Please try again later.",
+    tm: "Katalogy ýüklemek başartmady. Soňrak synanyşyň.",
+  },
+  tableUnavailable: {
+    ru: "Библиотека недоступна",
+    en: "Catalog is unavailable",
+    tm: "Katalog elýeterli däl",
+  },
+  statusNone: {
+    ru: "Ничего не найдено",
+    en: "Nothing found",
+    tm: "Hiç zat tapylmady",
+  },
+  statusShownAll: {
+    ru: "Показаны {count} записей",
+    en: "Showing {count} entries",
+    tm: "{count} ýazgy görkezildi",
+  },
+  statusFound: {
+    ru: "Найдено {count} из {total} записей",
+    en: "Found {count} of {total} entries",
+    tm: "{total} ýazgydan {count} tapyldy",
+  },
+  cardUseFilters: {
+    ru: "Воспользуйтесь фильтрами, чтобы увидеть карточки найденных книг.",
+    en: "Use the filters to see cards of the matched books.",
+    tm: "Tapylan kitaplaryň kartlaryny görmek üçin filtrleri ulanyň.",
+  },
+  cardEmpty: {
+    ru: "По заданным параметрам ничего не найдено.",
+    en: "Nothing matches your filters.",
+    tm: "Saýlanan filtrler boýunça hiç zat tapylmady.",
+  },
+  cardUntitled: {
+    ru: "Без названия",
+    en: "Untitled",
+    tm: "Ady ýok",
+  },
+  cardAuthor: {
+    ru: "Автор",
+    en: "Author",
+    tm: "Awtor",
+  },
+  cardPublisher: {
+    ru: "Издатель",
+    en: "Publisher",
+    tm: "Neşirçi",
+  },
+  cardCity: {
+    ru: "Город",
+    en: "City",
+    tm: "Şäher",
+  },
+  cardYear: {
+    ru: "Год",
+    en: "Year",
+    tm: "Ýyl",
+  },
+  cardPages: {
+    ru: "Страниц",
+    en: "Pages",
+    tm: "Sahypalar",
+  },
+};
+
 const bookSearchState = {
   tableBody: null,
   statusElement: null,
@@ -42,6 +125,8 @@ function initLanguageSwitcher() {
 
   const changeLanguage = () => {
     const lang = languageSelect.value || "ru";
+    document.documentElement.dataset.lang = lang;
+    document.documentElement.lang = lang;
     document.querySelectorAll(".lang").forEach((element) => {
       const isVisible = element.getAttribute("data-lang") === lang;
       element.hidden = !isVisible;
@@ -50,6 +135,13 @@ function initLanguageSwitcher() {
         element.style.removeProperty("display");
       }
     });
+    updatePlaceholders(lang);
+    document
+      .querySelectorAll("[data-i18n-key]")
+      .forEach((element) => translateElement(element));
+    if (bookSearchState.isTableReady) {
+      applyBookFilters();
+    }
   };
 
   languageSelect.addEventListener("change", changeLanguage);
@@ -372,18 +464,18 @@ function initBookTable() {
   if (typeof XLSX === "undefined") {
     console.error("XLSX library is not loaded");
     if (statusElement) {
-      statusElement.textContent = "Библиотека недоступна";
+      setElementTranslation(statusElement, "tableUnavailable");
       statusElement.dataset.state = "error";
     }
     return;
   }
 
   const tablePanel = document.querySelector(".table-panel");
-  const setTableStatus = (message, state) => {
+  const setTableStatus = (key, state, replacements) => {
     if (!statusElement) {
       return;
     }
-    statusElement.textContent = message;
+    setElementTranslation(statusElement, key, replacements);
     if (state) {
       statusElement.dataset.state = state;
     } else {
@@ -392,7 +484,7 @@ function initBookTable() {
   };
 
   tablePanel?.classList.add("is-loading");
-  setTableStatus("Загружаем каталог...", "pending");
+  setTableStatus("tableLoading", "pending");
 
   const MAX_ROWS = 1400;
   const CHUNK_SIZE = 200;
@@ -425,7 +517,7 @@ function initBookTable() {
         tablePanel?.classList.remove("is-loading");
         tablePanel?.classList.add("is-ready");
         bookTableBody.innerHTML = "";
-        setTableStatus("Каталог пуст", "error");
+        setTableStatus("tableEmpty", "error");
         dispatchReady(0);
         return;
       }
@@ -453,7 +545,7 @@ function initBookTable() {
         } else {
           tablePanel?.classList.remove("is-loading");
           tablePanel?.classList.add("is-ready");
-          setTableStatus(`Показаны ${totalRows} записей`, "success");
+          setTableStatus("tableShown", "success", { count: totalRows });
           bookSearchState.isTableReady = true;
           bookSearchState.totalRows = totalRows;
           applyBookFilters();
@@ -468,7 +560,7 @@ function initBookTable() {
       tablePanel?.classList.remove("is-loading");
       tablePanel?.classList.add("is-ready");
       bookTableBody.innerHTML = "";
-      setTableStatus("Не удалось загрузить каталог. Попробуйте позже.", "error");
+      setTableStatus("tableFetchError", "error");
     });
 }
 
@@ -600,14 +692,19 @@ function updateBookStatus(visibleRows) {
   }
 
   if (!visibleRows) {
-    statusElement.textContent = "Ничего не найдено";
+    setElementTranslation(statusElement, "statusNone");
     statusElement.dataset.state = "error";
     return;
   }
 
-  const prefix =
-    visibleRows === bookSearchState.totalRows ? "Показаны" : "Найдено";
-  statusElement.textContent = `${prefix} ${visibleRows} из ${bookSearchState.totalRows} записей`;
+  const key =
+    visibleRows === bookSearchState.totalRows
+      ? "statusShownAll"
+      : "statusFound";
+  setElementTranslation(statusElement, key, {
+    count: visibleRows,
+    total: bookSearchState.totalRows,
+  });
   statusElement.dataset.state = "success";
 }
 
@@ -620,14 +717,18 @@ function renderBookCards(entries, hasActiveFilter) {
   container.innerHTML = "";
 
   if (!hasActiveFilter) {
-    container.innerHTML =
-      '<p class="card-results__empty">Воспользуйтесь фильтрами, чтобы увидеть карточки найденных книг.</p>';
+    const message = document.createElement("p");
+    message.className = "card-results__empty";
+    setElementTranslation(message, "cardUseFilters");
+    container.appendChild(message);
     return;
   }
 
   if (!entries.length) {
-    container.innerHTML =
-      '<p class="card-results__empty">По заданным параметрам ничего не найдено.</p>';
+    const message = document.createElement("p");
+    message.className = "card-results__empty";
+    setElementTranslation(message, "cardEmpty");
+    container.appendChild(message);
     return;
   }
 
@@ -635,22 +736,72 @@ function renderBookCards(entries, hasActiveFilter) {
   entries.forEach((entry) => {
     const article = document.createElement("article");
     article.className = "book-card";
+    const details = [
+      { key: "cardAuthor", value: entry.author },
+      { key: "cardPublisher", value: entry.publisher },
+      { key: "cardCity", value: entry.city },
+      { key: "cardYear", value: entry.year },
+      { key: "cardPages", value: entry.pages },
+    ]
+      .map(
+        ({ key, value }) =>
+          `<div><dt>${translate(key)}</dt><dd>${value || "—"}</dd></div>`
+      )
+      .join("");
     article.innerHTML = `
       <div class="book-card__header">
-        <h3>${entry.title || "Без названия"}</h3>
+        <h3>${entry.title || translate("cardUntitled")}</h3>
         <span class="book-card__badge">${entry.language || "—"}</span>
       </div>
-      <dl class="book-card__details">
-        <div><dt>Автор</dt><dd>${entry.author || "—"}</dd></div>
-        <div><dt>Издатель</dt><dd>${entry.publisher || "—"}</dd></div>
-        <div><dt>Город</dt><dd>${entry.city || "—"}</dd></div>
-        <div><dt>Год</dt><dd>${entry.year || "—"}</dd></div>
-        <div><dt>Страниц</dt><dd>${entry.pages || "—"}</dd></div>
-      </dl>`;
+      <dl class="book-card__details">${details}</dl>`;
     fragment.appendChild(article);
   });
 
   container.appendChild(fragment);
+}
+
+function updatePlaceholders(lang) {
+  const langKey = lang.charAt(0).toUpperCase() + lang.slice(1);
+  const selector =
+    "[data-placeholder-ru], [data-placeholder-en], [data-placeholder-tm]";
+  document.querySelectorAll(selector).forEach((input) => {
+    const placeholder = input.dataset[`placeholder${langKey}`];
+    if (placeholder) {
+      input.placeholder = placeholder;
+    }
+  });
+}
+
+function translate(key, replacements = {}) {
+  const lang = document.documentElement.dataset.lang || "ru";
+  const template = UI_TEXTS[key]?.[lang] || UI_TEXTS[key]?.ru || "";
+  return Object.keys(replacements).reduce((acc, currentKey) => {
+    return acc.replace(new RegExp(`{${currentKey}}`, "g"), replacements[currentKey]);
+  }, template);
+}
+
+function translateElement(element) {
+  if (!element?.dataset?.i18nKey) {
+    return;
+  }
+  let args = {};
+  if (element.dataset.i18nArgs) {
+    try {
+      args = JSON.parse(element.dataset.i18nArgs);
+    } catch (error) {
+      console.error("Failed to parse translation arguments", error);
+    }
+  }
+  element.textContent = translate(element.dataset.i18nKey, args);
+}
+
+function setElementTranslation(element, key, replacements = {}) {
+  if (!element) {
+    return;
+  }
+  element.dataset.i18nKey = key;
+  element.dataset.i18nArgs = JSON.stringify(replacements || {});
+  translateElement(element);
 }
 
 function setStatusMessage(element, message, state) {
