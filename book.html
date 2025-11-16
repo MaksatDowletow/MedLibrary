@@ -8,19 +8,8 @@
     <meta name="author" content="Maksat Döwletow">
     <title>Медицинская электронная библиотека — список книг</title>
     <link rel="stylesheet" href="styles.css">
-    <style>
-        table tr:hover {
-            background-color: #f1f1f1;
-        }
-        table tr:nth-child(even) {
-            background-color: #a5aa95;
-        }
-        table tr:nth-child(odd) {
-            background-color: #fff;
-        }
-    </style>
 </head>
-<body>
+<body class="book-page">
   <header>
     <select id="language-select">
       <option value="tm">Türkmençe</option>
@@ -43,25 +32,57 @@
     <a href="book.html" data-lang="tm" class="lang">Kitaplar</a>
     <a href="https://sites.google.com/view/lukmanylyksanlykitaphanasy/ba%C5%9F-sahypa" target="_blank" class="external-link" style="color: blue; font-weight: bold;">Другой сайт библиотеки</a>
   </nav>
-  <section class="search" aria-label="Поиск по книгам">
-      <input type="text" id="searchInput" placeholder="Gözleg..." aria-label="Поиск по названию или автору">
-  </section>
-  <div style="height: 300px; overflow-y: auto;">
-    <table id="book-table" class="styled-table">
-      <thead>
-        <tr>
-          <th>Название книги</th>
-          <th>Имя автора</th>
-          <th>Издатель</th>
-          <th>Город публикации</th>
-          <th>Год публикации</th>
-          <th>Количество страниц</th>
-          <th>Язык книги</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
+  <main class="page-container" aria-label="Каталог книг">
+    <section class="table-panel">
+      <div class="panel-header">
+        <div>
+          <p data-lang="ru" class="lang panel-subtitle">Быстрый поиск по каталогу библиотеки</p>
+          <p data-lang="en" class="lang panel-subtitle">Quick search across the library catalogue</p>
+          <p data-lang="tm" class="lang panel-subtitle">Kitaphana katalogy boýunça çalt gözleg</p>
+        </div>
+        <p id="book-status" class="table-status" role="status" aria-live="polite">Загружаем каталог...</p>
+      </div>
+      <section class="search" aria-label="Поиск по книгам">
+        <label for="searchInput" class="visually-hidden">Поиск по названию или автору</label>
+        <div class="search-field">
+          <input type="text" id="searchInput" placeholder="Gözleg..." autocomplete="off">
+          <button type="button" id="clear-search" class="search-clear" aria-label="Очистить поиск">&times;</button>
+        </div>
+      </section>
+      <div class="table-wrapper" role="region" aria-live="polite">
+        <table id="book-table" class="styled-table">
+          <thead>
+            <tr>
+              <th>Название книги</th>
+              <th>Имя автора</th>
+              <th>Издатель</th>
+              <th>Город публикации</th>
+              <th>Год публикации</th>
+              <th>Количество страниц</th>
+              <th>Язык книги</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="skeleton-row" aria-hidden="true">
+              <td colspan="7"></td>
+            </tr>
+            <tr class="skeleton-row" aria-hidden="true">
+              <td colspan="7"></td>
+            </tr>
+            <tr class="skeleton-row" aria-hidden="true">
+              <td colspan="7"></td>
+            </tr>
+            <tr class="skeleton-row" aria-hidden="true">
+              <td colspan="7"></td>
+            </tr>
+            <tr class="skeleton-row" aria-hidden="true">
+              <td colspan="7"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
   <footer>
     <div class="footer-container">
       <div class="contact-info">
