@@ -624,6 +624,11 @@
     const excelSources = ['Book.xlsx'];
     const fallbackCoverImages = ['1.webp', '2.webp', '3.webp', '4.webp', '5.webp', '6.webp', '1.png', '2.png', '3.png', '4.png', '5.png', '6.png'];
     const fallbackCoverCache = new Map();
+    let excelImageMap = new Map();
+    const EXCEL_REL_NS = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+    const DRAWING_REL_TYPE = `${EXCEL_REL_NS}/drawing`;
+    const XDR_NS = 'http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing';
+    const DRAWING_NS = 'http://schemas.openxmlformats.org/drawingml/2006/main';
 
     const state = {
       lang: document.documentElement.lang || 'ru',
@@ -739,7 +744,8 @@
           const buffer = await response.arrayBuffer();
           const workbook = XLSX.read(buffer, { type: 'array' });
           const sheet = workbook.Sheets[workbook.SheetNames[0]];
-          const rawRows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+          const rawRows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', blankrows: true });
+          excelImageMap = await extractExcelImages(buffer).catch(() => new Map());
           const rows = convertSheetRowsToObjects(rawRows);
           const books = rows
             .map((row) => normalizeRow(row))
@@ -810,7 +816,7 @@
           version: BOOK_CACHE_VERSION,
           timestamp: Date.now(),
           checksum,
-          books
+          books: books.map((book) => sanitizeBookForCache(book))
         };
         storage.setItem(BOOK_CACHE_KEY, JSON.stringify(cacheRecord));
         state.cacheChecksum = checksum;
@@ -837,6 +843,17 @@
       return Array.from(new Uint8Array(digest))
         .map((byte) => byte.toString(16).padStart(2, '0'))
         .join('');
+    }
+
+    function sanitizeBookForCache(book) {
+      if (!book || typeof book !== 'object') {
+        return {};
+      }
+      const copy = { ...book };
+      if (typeof copy.cover === 'string' && copy.cover.startsWith('data:image/')) {
+        copy.cover = '';
+      }
+      return copy;
     }
 
     function parseTsv(text) {
@@ -914,6 +931,7 @@
           }
           record[`__COL_${getColumnLetter(colIndex)}`] = value;
         }
+        record.__rowIndex = rowIndex;
         if (hasValue) {
           result.push(record);
         }
@@ -950,6 +968,11 @@
       const author = getValue(columnAliases.author);
       const specialty = getValue(columnAliases.specialty);
       const { sanitizedLink, hasExternalLink } = normalizeLink(getValue(columnAliases.link), title, author);
+      const rowIndex = typeof row.__rowIndex === 'number' ? row.__rowIndex : null;
+      let coverValue = getValue(columnAliases.cover);
+      if (!coverValue && rowIndex !== null) {
+        coverValue = getExcelCover(rowIndex);
+      }
       return {
         title,
         author,
@@ -961,7 +984,7 @@
         specialty,
         link: sanitizedLink,
         hasExternalLink,
-        cover: resolveCoverValue(getValue(columnAliases.cover), title, author, specialty)
+        cover: resolveCoverValue(coverValue, title, author, specialty)
       };
     }
 
@@ -1008,6 +1031,19 @@
       return sanitizeUrl(source, getFallbackCover(fallbackKey));
     }
 
+    function getExcelCover(rowIndex) {
+      if (!excelImageMap || !excelImageMap.size) {
+        return '';
+      }
+      const candidates = [rowIndex, rowIndex + 1, rowIndex - 1];
+      for (const candidate of candidates) {
+        if (Number.isInteger(candidate) && candidate >= 0 && excelImageMap.has(candidate)) {
+          return excelImageMap.get(candidate);
+        }
+      }
+      return '';
+    }
+
     function sanitizeUrl(value, fallback) {
       if (!value || typeof value !== 'string') {
         return fallback;
@@ -1045,6 +1081,198 @@
         hash |= 0;
       }
       return hash;
+    }
+
+    async function extractExcelImages(buffer) {
+      if (typeof JSZip === 'undefined' || typeof DOMParser === 'undefined') {
+        return new Map();
+      }
+      try {
+        const zip = await JSZip.loadAsync(buffer);
+        const parser = new DOMParser();
+        const workbookPath = 'xl/workbook.xml';
+        const workbookXml = await loadZipText(zip, workbookPath);
+        if (!workbookXml) {
+          return new Map();
+        }
+        const workbookDoc = parser.parseFromString(workbookXml, 'application/xml');
+        const firstSheet = workbookDoc.querySelector('sheet');
+        if (!firstSheet) {
+          return new Map();
+        }
+        const sheetRelId = firstSheet.getAttribute('r:id');
+        if (!sheetRelId) {
+          return new Map();
+        }
+        const workbookRelsXml = await loadZipText(zip, getRelationshipPath(workbookPath));
+        if (!workbookRelsXml) {
+          return new Map();
+        }
+        const workbookRelsDoc = parser.parseFromString(workbookRelsXml, 'application/xml');
+        const sheetRelNode = workbookRelsDoc.querySelector(`Relationship[Id="${sheetRelId}"]`);
+        const sheetTarget = sheetRelNode?.getAttribute('Target');
+        if (!sheetTarget) {
+          return new Map();
+        }
+        const sheetPath = resolveZipTarget(workbookPath, sheetTarget);
+        const sheetRelsPath = getRelationshipPath(sheetPath);
+        const sheetRelsXml = await loadZipText(zip, sheetRelsPath);
+        if (!sheetRelsXml) {
+          return new Map();
+        }
+        const sheetRelsDoc = parser.parseFromString(sheetRelsXml, 'application/xml');
+        const drawingRelNode = sheetRelsDoc.querySelector(`Relationship[Type="${DRAWING_REL_TYPE}"]`);
+        const drawingTarget = drawingRelNode?.getAttribute('Target');
+        if (!drawingTarget) {
+          return new Map();
+        }
+        const drawingPath = resolveZipTarget(sheetRelsPath, drawingTarget);
+        const drawingXml = await loadZipText(zip, drawingPath);
+        const drawingRelsPath = getRelationshipPath(drawingPath);
+        const drawingRelsXml = await loadZipText(zip, drawingRelsPath);
+        if (!drawingXml || !drawingRelsXml) {
+          return new Map();
+        }
+        const drawingDoc = parser.parseFromString(drawingXml, 'application/xml');
+        const drawingRelsDoc = parser.parseFromString(drawingRelsXml, 'application/xml');
+        const relationshipMap = new Map();
+        drawingRelsDoc.querySelectorAll('Relationship').forEach((node) => {
+          const relId = node.getAttribute('Id');
+          const relTarget = node.getAttribute('Target');
+          if (relId && relTarget) {
+            relationshipMap.set(relId, resolveZipTarget(drawingRelsPath, relTarget));
+          }
+        });
+        const anchors = [
+          ...drawingDoc.getElementsByTagNameNS(XDR_NS, 'oneCellAnchor'),
+          ...drawingDoc.getElementsByTagNameNS(XDR_NS, 'twoCellAnchor')
+        ];
+        const map = new Map();
+        for (const anchor of anchors) {
+          const fromNode = anchor.getElementsByTagNameNS(XDR_NS, 'from')[0];
+          const picNode = anchor.getElementsByTagNameNS(XDR_NS, 'pic')[0];
+          if (!fromNode || !picNode) {
+            continue;
+          }
+          const rowNode = fromNode.getElementsByTagNameNS(XDR_NS, 'row')[0];
+          if (!rowNode) {
+            continue;
+          }
+          const rowIndex = Number.parseInt(rowNode.textContent || '', 10);
+          if (!Number.isFinite(rowIndex)) {
+            continue;
+          }
+          if (map.has(rowIndex)) {
+            continue;
+          }
+          const blip = picNode.getElementsByTagNameNS(DRAWING_NS, 'blip')[0];
+          if (!blip) {
+            continue;
+          }
+          const relId = blip.getAttributeNS(EXCEL_REL_NS, 'embed');
+          if (!relId) {
+            continue;
+          }
+          const mediaPath = relationshipMap.get(relId);
+          if (!mediaPath) {
+            continue;
+          }
+          const normalizedPath = mediaPath.replace(/^\//, '');
+          const fileEntry = zip.file(normalizedPath);
+          if (!fileEntry) {
+            continue;
+          }
+          const bytes = await fileEntry.async('uint8array');
+          if (!bytes || !bytes.length) {
+            continue;
+          }
+          const mimeType = getMimeTypeFromPath(normalizedPath);
+          map.set(rowIndex, `data:${mimeType};base64,${uint8ArrayToBase64(bytes)}`);
+        }
+        return map;
+      } catch (error) {
+        console.warn('Failed to extract Excel images', error);
+        return new Map();
+      }
+    }
+
+    async function loadZipText(zip, path) {
+      if (!zip || !path) {
+        return '';
+      }
+      const normalized = path.replace(/^\//, '');
+      const fileEntry = zip.file(normalized);
+      if (!fileEntry) {
+        return '';
+      }
+      return fileEntry.async('string');
+    }
+
+    function resolveZipTarget(basePath, target) {
+      if (!target) {
+        return '';
+      }
+      if (target.startsWith('/')) {
+        return target.slice(1);
+      }
+      const baseParts = basePath.split('/');
+      baseParts.pop();
+      const segments = target.split('/');
+      for (const segment of segments) {
+        if (!segment || segment === '.') {
+          continue;
+        }
+        if (segment === '..') {
+          if (baseParts.length) {
+            baseParts.pop();
+          }
+        } else {
+          baseParts.push(segment);
+        }
+      }
+      return baseParts.join('/');
+    }
+
+    function getRelationshipPath(filePath) {
+      if (!filePath) {
+        return '';
+      }
+      const lastSlash = filePath.lastIndexOf('/');
+      const dir = lastSlash === -1 ? '' : filePath.slice(0, lastSlash + 1);
+      const fileName = lastSlash === -1 ? filePath : filePath.slice(lastSlash + 1);
+      return `${dir}_rels/${fileName}.rels`;
+    }
+
+    function getMimeTypeFromPath(path) {
+      if (!path) {
+        return 'image/png';
+      }
+      const extension = path.split('.').pop()?.toLowerCase();
+      switch (extension) {
+        case 'jpg':
+        case 'jpeg':
+          return 'image/jpeg';
+        case 'gif':
+          return 'image/gif';
+        case 'webp':
+          return 'image/webp';
+        case 'png':
+        default:
+          return 'image/png';
+      }
+    }
+
+    function uint8ArrayToBase64(bytes) {
+      if (!bytes || !bytes.length) {
+        return '';
+      }
+      let binary = '';
+      const chunkSize = 0x8000;
+      for (let index = 0; index < bytes.length; index += chunkSize) {
+        const chunk = bytes.subarray(index, index + chunkSize);
+        binary += String.fromCharCode.apply(null, Array.from(chunk));
+      }
+      return btoa(binary);
     }
 
     function escapeHtml(value) {
