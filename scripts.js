@@ -1,4 +1,6 @@
 const TOKEN_KEY = "medlibraryToken";
+const LOCAL_USERS_KEY = "medlibraryLocalUsers";
+const LOCAL_SESSION_KEY = "medlibraryLocalSession";
 const BOOK_TABLE_COLUMNS = [
   "Название книги",
   "Имя автора",
@@ -258,7 +260,7 @@ function initRegistrationForm(apiBase) {
   const registerButton = document.getElementById("register-button");
   const registerEndpoint = buildEndpoint(apiBase, "/register");
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     if (!emailInput || !passwordInput || !confirmInput) {
@@ -291,30 +293,40 @@ function initRegistrationForm(apiBase) {
     setStatusMessage(statusElement, "Создаем аккаунт...", "pending");
     toggleDisabled(registerButton, true);
 
-    apiRequest(registerEndpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    })
-      .then((data) => {
-        setStatusMessage(
-          statusElement,
-          data?.message || "Регистрация прошла успешно",
-          "success"
-        );
-        form.reset();
-        document.getElementById("login-tab")?.click();
-      })
-      .catch((error) => {
+    try {
+      const data = await apiRequest(registerEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      setStatusMessage(
+        statusElement,
+        data?.message || "Регистрация прошла успешно",
+        "success"
+      );
+      clearLocalSession();
+      form.reset();
+      document.getElementById("login-tab")?.click();
+    } catch (error) {
+      if (isNetworkError(error)) {
+        try {
+          const { message } = await registerLocalUser(email, password);
+          setStatusMessage(statusElement, message, "success");
+          form.reset();
+          document.getElementById("login-tab")?.click();
+        } catch (fallbackError) {
+          setStatusMessage(statusElement, fallbackError.message, "error");
+        }
+      } else {
         setStatusMessage(
           statusElement,
           error?.message || "Ошибка при регистрации",
           "error"
         );
-      })
-      .finally(() => {
-        toggleDisabled(registerButton, false);
-      });
+      }
+    } finally {
+      toggleDisabled(registerButton, false);
+    }
   });
 }
 
@@ -333,8 +345,15 @@ function initLoginForm(apiBase) {
   const loginEndpoint = buildEndpoint(apiBase, "/login");
   const sessionEndpoint = buildEndpoint(apiBase, "/session");
 
-  const refreshSession = (showLoading = true) => {
+  const refreshSession = async (showLoading = true) => {
     const token = safeGetToken();
+    const localSession = loadLocalSession();
+
+    if (!token && localSession) {
+      renderLocalSession(sessionStatus, logoutButton, localSession);
+      return;
+    }
+
     if (!token) {
       setStatusMessage(sessionStatus, "Вы не авторизованы", null);
       if (logoutButton) {
@@ -347,41 +366,48 @@ function initLoginForm(apiBase) {
       setStatusMessage(sessionStatus, "Проверяем сессию...", "pending");
     }
 
-    apiRequest(sessionEndpoint, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((data) => {
-        const email = data?.user?.email;
-        const message = email ? `Вы вошли как ${email}` : "Вы вошли";
-        setStatusMessage(sessionStatus, message, "success");
-        if (logoutButton) {
-          logoutButton.hidden = false;
-        }
-      })
-      .catch((error) => {
-        console.error("Не удалось обновить сессию", error);
-        safeRemoveToken();
-        if (logoutButton) {
-          logoutButton.hidden = true;
-        }
-        setStatusMessage(
-          sessionStatus,
-          error?.message || "Сессия истекла. Авторизуйтесь снова",
-          "error"
-        );
+    try {
+      const data = await apiRequest(sessionEndpoint, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
       });
+      const email = data?.user?.email;
+      const message = email ? `Вы вошли как ${email}` : "Вы вошли";
+      setStatusMessage(sessionStatus, message, "success");
+      clearLocalSession();
+      if (logoutButton) {
+        logoutButton.hidden = false;
+      }
+    } catch (error) {
+      console.error("Не удалось обновить сессию", error);
+      if (error?.status === 401) {
+        safeRemoveToken();
+      }
+      if (isNetworkError(error) && localSession) {
+        renderLocalSession(sessionStatus, logoutButton, localSession);
+        return;
+      }
+      if (logoutButton) {
+        logoutButton.hidden = true;
+      }
+      setStatusMessage(
+        sessionStatus,
+        error?.message || "Сессия истекла. Авторизуйтесь снова",
+        "error"
+      );
+    }
   };
 
   logoutButton?.addEventListener("click", () => {
     safeRemoveToken();
+    clearLocalSession();
     setStatusMessage(sessionStatus, "Вы вышли из аккаунта", null);
     if (logoutButton) {
       logoutButton.hidden = true;
     }
   });
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     if (!emailInput || !passwordInput) {
@@ -408,30 +434,40 @@ function initLoginForm(apiBase) {
     setStatusMessage(statusElement, "Входим...", "pending");
     toggleDisabled(loginButton, true);
 
-    apiRequest(loginEndpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    })
-      .then((data) => {
-        const token = data?.token;
-        if (token) {
-          safeStoreToken(token);
+    try {
+      const data = await apiRequest(loginEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const token = data?.token;
+      if (token) {
+        safeStoreToken(token);
+      }
+      clearLocalSession();
+      setStatusMessage(statusElement, data?.message || "Вход выполнен", "success");
+      refreshSession(false);
+      form.reset();
+    } catch (error) {
+      if (isNetworkError(error)) {
+        try {
+          const { message, session } = await loginLocalUser(email, password);
+          setStatusMessage(statusElement, message, "success");
+          renderLocalSession(sessionStatus, logoutButton, session);
+          form.reset();
+        } catch (fallbackError) {
+          setStatusMessage(statusElement, fallbackError.message, "error");
         }
-        setStatusMessage(statusElement, data?.message || "Вход выполнен", "success");
-        refreshSession(false);
-        form.reset();
-      })
-      .catch((error) => {
+      } else {
         setStatusMessage(
           statusElement,
           error?.message || "Ошибка при входе",
           "error"
         );
-      })
-      .finally(() => {
-        toggleDisabled(loginButton, false);
-      });
+      }
+    } finally {
+      toggleDisabled(loginButton, false);
+    }
   });
 
   refreshSession(false);
@@ -906,7 +942,9 @@ function apiRequest(url, options = {}) {
         throw new Error("Истек таймаут запроса");
       }
       if (error.name === "TypeError" && error.message === "Failed to fetch") {
-        throw new Error("Не удалось связаться с сервером");
+        const networkError = new Error("Не удалось связаться с сервером");
+        networkError.code = "NETWORK_ERROR";
+        throw networkError;
       }
       throw error;
     })
@@ -935,6 +973,137 @@ function resolveApiBase(attributeBase = "") {
 function buildEndpoint(apiBase, path) {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
   return apiBase ? `${apiBase}${normalizedPath}` : normalizedPath;
+}
+
+function isNetworkError(error) {
+  return error?.code === "NETWORK_ERROR";
+}
+
+function loadLocalUsers() {
+  try {
+    const stored = window.localStorage?.getItem(LOCAL_USERS_KEY);
+    const parsed = stored ? JSON.parse(stored) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.error("Не удалось загрузить локальных пользователей", error);
+    return [];
+  }
+}
+
+function saveLocalUsers(users) {
+  try {
+    window.localStorage?.setItem(LOCAL_USERS_KEY, JSON.stringify(users));
+  } catch (error) {
+    console.error("Не удалось сохранить локальных пользователей", error);
+    throw new Error("Не удалось сохранить данные локально");
+  }
+}
+
+async function registerLocalUser(email, password) {
+  const normalizedEmail = email.trim().toLowerCase();
+  const users = loadLocalUsers();
+  const exists = users.some((user) => user.email === normalizedEmail);
+  if (exists) {
+    throw new Error("Пользователь уже сохранен локально");
+  }
+  const passwordHash = await hashPassword(password, normalizedEmail);
+  const nextUsers = [
+    ...users,
+    {
+      email: normalizedEmail,
+      passwordHash,
+      createdAt: new Date().toISOString(),
+    },
+  ];
+  saveLocalUsers(nextUsers);
+  return {
+    message: "Сервер недоступен. Аккаунт сохранен локально.",
+    user: { email: normalizedEmail },
+  };
+}
+
+function loadLocalSession() {
+  try {
+    const stored = window.localStorage?.getItem(LOCAL_SESSION_KEY);
+    if (!stored) {
+      return null;
+    }
+    return JSON.parse(stored);
+  } catch (error) {
+    console.error("Не удалось загрузить локальную сессию", error);
+    return null;
+  }
+}
+
+function saveLocalSession(session) {
+  try {
+    window.localStorage?.setItem(LOCAL_SESSION_KEY, JSON.stringify(session));
+  } catch (error) {
+    console.error("Не удалось сохранить локальную сессию", error);
+  }
+}
+
+function clearLocalSession() {
+  try {
+    window.localStorage?.removeItem(LOCAL_SESSION_KEY);
+  } catch (error) {
+    console.error("Не удалось очистить локальную сессию", error);
+  }
+}
+
+async function loginLocalUser(email, password) {
+  const normalizedEmail = email.trim().toLowerCase();
+  const users = loadLocalUsers();
+  const user = users.find((item) => item.email === normalizedEmail);
+  if (!user) {
+    throw new Error("Пользователь не найден в локальном хранилище");
+  }
+  const passwordHash = await hashPassword(password, normalizedEmail);
+  if (user.passwordHash !== passwordHash) {
+    throw new Error("Неверный email или пароль");
+  }
+  const session = {
+    email: normalizedEmail,
+    loggedInAt: new Date().toISOString(),
+    mode: "local",
+  };
+  saveLocalSession(session);
+  safeRemoveToken();
+  return {
+    message: "Вход выполнен (офлайн-режим)",
+    session,
+  };
+}
+
+function renderLocalSession(sessionStatus, logoutButton, session) {
+  if (!session) {
+    return;
+  }
+  const email = session.email;
+  const suffix = session.mode === "local" ? " (офлайн)" : "";
+  const message = email
+    ? `Вы вошли как ${email}${suffix}`
+    : "Вы вошли (офлайн)";
+  setStatusMessage(sessionStatus, message, "success");
+  if (logoutButton) {
+    logoutButton.hidden = false;
+  }
+}
+
+async function hashPassword(password, salt = "") {
+  if (!window.crypto?.subtle) {
+    return `${salt}:${password}`;
+  }
+  const encoder = new TextEncoder();
+  const data = encoder.encode(`${salt}:${password}`);
+  const hashBuffer = await window.crypto.subtle.digest("SHA-256", data);
+  return bufferToHex(hashBuffer);
+}
+
+function bufferToHex(buffer) {
+  return Array.from(new Uint8Array(buffer))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
 }
 
 function debounce(callback, delay = 200) {
