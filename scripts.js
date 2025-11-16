@@ -22,7 +22,11 @@ function initLanguageSwitcher() {
     const lang = languageSelect.value || "ru";
     document.querySelectorAll(".lang").forEach((element) => {
       const isVisible = element.getAttribute("data-lang") === lang;
-      element.style.display = isVisible ? "block" : "none";
+      element.hidden = !isVisible;
+      element.setAttribute("aria-hidden", isVisible ? "false" : "true");
+      if (isVisible) {
+        element.style.removeProperty("display");
+      }
     });
   };
 
