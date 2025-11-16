@@ -701,37 +701,58 @@
         state.cacheChecksum = cached.checksum || '';
         renderBooks();
       }
-      if (typeof XLSX === 'undefined') {
-        if (!state.books.length) {
-          updateStatus('statusEmpty');
-        }
-        console.error('XLSX library is not available');
-        return;
-      }
-      try {
-        const response = await fetch('Book.xls', { cache: 'no-store' });
-        if (!response.ok) {
-          throw new Error('Network error');
-        }
-        const buffer = await response.arrayBuffer();
-        const workbook = XLSX.read(buffer, { type: 'array' });
-        const sheet = workbook.Sheets[workbook.SheetNames[0]];
-        const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
-        state.books = rows
-          .map((row) => normalizeRow(row))
-          .filter((book) => book.title || book.author);
-        renderBooks();
-        persistBooks(state.books, buffer).catch(() => {});
-      } catch (error) {
-        console.error(error);
-        if (!state.books.length) {
-          updateStatus('statusEmpty');
-          const grid = document.getElementById('book-grid');
-          if (grid) {
-            grid.innerHTML = `<div class="empty-state">${translations[state.lang].statusEmpty}</div>`;
+      const loaders = [loadFromExcelSource, loadFromTsvSource];
+      for (const loader of loaders) {
+        try {
+          const result = await loader();
+          if (result && Array.isArray(result.books) && result.books.length) {
+            state.books = result.books;
+            renderBooks();
+            persistBooks(state.books, result.cachePayload).catch(() => {});
+            return;
           }
+        } catch (error) {
+          console.warn('Failed to load catalog from source', error);
         }
       }
+      if (!state.books.length) {
+        updateStatus('statusEmpty');
+        const grid = document.getElementById('book-grid');
+        if (grid) {
+          grid.innerHTML = `<div class="empty-state">${translations[state.lang].statusEmpty}</div>`;
+        }
+      }
+    }
+
+    async function loadFromExcelSource() {
+      if (typeof XLSX === 'undefined') {
+        throw new Error('XLSX library is not available');
+      }
+      const response = await fetch('Book.xls', { cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error('Network error while requesting Book.xls');
+      }
+      const buffer = await response.arrayBuffer();
+      const workbook = XLSX.read(buffer, { type: 'array' });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+      const books = rows
+        .map((row) => normalizeRow(row))
+        .filter((book) => book.title || book.author);
+      return { books, cachePayload: buffer };
+    }
+
+    async function loadFromTsvSource() {
+      const response = await fetch('books.html', { cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error('Network error while requesting books.html');
+      }
+      const text = await response.text();
+      const rows = parseTsv(text);
+      const books = rows
+        .map((row) => normalizeRow(row))
+        .filter((book) => book.title || book.author);
+      return { books, cachePayload: text };
     }
 
     function readBooksFromCache() {
@@ -761,7 +782,7 @@
       }
     }
 
-    async function persistBooks(books, buffer) {
+    async function persistBooks(books, payload) {
       let storage;
       try {
         storage = window.localStorage;
@@ -773,28 +794,72 @@
         return;
       }
       try {
-        const checksum = await hashBuffer(buffer);
-        const payload = {
+        const checksum = await hashPayload(payload);
+        const cacheRecord = {
           version: BOOK_CACHE_VERSION,
           timestamp: Date.now(),
           checksum,
           books
         };
-        storage.setItem(BOOK_CACHE_KEY, JSON.stringify(payload));
+        storage.setItem(BOOK_CACHE_KEY, JSON.stringify(cacheRecord));
         state.cacheChecksum = checksum;
       } catch (error) {
         console.warn('Failed to persist book cache', error);
       }
     }
 
-    async function hashBuffer(buffer) {
-      if (!window.crypto?.subtle || !(buffer instanceof ArrayBuffer)) {
+    async function hashPayload(payload) {
+      if (!window.crypto?.subtle) {
         return '';
       }
-      const digest = await window.crypto.subtle.digest('SHA-256', buffer);
+      let data;
+      if (typeof payload === 'string') {
+        data = new TextEncoder().encode(payload);
+      } else if (payload instanceof ArrayBuffer) {
+        data = new Uint8Array(payload);
+      } else if (ArrayBuffer.isView(payload)) {
+        data = new Uint8Array(payload.buffer);
+      } else {
+        return '';
+      }
+      const digest = await window.crypto.subtle.digest('SHA-256', data);
       return Array.from(new Uint8Array(digest))
         .map((byte) => byte.toString(16).padStart(2, '0'))
         .join('');
+    }
+
+    function parseTsv(text) {
+      if (typeof text !== 'string') {
+        return [];
+      }
+      const cleaned = text.replace(/^﻿/, '');
+      const lines = cleaned.split(/\r?\n/);
+      const headerIndex = lines.findIndex((line) => line.trim());
+      if (headerIndex === -1) {
+        return [];
+      }
+      const header = lines[headerIndex].split('\t').map((cell) => cell.trim());
+      const rows = [];
+      for (let i = headerIndex + 1; i < lines.length; i += 1) {
+        const line = lines[i];
+        if (!line || !line.trim()) {
+          continue;
+        }
+        const cells = line.split('\t');
+        const row = {};
+        let hasValue = false;
+        header.forEach((key, index) => {
+          const value = (cells[index] || '').trim();
+          if (value) {
+            hasValue = true;
+          }
+          row[key] = value;
+        });
+        if (hasValue) {
+          rows.push(row);
+        }
+      }
+      return rows;
     }
 
     function normalizeRow(row) {
