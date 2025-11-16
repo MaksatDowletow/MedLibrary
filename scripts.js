@@ -362,8 +362,16 @@ function initSearchFilter() {
     );
     const perColumnFilters = Array.from(columnFilters).map((input) => ({
       column: Number(input.dataset.columnFilter),
-      value: input.value.trim().toUpperCase(),
+      key: input.dataset.filterKey,
+      value: input.value.trim(),
     }));
+    const preparedColumnFilters = perColumnFilters
+      .filter((filter) => Boolean(filter.value))
+      .map((filter) => ({
+        ...filter,
+        matcher: COLUMN_SEARCHERS[filter.key] ||
+          createColumnMatcher(filter.column),
+      }));
     let visibleCount = 0;
 
     rows.forEach((row) => {
@@ -377,14 +385,9 @@ function initSearchFilter() {
         Array.from(cells).some((cell) =>
           (cell.textContent || "").toUpperCase().includes(filter)
         );
-      const matchesColumnFilters = perColumnFilters.every((columnFilter) => {
-        if (!columnFilter.value) {
-          return true;
-        }
-        const cellText =
-          cells[columnFilter.column]?.textContent?.toUpperCase() || "";
-        return cellText.includes(columnFilter.value);
-      });
+      const matchesColumnFilters = preparedColumnFilters.every((columnFilter) =>
+        columnFilter.matcher(row, columnFilter.value)
+      );
 
       const matches = matchesQuickSearch && matchesColumnFilters;
       row.hidden = !matches;
@@ -714,7 +717,13 @@ function renderBookCards(rows) {
     ? Math.min(visibleRows.length, maxCardsAttr)
     : visibleRows.length;
   for (let i = 0; i < cardsToRender; i += 1) {
-    fragment.appendChild(createBookCard(getRowDetail(visibleRows[i])));
+    const row = visibleRows[i];
+    fragment.appendChild(
+      createBookCard(
+        getRowDetail(row),
+        Number(row?.dataset?.rowIndex ?? i)
+      )
+    );
   }
   cardContainer.innerHTML = "";
   cardContainer.appendChild(fragment);
@@ -725,9 +734,15 @@ function renderBookCards(rows) {
   }
 }
 
-function createBookCard(detail) {
+function createBookCard(detail, order) {
   const card = document.createElement("article");
   card.className = "book-card";
+  const badge = document.createElement("span");
+  badge.className = "book-card__badge";
+  const displayOrder = Number.isFinite(order) ? order + 1 : "";
+  badge.textContent = displayOrder ? `#${displayOrder}` : "—";
+  card.appendChild(badge);
+
   const title = document.createElement("h3");
   title.textContent = detail?.title || "Без названия";
   card.appendChild(title);
@@ -735,30 +750,138 @@ function createBookCard(detail) {
   const meta = document.createElement("p");
   meta.className = "book-card__meta";
   const author = detail?.author || "Автор неизвестен";
-  const year = detail?.year || "—";
-  meta.textContent = `${author} • ${year}`;
+  const publisher = detail?.publisher || "—";
+  meta.textContent = `${author} · ${publisher}`;
   card.appendChild(meta);
 
-  const detailsList = document.createElement("ul");
+  const chips = document.createElement("div");
+  chips.className = "book-card__chips";
+  chips.appendChild(createBookChip("Год", detail?.year));
+  chips.appendChild(createBookChip("Страниц", detail?.pages));
+  chips.appendChild(createBookChip("Язык", detail?.language));
+  card.appendChild(chips);
+
+  const detailsList = document.createElement("dl");
   detailsList.className = "book-card__details";
   [
-    ["Издатель", detail?.publisher],
     ["Город", detail?.city],
-    ["Язык", detail?.language],
-    ["Страниц", detail?.pages],
+    ["Издатель", detail?.publisher],
+    ["Автор", detail?.author],
   ].forEach(([label, value]) => {
-    const item = document.createElement("li");
-    const labelSpan = document.createElement("span");
-    labelSpan.textContent = label;
-    const valueElement = document.createElement("strong");
-    valueElement.textContent = value || "—";
-    item.appendChild(labelSpan);
-    item.appendChild(valueElement);
-    detailsList.appendChild(item);
+    const wrapper = document.createElement("div");
+    const dt = document.createElement("dt");
+    dt.textContent = label;
+    const dd = document.createElement("dd");
+    dd.textContent = value || "—";
+    wrapper.appendChild(dt);
+    wrapper.appendChild(dd);
+    detailsList.appendChild(wrapper);
   });
   card.appendChild(detailsList);
 
   return card;
+}
+
+function createBookChip(label, value) {
+  const chip = document.createElement("span");
+  chip.className = "book-card__chip";
+  chip.textContent = value ? `${label}: ${value}` : `${label}: —`;
+  return chip;
+}
+
+function createColumnMatcher(columnIndex) {
+  return (row, query) => defaultColumnSearch(row, query, columnIndex);
+}
+
+function defaultColumnSearch(row, query, columnIndex) {
+  if (!query) {
+    return true;
+  }
+  const cellText = getCellText(row, columnIndex);
+  return cellText.toUpperCase().includes(query.trim().toUpperCase());
+}
+
+const COLUMN_SEARCHERS = {
+  title: (row, query) => searchByTitle(row, query),
+  author: (row, query) => searchByAuthor(row, query),
+  publisher: (row, query) => searchByPublisher(row, query),
+  city: (row, query) => searchByCity(row, query),
+  year: (row, query) => searchByYear(row, query),
+  pages: (row, query) => searchByPages(row, query),
+  language: (row, query) => searchByLanguage(row, query),
+};
+
+function searchByTitle(row, query) {
+  return defaultColumnSearch(row, query, 0);
+}
+
+function searchByAuthor(row, query) {
+  return defaultColumnSearch(row, query, 1);
+}
+
+function searchByPublisher(row, query) {
+  return defaultColumnSearch(row, query, 2);
+}
+
+function searchByCity(row, query) {
+  return defaultColumnSearch(row, query, 3);
+}
+
+function searchByYear(row, query) {
+  if (!query) {
+    return true;
+  }
+  const normalizedQuery = query.replace(/\D+/g, "");
+  const cellValue = getCellText(row, 4).replace(/\D+/g, "");
+  if (!normalizedQuery) {
+    return defaultColumnSearch(row, query, 4);
+  }
+  return cellValue.includes(normalizedQuery);
+}
+
+function searchByPages(row, query) {
+  if (!query) {
+    return true;
+  }
+  const value = getCellText(row, 5);
+  const numericValue = Number(value.replace(/[^\d]/g, ""));
+  const cleanedQuery = query.trim();
+  if (!Number.isNaN(numericValue)) {
+    const rangeMatch = cleanedQuery.match(/^(\d+)\s*[–-]\s*(\d+)$/);
+    if (rangeMatch) {
+      const min = Number(rangeMatch[1]);
+      const max = Number(rangeMatch[2]);
+      return numericValue >= min && numericValue <= max;
+    }
+    const comparatorMatch = cleanedQuery.match(/^(>=|<=|>|<)\s*(\d+)$/);
+    if (comparatorMatch) {
+      const operator = comparatorMatch[1];
+      const target = Number(comparatorMatch[2]);
+      switch (operator) {
+        case ">":
+          return numericValue > target;
+        case ">=":
+          return numericValue >= target;
+        case "<":
+          return numericValue < target;
+        case "<=":
+          return numericValue <= target;
+        default:
+          break;
+      }
+    }
+  }
+  return value.toUpperCase().includes(cleanedQuery.toUpperCase());
+}
+
+function searchByLanguage(row, query) {
+  return defaultColumnSearch(row, query, 6);
+}
+
+function getCellText(row, columnIndex) {
+  return (
+    row?.getElementsByTagName("td")[columnIndex]?.textContent?.trim() || ""
+  );
 }
 
 window.sendMail = () => {
