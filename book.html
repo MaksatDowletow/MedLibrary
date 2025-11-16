@@ -1,20 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">    <meta charset="UTF-8">
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Lukmançylyk kitaphanasy - 1000-den gowrak kitaplara oflayn elýeterlik. Kitaplary gözlemek we kategoriýalar boýunça seretmek mümkinçiligi.">
     <meta name="keywords" content="lukmançylyk, kitaplar, kategoriýalar, oflayn, bilim, Медицинская электронная библиотека">
-    <meta name="author" content="Maksat Döwletow" >
-    <title>Медицинская электронная библиотека</title>
+    <meta name="author" content="Maksat Döwletow">
+    <title>Медицинская электронная библиотека — список книг</title>
     <link rel="stylesheet" href="styles.css">
-     <style>
-       table tr:hover {
-            background-color: #f1f1f1; /* Цвет фона строки при наведении */
+    <style>
+        table tr:hover {
+            background-color: #f1f1f1;
         }
         table tr:nth-child(even) {
-            background-color: #a5aa95; /* Цвет четных строк */
+            background-color: #a5aa95;
         }
         table tr:nth-child(odd) {
-            background-color: #fff; /* Цвет нечетных строк */
+            background-color: #fff;
         }
     </style>
 </head>
@@ -22,12 +24,12 @@
   <header>
     <select id="language-select">
       <option value="tm">Türkmençe</option>
-      <option value="ru">Русский</option>
+      <option value="ru" selected>Русский</option>
       <option value="en">English</option>
     </select>
-    <h1 data-lang="ru" class="lang">Категории книг</h1>
-    <h1 data-lang="en" class="lang">Book Categories</h1>
-    <h1 data-lang="tm" class="lang">Kitap kategoriýalary</h1>
+    <h1 data-lang="ru" class="lang">Список книг</h1>
+    <h1 data-lang="en" class="lang">Book List</h1>
+    <h1 data-lang="tm" class="lang">Kitaplar</h1>
   </header>
   <nav>
     <a href="index.html" data-lang="ru" class="lang">Главная</a>
@@ -36,16 +38,15 @@
     <a href="BookCategory.html" data-lang="ru" class="lang">Категории книг</a>
     <a href="BookCategory.html" data-lang="en" class="lang">Book Categories</a>
     <a href="BookCategory.html" data-lang="tm" class="lang">Kitap kategoriýalary</a>
-      <!-- Новая ссылка на страницу с книгами -->
-  <a href="book.html" data-lang="ru" class="lang">Список книг</a>
-  <a href="book.html" data-lang="en" class="lang">Book List</a>
-  <a href="book.html" data-lang="tm" class="lang">Kitaplar</a>
+    <a href="book.html" data-lang="ru" class="lang">Список книг</a>
+    <a href="book.html" data-lang="en" class="lang">Book List</a>
+    <a href="book.html" data-lang="tm" class="lang">Kitaplar</a>
     <a href="https://sites.google.com/view/lukmanylyksanlykitaphanasy/ba%C5%9F-sahypa" target="_blank" class="external-link" style="color: blue; font-weight: bold;">Другой сайт библиотеки</a>
   </nav>
-    <nav>
-  <input type="text" id="searchInput" placeholder="Gözleg...">
-    </nav>
-    <div style="height: 300px; overflow-y: auto;">
+  <section class="search" aria-label="Поиск по книгам">
+      <input type="text" id="searchInput" placeholder="Gözleg..." aria-label="Поиск по названию или автору">
+  </section>
+  <div style="height: 300px; overflow-y: auto;">
     <table id="book-table" class="styled-table">
       <thead>
         <tr>
@@ -60,21 +61,22 @@
       </thead>
       <tbody></tbody>
     </table>
-    </div>
-  <footer>
-  <div class="footer-container">
-    <div class="contact-info">
-      <p>Контактный телефон: <a href="tel:+99362234094">+99362234094</a></p>
-      <p>Email: <a href="mailto:example@example.com">tdlipf@gmail.com</a></p>
-    </div>
-    <div class="footer-nav">
-      <a href="index.html">Главная</a>
-     </div>
-    <div class="copyright">
-      <p>&copy; 2025 Медицинская электронная библиотека. Все права защищены.</p>
-    </div>
   </div>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script defer src="scripts.js"></script>
-  </body>
+  <footer>
+    <div class="footer-container">
+      <div class="contact-info">
+        <p>Контактный телефон: <a href="tel:+99362234094">+99362234094</a></p>
+        <p>Email: <a href="mailto:tdlipf@gmail.com">tdlipf@gmail.com</a></p>
+      </div>
+      <div class="footer-nav">
+        <a href="index.html">Главная</a>
+      </div>
+      <div class="copyright">
+        <p>&copy; 2025 Медицинская электронная библиотека. Все права защищены.</p>
+      </div>
+    </div>
+  </footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script defer src="scripts.js"></script>
+</body>
 </html>
