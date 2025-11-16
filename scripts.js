@@ -123,8 +123,16 @@ function initLanguageSwitcher() {
     return;
   }
 
+  const documentLang = document.documentElement.dataset.lang || document.documentElement.lang;
+  if (documentLang && languageSelect.value !== documentLang) {
+    const optionExists = Array.from(languageSelect.options).some((option) => option.value === documentLang);
+    if (optionExists) {
+      languageSelect.value = documentLang;
+    }
+  }
+
   const changeLanguage = () => {
-    const lang = languageSelect.value || "ru";
+    const lang = languageSelect.value || documentLang || "ru";
     document.documentElement.dataset.lang = lang;
     document.documentElement.lang = lang;
     document.querySelectorAll(".lang").forEach((element) => {
