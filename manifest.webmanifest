@@ -1,0 +1,24 @@
+{
+  "name": "MedLibrary – Медицинская электронная библиотека",
+  "short_name": "MedLibrary",
+  "description": "Офлайн медицинская электронная библиотека: более 1000 книг по 69 направлениям медицины.",
+  "start_url": "/MedLibrary/index.html",
+  "scope": "/MedLibrary/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0d47a1",
+  "icons": [
+    {
+      "src": "/MedLibrary/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/MedLibrary/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
