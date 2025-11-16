@@ -306,6 +306,39 @@ nav a:hover {
     position: relative;
 }
 
+.search-filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+    color: #4a4f63;
+}
+
+.filter-field label {
+    font-weight: 600;
+}
+
+.filter-field input {
+    border-radius: 12px;
+    border: 1px solid #dbe2f0;
+    padding: 0.65rem 0.85rem;
+    background: #fff;
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.filter-field input:focus {
+    outline: none;
+    border-color: #7f5a83;
+    box-shadow: 0 0 0 3px rgba(127, 90, 131, 0.15);
+}
+
 #searchInput {
     width: 100%;
     padding: 0.85rem 2.5rem 0.85rem 1rem;
@@ -368,6 +401,87 @@ nav a:hover {
 
 .table-wrapper::-webkit-scrollbar-track {
     background: transparent;
+}
+
+.card-results {
+    margin-top: 2.5rem;
+    padding: clamp(1rem, 4vw, 2.5rem);
+    background: #fff;
+    border-radius: 24px;
+    border: 1px solid #eef1f5;
+    box-shadow: 0 25px 60px rgba(15, 28, 63, 0.08);
+}
+
+.card-results__empty {
+    margin: 0;
+    color: #5c6177;
+    text-align: center;
+    font-style: italic;
+}
+
+.card-results article + article {
+    margin-top: 1rem;
+}
+
+.book-card {
+    border-radius: 20px;
+    border: 1px solid #e7ebf3;
+    padding: 1.5rem;
+    background: linear-gradient(165deg, #ffffff, #f8fbff 65%);
+    box-shadow: 0 15px 35px rgba(13, 50, 77, 0.08);
+}
+
+.book-card__header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.75rem;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.book-card__header h3 {
+    margin: 0;
+    font-size: clamp(1.1rem, 4vw, 1.35rem);
+    color: #0f1c3f;
+}
+
+.book-card__badge {
+    padding: 0.25rem 0.85rem;
+    border-radius: 999px;
+    background: #e6f6ee;
+    color: #0f7a42;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.book-card__details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.5rem 1rem;
+    margin: 0;
+}
+
+.book-card__details div {
+    background: rgba(243, 246, 251, 0.8);
+    border-radius: 12px;
+    padding: 0.75rem;
+}
+
+.book-card__details dt {
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+    color: #6f758c;
+    margin: 0 0 0.35rem;
+    text-transform: uppercase;
+}
+
+.book-card__details dd {
+    margin: 0;
+    font-weight: 600;
+    color: #1b2540;
+    font-size: 1rem;
+    word-break: break-word;
 }
 
 .feature-grid {

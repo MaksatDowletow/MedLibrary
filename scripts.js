@@ -1,4 +1,25 @@
 const TOKEN_KEY = "medlibraryToken";
+const BOOK_TABLE_COLUMNS = [
+  "Название книги",
+  "Имя автора",
+  "Издатель",
+  "Город публикации",
+  "Год публикации",
+  "Количество страниц",
+  "Язык книги",
+];
+
+const bookSearchState = {
+  tableBody: null,
+  statusElement: null,
+  cardContainer: null,
+  isTableReady: false,
+  totalRows: 0,
+  filters: {
+    global: "",
+    columns: BOOK_TABLE_COLUMNS.map(() => ""),
+  },
+};
 
 document.addEventListener("DOMContentLoaded", () => {
   const apiBase = (document.body?.dataset.apiBase || "").replace(/\/$/, "");
@@ -9,6 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initRegistrationForm(apiBase);
   initLoginForm(apiBase);
   initSearchFilter();
+  initColumnSearchFilters();
   initBookTable();
 });
 
@@ -314,67 +336,15 @@ function initSearchFilter() {
   }
 
   const clearButton = document.getElementById("clear-search");
-  const statusElement = document.getElementById("book-status");
-  let isTableReady = false;
-  let totalRows = 0;
+  bookSearchState.tableBody = tableBody;
+  bookSearchState.statusElement = document.getElementById("book-status");
+  bookSearchState.cardContainer = document.getElementById("card-results");
 
-  const updateStatus = (visibleRows) => {
-    if (!statusElement) {
-      return;
-    }
-
-    if (!totalRows) {
-      return;
-    }
-
-    if (!visibleRows) {
-      statusElement.textContent = "Ничего не найдено";
-      statusElement.dataset.state = "error";
-      return;
-    }
-
-    const prefix = visibleRows === totalRows ? "Показаны" : "Найдено";
-    statusElement.textContent = `${prefix} ${visibleRows} из ${totalRows} записей`;
-    statusElement.dataset.state = "success";
-  };
-
-  const filterRows = () => {
+  const debouncedFilter = debounce(() => {
+    bookSearchState.filters.global = searchInput.value;
     clearButton?.classList.toggle("is-visible", Boolean(searchInput.value));
-
-    if (!isTableReady) {
-      return;
-    }
-
-    const filter = searchInput.value.trim().toUpperCase();
-    const rows = Array.from(tableBody.rows).filter(
-      (row) => !row.classList.contains("skeleton-row")
-    );
-    let visibleCount = 0;
-
-    rows.forEach((row) => {
-      const cells = row.getElementsByTagName("td");
-      if (!cells.length) {
-        return;
-      }
-
-      const bookTitle = cells[0].textContent || "";
-      const author = cells[1].textContent || "";
-      const matches =
-        !filter ||
-        bookTitle.toUpperCase().includes(filter) ||
-        author.toUpperCase().includes(filter);
-
-      row.style.display = matches ? "" : "none";
-      if (matches) {
-        visibleCount += 1;
-      }
-    });
-
-    totalRows = rows.length;
-    updateStatus(visibleCount);
-  };
-
-  const debouncedFilter = debounce(filterRows, 160);
+    applyBookFilters();
+  }, 160);
   searchInput.addEventListener("input", debouncedFilter);
 
   clearButton?.addEventListener("click", () => {
@@ -382,14 +352,9 @@ function initSearchFilter() {
       return;
     }
     searchInput.value = "";
-    filterRows();
+    bookSearchState.filters.global = "";
+    applyBookFilters();
     searchInput.focus();
-  });
-
-  tableBody.addEventListener("booktable:ready", (event) => {
-    isTableReady = true;
-    totalRows = event?.detail?.totalRows ?? tableBody.rows.length;
-    filterRows();
   });
 }
 
@@ -399,6 +364,10 @@ function initBookTable() {
   if (!bookTableBody) {
     return;
   }
+
+  bookSearchState.tableBody = bookTableBody;
+  bookSearchState.statusElement = statusElement;
+  bookSearchState.cardContainer = document.getElementById("card-results");
 
   if (typeof XLSX === "undefined") {
     console.error("XLSX library is not loaded");
@@ -425,15 +394,6 @@ function initBookTable() {
   tablePanel?.classList.add("is-loading");
   setTableStatus("Загружаем каталог...", "pending");
 
-  const columns = [
-    "Название книги",
-    "Имя автора",
-    "Издатель",
-    "Город публикации",
-    "Год публикации",
-    "Количество страниц",
-    "Язык книги",
-  ];
   const MAX_ROWS = 1400;
   const CHUNK_SIZE = 200;
 
@@ -458,7 +418,7 @@ function initBookTable() {
       const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
       const jsonData = XLSX.utils.sheet_to_json(firstSheet);
       const rows = jsonData.slice(0, MAX_ROWS).map((row) =>
-        columns.map((column) => row[column] || "")
+        BOOK_TABLE_COLUMNS.map((column) => row[column] || "")
       );
 
       if (!rows.length) {
@@ -494,6 +454,9 @@ function initBookTable() {
           tablePanel?.classList.remove("is-loading");
           tablePanel?.classList.add("is-ready");
           setTableStatus(`Показаны ${totalRows} записей`, "success");
+          bookSearchState.isTableReady = true;
+          bookSearchState.totalRows = totalRows;
+          applyBookFilters();
           dispatchReady(totalRows);
         }
       };
@@ -507,6 +470,187 @@ function initBookTable() {
       bookTableBody.innerHTML = "";
       setTableStatus("Не удалось загрузить каталог. Попробуйте позже.", "error");
     });
+}
+
+function initColumnSearchFilters() {
+  const filterConfigs = [
+    { id: "filter-title", handler: searchByTitle },
+    { id: "filter-author", handler: searchByAuthor },
+    { id: "filter-publisher", handler: searchByPublisher },
+    { id: "filter-city", handler: searchByCity },
+    { id: "filter-year", handler: searchByYear },
+    { id: "filter-pages", handler: searchByPages },
+    { id: "filter-language", handler: searchByLanguage },
+  ];
+
+  filterConfigs.forEach(({ id, handler }) => {
+    const input = document.getElementById(id);
+    if (!input) {
+      return;
+    }
+    const debouncedHandler = debounce(() => handler(input.value), 160);
+    input.addEventListener("input", debouncedHandler);
+  });
+}
+
+function updateColumnFilter(columnIndex, value) {
+  if (!bookSearchState.filters.columns?.length) {
+    bookSearchState.filters.columns = BOOK_TABLE_COLUMNS.map(() => "");
+  }
+  bookSearchState.filters.columns[columnIndex] = value || "";
+  applyBookFilters();
+}
+
+function searchByTitle(value) {
+  updateColumnFilter(0, value);
+}
+
+function searchByAuthor(value) {
+  updateColumnFilter(1, value);
+}
+
+function searchByPublisher(value) {
+  updateColumnFilter(2, value);
+}
+
+function searchByCity(value) {
+  updateColumnFilter(3, value);
+}
+
+function searchByYear(value) {
+  updateColumnFilter(4, value);
+}
+
+function searchByPages(value) {
+  updateColumnFilter(5, value);
+}
+
+function searchByLanguage(value) {
+  updateColumnFilter(6, value);
+}
+
+function applyBookFilters() {
+  const tableBody = bookSearchState.tableBody;
+  if (!tableBody || !bookSearchState.isTableReady) {
+    return;
+  }
+
+  const rows = Array.from(tableBody.rows).filter(
+    (row) => !row.classList.contains("skeleton-row")
+  );
+  const globalFilter = bookSearchState.filters.global.trim().toUpperCase();
+  const columnFilters = bookSearchState.filters.columns.map((filter) =>
+    (filter || "").trim().toUpperCase()
+  );
+  const hasActiveColumnFilter = columnFilters.some(Boolean);
+  const hasActiveFilter = Boolean(globalFilter || hasActiveColumnFilter);
+  let visibleCount = 0;
+  const cardEntries = [];
+
+  rows.forEach((row) => {
+    const cells = row.getElementsByTagName("td");
+    if (!cells.length) {
+      return;
+    }
+
+    let matches = true;
+    if (globalFilter) {
+      const bookTitle = cells[0].textContent || "";
+      const author = cells[1].textContent || "";
+      const composite = `${bookTitle} ${author}`.toUpperCase();
+      matches = composite.includes(globalFilter);
+    }
+
+    if (matches) {
+      for (let i = 0; i < columnFilters.length; i += 1) {
+        const filter = columnFilters[i];
+        if (filter && !(cells[i]?.textContent || "").toUpperCase().includes(filter)) {
+          matches = false;
+          break;
+        }
+      }
+    }
+
+    row.style.display = matches ? "" : "none";
+    if (matches) {
+      visibleCount += 1;
+      if (hasActiveFilter) {
+        cardEntries.push({
+          title: cells[0]?.textContent || "",
+          author: cells[1]?.textContent || "",
+          publisher: cells[2]?.textContent || "",
+          city: cells[3]?.textContent || "",
+          year: cells[4]?.textContent || "",
+          pages: cells[5]?.textContent || "",
+          language: cells[6]?.textContent || "",
+        });
+      }
+    }
+  });
+
+  bookSearchState.totalRows = rows.length;
+  updateBookStatus(visibleCount);
+  renderBookCards(cardEntries, hasActiveFilter);
+}
+
+function updateBookStatus(visibleRows) {
+  const statusElement = bookSearchState.statusElement;
+  if (!statusElement || !bookSearchState.totalRows) {
+    return;
+  }
+
+  if (!visibleRows) {
+    statusElement.textContent = "Ничего не найдено";
+    statusElement.dataset.state = "error";
+    return;
+  }
+
+  const prefix =
+    visibleRows === bookSearchState.totalRows ? "Показаны" : "Найдено";
+  statusElement.textContent = `${prefix} ${visibleRows} из ${bookSearchState.totalRows} записей`;
+  statusElement.dataset.state = "success";
+}
+
+function renderBookCards(entries, hasActiveFilter) {
+  const container = bookSearchState.cardContainer;
+  if (!container) {
+    return;
+  }
+
+  container.innerHTML = "";
+
+  if (!hasActiveFilter) {
+    container.innerHTML =
+      '<p class="card-results__empty">Воспользуйтесь фильтрами, чтобы увидеть карточки найденных книг.</p>';
+    return;
+  }
+
+  if (!entries.length) {
+    container.innerHTML =
+      '<p class="card-results__empty">По заданным параметрам ничего не найдено.</p>';
+    return;
+  }
+
+  const fragment = document.createDocumentFragment();
+  entries.forEach((entry) => {
+    const article = document.createElement("article");
+    article.className = "book-card";
+    article.innerHTML = `
+      <div class="book-card__header">
+        <h3>${entry.title || "Без названия"}</h3>
+        <span class="book-card__badge">${entry.language || "—"}</span>
+      </div>
+      <dl class="book-card__details">
+        <div><dt>Автор</dt><dd>${entry.author || "—"}</dd></div>
+        <div><dt>Издатель</dt><dd>${entry.publisher || "—"}</dd></div>
+        <div><dt>Город</dt><dd>${entry.city || "—"}</dd></div>
+        <div><dt>Год</dt><dd>${entry.year || "—"}</dd></div>
+        <div><dt>Страниц</dt><dd>${entry.pages || "—"}</dd></div>
+      </dl>`;
+    fragment.appendChild(article);
+  });
+
+  container.appendChild(fragment);
 }
 
 function setStatusMessage(element, message, state) {
