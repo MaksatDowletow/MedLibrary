@@ -105,7 +105,10 @@ const bookSearchState = {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  const apiBase = (document.body?.dataset.apiBase || "").replace(/\/$/, "");
+  const apiBase = resolveApiBase(document.body?.dataset.apiBase);
+  if (document.body) {
+    document.body.dataset.apiBase = apiBase;
+  }
 
   initLanguageSwitcher();
   initGallerySlider();
@@ -288,29 +291,24 @@ function initRegistrationForm(apiBase) {
     setStatusMessage(statusElement, "Создаем аккаунт...", "pending");
     toggleDisabled(registerButton, true);
 
-    fetch(registerEndpoint, {
+    apiRequest(registerEndpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Не удалось зарегистрировать пользователя");
-        }
-        return response.json();
-      })
       .then((data) => {
         setStatusMessage(
           statusElement,
-          data.message || "Регистрация прошла успешно",
+          data?.message || "Регистрация прошла успешно",
           "success"
         );
         form.reset();
+        document.getElementById("login-tab")?.click();
       })
       .catch((error) => {
         setStatusMessage(
           statusElement,
-          error.message || "Ошибка при регистрации",
+          error?.message || "Ошибка при регистрации",
           "error"
         );
       })
@@ -333,33 +331,54 @@ function initLoginForm(apiBase) {
   const logoutButton = document.getElementById("logout-button");
   const sessionStatus = document.getElementById("auth-session-status");
   const loginEndpoint = buildEndpoint(apiBase, "/login");
+  const sessionEndpoint = buildEndpoint(apiBase, "/session");
 
-  const refreshSession = () => {
-    try {
-      const token = window.localStorage?.getItem(TOKEN_KEY);
-      if (token) {
-        setStatusMessage(sessionStatus, "Вы вошли в систему", "success");
+  const refreshSession = (showLoading = true) => {
+    const token = safeGetToken();
+    if (!token) {
+      setStatusMessage(sessionStatus, "Вы не авторизованы", null);
+      if (logoutButton) {
+        logoutButton.hidden = true;
+      }
+      return;
+    }
+
+    if (showLoading) {
+      setStatusMessage(sessionStatus, "Проверяем сессию...", "pending");
+    }
+
+    apiRequest(sessionEndpoint, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((data) => {
+        const email = data?.user?.email;
+        const message = email ? `Вы вошли как ${email}` : "Вы вошли";
+        setStatusMessage(sessionStatus, message, "success");
         if (logoutButton) {
           logoutButton.hidden = false;
         }
-      } else {
-        setStatusMessage(sessionStatus, "Вы не авторизованы", null);
+      })
+      .catch((error) => {
+        console.error("Не удалось обновить сессию", error);
+        safeRemoveToken();
         if (logoutButton) {
           logoutButton.hidden = true;
         }
-      }
-    } catch (error) {
-      console.error("Не удалось получить информацию о сессии", error);
-    }
+        setStatusMessage(
+          sessionStatus,
+          error?.message || "Сессия истекла. Авторизуйтесь снова",
+          "error"
+        );
+      });
   };
 
   logoutButton?.addEventListener("click", () => {
-    try {
-      window.localStorage?.removeItem(TOKEN_KEY);
-    } catch (error) {
-      console.error("Не удалось очистить токен", error);
+    safeRemoveToken();
+    setStatusMessage(sessionStatus, "Вы вышли из аккаунта", null);
+    if (logoutButton) {
+      logoutButton.hidden = true;
     }
-    refreshSession();
   });
 
   form.addEventListener("submit", (event) => {
@@ -389,34 +408,24 @@ function initLoginForm(apiBase) {
     setStatusMessage(statusElement, "Входим...", "pending");
     toggleDisabled(loginButton, true);
 
-    fetch(loginEndpoint, {
+    apiRequest(loginEndpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Не удалось выполнить вход");
-        }
-        return response.json();
-      })
       .then((data) => {
-        const token = data.token;
+        const token = data?.token;
         if (token) {
-          try {
-            window.localStorage?.setItem(TOKEN_KEY, token);
-          } catch (error) {
-            console.error("Не удалось сохранить токен", error);
-          }
+          safeStoreToken(token);
         }
-        setStatusMessage(statusElement, data.message || "Вход выполнен", "success");
-        refreshSession();
+        setStatusMessage(statusElement, data?.message || "Вход выполнен", "success");
+        refreshSession(false);
         form.reset();
       })
       .catch((error) => {
         setStatusMessage(
           statusElement,
-          error.message || "Ошибка при входе",
+          error?.message || "Ошибка при входе",
           "error"
         );
       })
@@ -425,7 +434,7 @@ function initLoginForm(apiBase) {
       });
   });
 
-  refreshSession();
+  refreshSession(false);
 }
 
 function initSearchFilter() {
@@ -831,6 +840,96 @@ function toggleDisabled(button, disabled) {
 
 function isEmailValid(email) {
   return /.+@.+\..+/.test(email);
+}
+
+function safeStoreToken(token) {
+  try {
+    window.localStorage?.setItem(TOKEN_KEY, token);
+  } catch (error) {
+    console.error("Не удалось сохранить токен", error);
+  }
+}
+
+function safeGetToken() {
+  try {
+    return window.localStorage?.getItem(TOKEN_KEY) || null;
+  } catch (error) {
+    console.error("Не удалось получить токен", error);
+    return null;
+  }
+}
+
+function safeRemoveToken() {
+  try {
+    window.localStorage?.removeItem(TOKEN_KEY);
+  } catch (error) {
+    console.error("Не удалось удалить токен", error);
+  }
+}
+
+const DEFAULT_REQUEST_TIMEOUT = 10000;
+
+function apiRequest(url, options = {}) {
+  const { timeout = DEFAULT_REQUEST_TIMEOUT, headers = {}, ...rest } = options;
+  const controller = new AbortController();
+  const timerId = window.setTimeout(() => controller.abort(), timeout);
+
+  return fetch(url, {
+    ...rest,
+    headers: { Accept: "application/json", ...headers },
+    signal: controller.signal,
+  })
+    .then(async (response) => {
+      const contentType = response.headers.get("content-type") || "";
+      let payload = null;
+      if (contentType.includes("application/json")) {
+        payload = await response.json();
+      } else if (contentType.includes("text/")) {
+        payload = await response.text();
+      }
+
+      if (!response.ok) {
+        const message =
+          (payload && typeof payload === "object" && payload.message) ||
+          (typeof payload === "string" && payload) ||
+          "Запрос завершился ошибкой";
+        const error = new Error(message);
+        error.status = response.status;
+        error.payload = payload;
+        throw error;
+      }
+
+      return payload || {};
+    })
+    .catch((error) => {
+      if (error.name === "AbortError") {
+        throw new Error("Истек таймаут запроса");
+      }
+      if (error.name === "TypeError" && error.message === "Failed to fetch") {
+        throw new Error("Не удалось связаться с сервером");
+      }
+      throw error;
+    })
+    .finally(() => {
+      window.clearTimeout(timerId);
+    });
+}
+
+function resolveApiBase(attributeBase = "") {
+  const params = new URLSearchParams(window.location.search);
+  const overrideBase = params.get("apiBase");
+  let base = (overrideBase || attributeBase || "").trim();
+
+  if (!base) {
+    base = window.location.origin;
+  }
+
+  const isLocalHost = /^https?:\/\/(localhost|127\.0\.0\.1)/i.test(base);
+  if (window.location.protocol === "https:" && base.startsWith("http://") && !isLocalHost) {
+    base = base.replace("http://", "https://");
+  }
+
+  return base.replace(/\/$/, "");
 }
 
 function buildEndpoint(apiBase, path) {
