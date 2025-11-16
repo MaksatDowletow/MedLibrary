@@ -506,7 +506,7 @@ function initBookTable() {
     );
   };
 
-  fetch("Book.xls")
+  fetch("Book.xlsx")
     .then((response) => {
       if (!response.ok) {
         throw new Error("Network response was not ok " + response.statusText);
