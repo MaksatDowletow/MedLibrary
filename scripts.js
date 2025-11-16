@@ -698,25 +698,30 @@ function renderBookCards(rows) {
   const visibleRows = rows.filter(
     (row) => !row.hidden && !row.classList.contains("skeleton-row")
   );
-  const maxCards = Number(cardContainer.dataset.maxCards) || 12;
+  const maxCardsAttr = Number(cardContainer.dataset.maxCards || 0);
+  const shouldLimit = Number.isFinite(maxCardsAttr) && maxCardsAttr > 0;
 
   if (!visibleRows.length) {
     cardContainer.innerHTML = "";
     if (cardStatus) {
-      cardStatus.textContent = "Карточки появятся после выбора книги";
+      cardStatus.textContent = "Подходящих книг не найдено. Попробуйте изменить фильтры.";
     }
     return;
   }
 
   const fragment = document.createDocumentFragment();
-  const cardsToRender = Math.min(visibleRows.length, maxCards);
+  const cardsToRender = shouldLimit
+    ? Math.min(visibleRows.length, maxCardsAttr)
+    : visibleRows.length;
   for (let i = 0; i < cardsToRender; i += 1) {
     fragment.appendChild(createBookCard(getRowDetail(visibleRows[i])));
   }
   cardContainer.innerHTML = "";
   cardContainer.appendChild(fragment);
   if (cardStatus) {
-    cardStatus.textContent = `Показаны ${cardsToRender} из ${visibleRows.length} найденных книг`;
+    cardStatus.textContent = shouldLimit
+      ? `Показаны ${cardsToRender} из ${visibleRows.length} найденных книг`
+      : `Найдено ${visibleRows.length} книг`;
   }
 }
 
