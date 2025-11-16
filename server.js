@@ -7,6 +7,8 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const morgan = require("morgan");
 const crypto = require("crypto");
+const fs = require("fs/promises");
+const path = require("path");
 require("dotenv").config();
 
 const PORT = process.env.PORT || 5000;
@@ -14,6 +16,8 @@ const JWT_SECRET = process.env.JWT_SECRET || "change-me-in-production";
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/medlibrary";
 const TOKEN_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "2h";
 const SALT_ROUNDS = 12;
+const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "data");
+const USERS_FILE = process.env.USERS_FILE || path.join(DATA_DIR, "users.json");
 
 mongoose.set("strictQuery", true);
 
@@ -40,36 +44,94 @@ userSchema.methods.toSafeObject = function toSafeObject() {
 
 const User = mongoose.model("User", userSchema);
 
-const createInMemoryUserStore = () => {
+const createFileUserStore = (filePath = USERS_FILE) => {
   const usersByEmail = new Map();
   const usersById = new Map();
 
   const cloneUser = (user) => (user ? { ...user } : null);
 
-  const saveUser = (user) => {
-    usersByEmail.set(user.email, user);
-    usersById.set(user.id, user);
-    return cloneUser(user);
+  const loadUsersFromDisk = async () => {
+    try {
+      await fs.mkdir(path.dirname(filePath), { recursive: true });
+      const raw = await fs.readFile(filePath, "utf8");
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        parsed.forEach((user) => {
+          if (user?.email && user?.passwordHash && (user.id || user._id)) {
+            const userId = user.id || user._id;
+            const normalized = {
+              id: userId,
+              email: user.email,
+              passwordHash: user.passwordHash,
+            };
+            usersByEmail.set(normalized.email, normalized);
+            usersById.set(normalized.id, normalized);
+          }
+        });
+      }
+    } catch (error) {
+      if (error.code !== "ENOENT") {
+        console.warn("Не удалось загрузить файл пользователей", error.message);
+      }
+    }
+  };
+
+  const persistUsersToDisk = async () => {
+    const serialized = JSON.stringify(
+      Array.from(usersById.values()).map((user) => ({
+        id: user.id,
+        email: user.email,
+        passwordHash: user.passwordHash,
+      })),
+      null,
+      2
+    );
+
+    await fs.mkdir(path.dirname(filePath), { recursive: true });
+    await fs.writeFile(filePath, serialized);
+  };
+
+  const ready = loadUsersFromDisk();
+
+  const ensureReady = async () => {
+    try {
+      await ready;
+    } catch (error) {
+      console.warn("Хранилище пользователей доступно в режиме чтения", error.message);
+    }
   };
 
   return {
-    type: "memory",
+    type: "file",
+    ready,
     async findByEmail(email) {
+      await ensureReady();
       return cloneUser(usersByEmail.get(email));
     },
     async findByEmailWithPassword(email) {
+      await ensureReady();
       return cloneUser(usersByEmail.get(email));
     },
     async findById(id) {
+      await ensureReady();
       return cloneUser(usersById.get(id));
     },
     async createUser(email, passwordHash) {
+      await ensureReady();
       const user = {
         id: crypto.randomUUID(),
         email,
         passwordHash,
       };
-      return saveUser(user);
+      usersByEmail.set(email, user);
+      usersById.set(user.id, user);
+      try {
+        await persistUsersToDisk();
+      } catch (error) {
+        console.error("Не удалось сохранить файл пользователей", error);
+        throw new Error("Ошибка сохранения пользователя. Попробуйте позже.");
+      }
+      return cloneUser(user);
     },
   };
 };
@@ -90,11 +152,15 @@ const createMongoUserStore = () => ({
   },
 });
 
-let userStore = createInMemoryUserStore();
+let userStore = createFileUserStore();
 
 async function initializeUserStore() {
+  await userStore.ready.catch((error) => {
+    console.warn("Файловое хранилище пользователей не инициализировалось", error.message);
+  });
+
   if (!MONGODB_URI) {
-    console.warn("MONGODB_URI не указан. Используем хранилище в памяти.");
+    console.warn("MONGODB_URI не указан. Используем файловое хранилище.");
     return;
   }
 
@@ -107,7 +173,7 @@ async function initializeUserStore() {
     userStore = createMongoUserStore();
   } catch (error) {
     console.warn(
-      "Не удалось подключиться к MongoDB. Используем временное хранилище в памяти.",
+      "Не удалось подключиться к MongoDB. Используем файловое хранилище.",
       error.message
     );
   }
