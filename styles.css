@@ -588,8 +588,10 @@ footer {
     display: none;
 }
 
-.lang[data-lang="ru"] {
-    display: block;
+:root[data-lang="ru"] .lang[data-lang="ru"],
+:root[data-lang="en"] .lang[data-lang="en"],
+:root[data-lang="tm"] .lang[data-lang="tm"] {
+    display: initial;
 }
 
 .highlight {
