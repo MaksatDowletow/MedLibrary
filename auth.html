@@ -2,116 +2,159 @@
 <html lang="ru" data-lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Регистрация и Вход</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-client-id" content="">
+    <title>Регистрация и вход</title>
     <style>
+        :root {
+            font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+            color: #0f172a;
+            background: #f8fafc;
+        }
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            background: radial-gradient(circle at top, #dbeafe, #f8fafc 55%);
+        }
+        .auth-wrapper {
+            width: min(420px, 100%);
+            background: #fff;
+            padding: 2rem;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
+        }
+        h1 {
+            margin-top: 0;
+            text-align: center;
         }
         form {
-            margin-bottom: 20px;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            max-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            margin-bottom: 1.5rem;
         }
-        input {
-            display: block;
+        input, button {
             width: 100%;
-            margin-bottom: 10px;
-            padding: 8px;
+            padding: 0.75rem 0.95rem;
+            border-radius: 12px;
+            border: 1px solid #d0d5dd;
+            font-size: 1rem;
             box-sizing: border-box;
         }
-        button {
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
+        input:focus {
+            outline: 2px solid #2563eb;
         }
-        button:hover {
-            background-color: #45a049;
+        button {
+            border: none;
+            background: linear-gradient(135deg, #2563eb, #22d3ee);
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+        button[disabled] {
+            opacity: 0.65;
+            cursor: progress;
         }
         .message {
-            margin-top: 10px;
-            font-weight: bold;
+            min-height: 1.25rem;
+            font-size: 0.95rem;
+        }
+        .message.success { color: #15803d; }
+        .message.error { color: #b91c1c; }
+        .message.pending { color: #b45309; }
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #e2e8f0;
+        }
+        .provider-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 1rem;
+            background: #f8fafc;
+            text-align: center;
+        }
+        .provider-card h2 {
+            margin-top: 0;
+        }
+        .google-signin-placeholder {
+            width: 100%;
+            min-height: 46px;
+            border-radius: 999px;
+            border: 1px dashed #cbd5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+            color: #475569;
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            box-sizing: border-box;
+        }
+        .google-signin-placeholder.is-error {
+            border-color: #f87171;
+            color: #b91c1c;
+        }
+        .session-state {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        #logout {
+            width: auto;
+            margin-top: 0.75rem;
+            background: transparent;
+            border: 1px solid #2563eb;
+            color: #2563eb;
+        }
+        @media (max-width: 480px) {
+            body { padding: 1rem; }
+            .auth-wrapper { padding: 1.25rem; }
         }
     </style>
 </head>
-<body>
-    <h2>Регистрация</h2>
-    <form id="registerForm">
-        <input type="email" id="email" placeholder="Email" autocomplete="email" required>
-        <input
-          type="password"
-          id="password"
-          placeholder="Пароль"
-          autocomplete="new-password"
-          required
-        >
-        <button id="register" type="button">Зарегистрироваться</button>
-        <div id="registerMessage" class="message"></div>
-    </form>
+<body data-api-base="http://localhost:5000" data-google-client-id="">
+    <div class="auth-wrapper">
+        <h1>Регистрация и вход</h1>
+        <form id="registerForm">
+            <input type="email" id="register-email" placeholder="Email" autocomplete="email" required>
+            <input type="password" id="register-password" placeholder="Пароль (мин. 6 символов)" minlength="6" autocomplete="new-password" required>
+            <button type="submit" id="register">Зарегистрироваться</button>
+            <p id="registerMessage" class="message" aria-live="polite"></p>
+        </form>
 
-    <h2>Вход</h2>
-    <form id="loginForm">
-        <input type="email" id="email" placeholder="Email" autocomplete="email" required>
-        <input
-          type="password"
-          id="password"
-          placeholder="Пароль"
-          autocomplete="current-password"
-          required
-        >
-        <button id="login" type="button">Войти</button>
-        <div id="loginMessage" class="message"></div>
-    </form>
-    <button id="logout" type="button">Выйти</button>
+        <form id="loginForm">
+            <input type="email" id="login-email" placeholder="Email" autocomplete="email" required>
+            <input type="password" id="login-password" placeholder="Пароль" minlength="6" autocomplete="current-password" required>
+            <button type="submit" id="login">Войти</button>
+            <div class="divider"><span>или</span></div>
+            <div class="provider-card">
+                <h2>Вход через Google</h2>
+                <div id="google-signin-button" class="google-signin-placeholder" data-loading-text="Подключаем Google Identity..." aria-live="polite"></div>
+                <p class="message">Подтвердите учетную запись Google, и мы создадим профиль автоматически.</p>
+            </div>
+            <p id="loginMessage" class="message" aria-live="polite"></p>
+        </form>
 
-    <script>
-        document.getElementById("register").addEventListener("click", () => {
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-
-            fetch('https://your-server.com/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email, password })
-            })
-            .then(response => response.json())
-            .then(data => alert(data.message))
-            .catch(error => alert(error.message));
-        });
-
-        document.getElementById("login").addEventListener("click", () => {
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-
-            fetch('https://your-server.com/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email, password })
-            })
-            .then(response => response.json())
-            .then(data => alert(data.message))
-            .catch(error => alert(error.message));
-        });
-
-        document.getElementById("logout").addEventListener("click", () => {
-            fetch('https://your-server.com/logout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            })
-            .then(response => response.json())
-            .then(data => alert(data.message))
-            .catch(error => alert(error.message));
-        });
-    </script>
+        <div class="session-state">
+            <p id="sessionStatus" class="message" aria-live="polite"></p>
+            <button id="logout" type="button" hidden>Выйти</button>
+        </div>
+    </div>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="auth.js" defer></script>
 </body>
 </html>

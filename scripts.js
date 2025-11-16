@@ -116,7 +116,8 @@ document.addEventListener("DOMContentLoaded", () => {
   initGallerySlider();
   initAuthTabs();
   initRegistrationForm(apiBase);
-  initLoginForm(apiBase);
+  const refreshSession = initLoginForm(apiBase) || (() => {});
+  initFederatedLogin(apiBase, refreshSession);
   initSearchFilter();
   initColumnSearchFilters();
   initBookTable();
@@ -333,7 +334,7 @@ function initRegistrationForm(apiBase) {
 function initLoginForm(apiBase) {
   const form = document.getElementById("login-form");
   if (!form) {
-    return;
+    return null;
   }
 
   const emailInput = document.getElementById("login-email");
@@ -471,6 +472,116 @@ function initLoginForm(apiBase) {
   });
 
   refreshSession(false);
+  return refreshSession;
+}
+
+function initFederatedLogin(apiBase, refreshSession = () => {}) {
+  const container = document.getElementById("google-signin-button");
+  if (!container) {
+    return;
+  }
+
+  const loginStatus = document.getElementById("login-status");
+  const sessionStatus = document.getElementById("auth-session-status");
+  const logoutButton = document.getElementById("logout-button");
+  const googleClientId = resolveGoogleClientId();
+
+  if (!googleClientId) {
+    container.textContent =
+      "Укажите GOOGLE_CLIENT_ID и data-google-client-id для включения входа через Google";
+    container.classList.add("google-signin-placeholder", "is-error");
+    return;
+  }
+
+  const googleEndpoint = buildEndpoint(apiBase, "/auth/google");
+
+  const handleCredential = async (credential) => {
+    if (!credential) {
+      setStatusMessage(
+        loginStatus,
+        "Не удалось получить credential от Google",
+        "error"
+      );
+      return;
+    }
+
+    setStatusMessage(
+      loginStatus,
+      "Подтверждаем аккаунт Google...",
+      "pending"
+    );
+
+    try {
+      const data = await apiRequest(googleEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credential }),
+      });
+      if (data?.token) {
+        safeStoreToken(data.token);
+      }
+      clearLocalSession();
+      setStatusMessage(
+        loginStatus,
+        data?.message || "Вход выполнен через Google",
+        "success"
+      );
+      if (typeof refreshSession === "function") {
+        refreshSession(false);
+      } else if (sessionStatus) {
+        const email = data?.user?.email;
+        const message = email
+          ? `Вы вошли как ${email}`
+          : "Вы вошли через Google";
+        setStatusMessage(sessionStatus, message, "success");
+        if (logoutButton) {
+          logoutButton.hidden = false;
+        }
+      }
+    } catch (error) {
+      setStatusMessage(
+        loginStatus,
+        error?.message || "Не удалось войти через Google",
+        "error"
+      );
+    }
+  };
+
+  const renderGoogleButton = () => {
+    if (!window.google?.accounts?.id) {
+      return false;
+    }
+
+    window.google.accounts.id.initialize({
+      client_id: googleClientId,
+      callback: (response) => handleCredential(response.credential),
+    });
+
+    window.google.accounts.id.renderButton(container, {
+      type: "standard",
+      theme: "outline",
+      size: "large",
+      shape: "pill",
+      width: "100%",
+    });
+    window.google.accounts.id.prompt();
+    container.classList.remove("is-error", "is-pending");
+    container.textContent = "";
+    return true;
+  };
+
+  if (!renderGoogleButton()) {
+    container.textContent =
+      container.dataset.loadingText || "Подключаем Google Identity...";
+    container.classList.add("google-signin-placeholder", "is-pending");
+    window.addEventListener(
+      "load",
+      () => {
+        renderGoogleButton();
+      },
+      { once: true }
+    );
+  }
 }
 
 function initSearchFilter() {
@@ -968,6 +1079,32 @@ function resolveApiBase(attributeBase = "") {
   }
 
   return base.replace(/\/$/, "");
+}
+
+function resolveGoogleClientId() {
+  const params = new URLSearchParams(window.location.search);
+  const fromQuery = params.get("googleClientId");
+  if (fromQuery) {
+    return fromQuery.trim();
+  }
+
+  const bodyValue = document.body?.dataset.googleClientId;
+  if (bodyValue) {
+    return bodyValue.trim();
+  }
+
+  const metaValue = document
+    .querySelector('meta[name="google-client-id"]')
+    ?.getAttribute("content");
+  if (metaValue) {
+    return metaValue.trim();
+  }
+
+  if (window.GOOGLE_CLIENT_ID) {
+    return String(window.GOOGLE_CLIENT_ID).trim();
+  }
+
+  return "";
 }
 
 function buildEndpoint(apiBase, path) {
