@@ -18,13 +18,31 @@
 </head>
 <body data-api-base="http://localhost:5000" data-google-client-id="">
   <header>
-    <select id="language-select">
-      <option value="tm">Türkmençe</option>
-      <option value="ru">Русский</option>
-      <option value="en">English</option>
-    </select>
-    <div id="auth" aria-labelledby="auth-heading">
-      <div class="auth-header">
+    <div class="header-controls">
+      <select id="language-select">
+        <option value="tm">Türkmençe</option>
+        <option value="ru">Русский</option>
+        <option value="en">English</option>
+      </select>
+      <button id="auth-open-button" class="auth-open-button" type="button">
+        <span data-lang="ru" class="lang">Регистрация / Вход</span>
+        <span data-lang="en" class="lang">Sign up / Sign in</span>
+        <span data-lang="tm" class="lang">Hasaba al / Içeri gir</span>
+      </button>
+    </div>
+
+    <h1 data-lang="ru" class="lang">Медицинская электронная библиотека</h1>
+    <h1 data-lang="en" class="lang">Medical e-Library</h1>
+    <h1 data-lang="tm" class="lang">Elektron lukmançylyk kitaphanasy</h1>
+  </header>
+
+  <div id="auth-modal" class="auth-modal" hidden aria-hidden="true">
+    <div class="auth-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="auth-heading">
+      <button id="auth-close-button" class="auth-modal__close" type="button" aria-label="Закрыть окно авторизации">
+        ×
+      </button>
+      <div id="auth" aria-labelledby="auth-heading">
+        <div class="auth-header">
         <h2 id="auth-heading">Регистрация и вход</h2>
         <div class="auth-tabs" role="tablist">
           <button
@@ -124,11 +142,8 @@
         <button id="logout-button" type="button" hidden>Выйти</button>
       </div>
     </div>
-
-    <h1 data-lang="ru" class="lang">Медицинская электронная библиотека</h1>
-    <h1 data-lang="en" class="lang">Medical e-Library</h1>
-    <h1 data-lang="tm" class="lang">Elektron lukmançylyk kitaphanasy</h1>
-  </header>
+  </div>
+  </div>
   <nav>
     <a href="index.html" data-lang="ru" class="lang">Главная</a>
     <a href="index.html" data-lang="en" class="lang">Home</a>
@@ -232,9 +247,9 @@
             <li>Ulgam maglumatlary ugratmazdan öň barlaýar.</li>
             <li>Formanyň aşagynda ýükleme, üstünlik ýa-da säwlik habar berilýär.</li>
           </ul>
-          <a class="feature-cta lang" data-lang="ru" href="#auth">Перейти к регистрации</a>
-          <a class="feature-cta lang" data-lang="en" href="#auth">Start registration</a>
-          <a class="feature-cta lang" data-lang="tm" href="#auth">Hasaba başlaň</a>
+          <a class="feature-cta lang auth-trigger" data-lang="ru" href="#auth-modal" role="button">Перейти к регистрации</a>
+          <a class="feature-cta lang auth-trigger" data-lang="en" href="#auth-modal" role="button">Start registration</a>
+          <a class="feature-cta lang auth-trigger" data-lang="tm" href="#auth-modal" role="button">Hasaba başlaň</a>
         </article>
         <article class="feature-card" role="listitem">
           <div class="feature-icon" aria-hidden="true">📚</div>
