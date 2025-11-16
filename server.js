@@ -15,9 +15,17 @@ const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || "change-me-in-production";
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/medlibrary";
 const TOKEN_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "2h";
+const GOOGLE_CLIENT_IDS = (process.env.GOOGLE_CLIENT_ID || "")
+  .split(",")
+  .map((id) => id.trim())
+  .filter(Boolean);
+const GOOGLE_ALLOWED_HD = process.env.GOOGLE_ALLOWED_HD?.trim();
 const SALT_ROUNDS = 12;
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "data");
 const USERS_FILE = process.env.USERS_FILE || path.join(DATA_DIR, "users.json");
+const GOOGLE_TOKEN_INFO_URL = "https://oauth2.googleapis.com/tokeninfo";
+const GOOGLE_FETCH_TIMEOUT = 10000;
+const isFetchAvailable = typeof fetch === "function";
 
 mongoose.set("strictQuery", true);
 
@@ -196,7 +204,7 @@ const authLimiter = rateLimit({
   message: { message: "Слишком много попыток. Попробуйте позже." },
 });
 
-app.use(["/register", "/login"], authLimiter);
+app.use(["/register", "/login", "/auth/google"], authLimiter);
 
 const asyncHandler = (handler) => (req, res, next) =>
   Promise.resolve(handler(req, res, next)).catch(next);
@@ -231,6 +239,70 @@ const generateToken = (user) =>
     JWT_SECRET,
     { expiresIn: TOKEN_EXPIRES_IN }
   );
+
+const isGoogleAuthEnabled = () => isFetchAvailable && GOOGLE_CLIENT_IDS.length > 0;
+
+const verifyGoogleCredential = async (idToken) => {
+  if (!isGoogleAuthEnabled()) {
+    throw new Error("Вход через Google недоступен. Укажите GOOGLE_CLIENT_ID");
+  }
+
+  if (!idToken) {
+    throw new Error("Отсутствует credential от Google");
+  }
+
+  if (!isFetchAvailable) {
+    throw new Error("Сервер не поддерживает проверку токенов Google (нет fetch)");
+  }
+
+  const controller = typeof AbortController === "function" ? new AbortController() : null;
+  const timeoutId = setTimeout(() => controller?.abort(), GOOGLE_FETCH_TIMEOUT);
+
+  try {
+    const response = await fetch(
+      `${GOOGLE_TOKEN_INFO_URL}?id_token=${encodeURIComponent(idToken)}`,
+      controller ? { signal: controller.signal } : undefined
+    );
+
+    if (!response.ok) {
+      throw new Error("Google не подтвердил токен. Попробуйте снова");
+    }
+
+    const payload = await response.json();
+    const audience = payload?.aud || "";
+    if (!GOOGLE_CLIENT_IDS.includes(audience)) {
+      throw new Error("Полученный токен выдан для другого клиента Google");
+    }
+
+    const email = payload?.email;
+    if (!email) {
+      throw new Error("Google не вернул адрес электронной почты");
+    }
+
+    if (payload?.email_verified !== "true") {
+      throw new Error("Google не подтвердил email пользователя");
+    }
+
+    if (GOOGLE_ALLOWED_HD && payload?.hd && payload.hd !== GOOGLE_ALLOWED_HD) {
+      throw new Error("Учетная запись Google не принадлежит разрешенному домену");
+    }
+
+    return {
+      email: email.trim().toLowerCase(),
+      name: payload?.name,
+      picture: payload?.picture,
+      locale: payload?.locale,
+      sub: payload?.sub,
+    };
+  } catch (error) {
+    if (error.name === "AbortError") {
+      throw new Error("Google не ответил вовремя. Повторите попытку");
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+};
 
 const authenticate = asyncHandler(async (req, res, next) => {
   const header = req.headers.authorization || "";
@@ -307,6 +379,59 @@ app.post(
       token,
       user: sanitizeUser(user),
     });
+  })
+);
+
+app.post(
+  "/auth/google",
+  asyncHandler(async (req, res) => {
+    if (!isGoogleAuthEnabled()) {
+      return res
+        .status(503)
+        .json({ message: "Вход через Google не настроен на сервере" });
+    }
+
+    const { credential } = req.body || {};
+    if (!credential) {
+      return res.status(400).json({ message: "Отсутствует credential" });
+    }
+
+    try {
+      const profile = await verifyGoogleCredential(credential);
+      if (!profile?.email) {
+        throw new Error("Google не вернул email пользователя");
+      }
+
+      let user = await userStore.findByEmail(profile.email);
+      if (!user) {
+        const placeholderSecret = `${profile.sub || "google"}:${crypto
+          .randomBytes(32)
+          .toString("hex")}`;
+        const passwordHash = await bcrypt.hash(placeholderSecret, SALT_ROUNDS);
+        user = await userStore.createUser(profile.email, passwordHash);
+      }
+
+      const safeUser = sanitizeUser(user);
+      const token = generateToken(safeUser);
+      return res.json({
+        message: "Вход выполнен через Google",
+        token,
+        user: safeUser,
+        provider: "google",
+        profile: {
+          name: profile.name,
+          picture: profile.picture,
+          locale: profile.locale,
+        },
+      });
+    } catch (error) {
+      console.error("Ошибка входа через Google", error);
+      const statusCode =
+        error?.message && error.message.includes("credential") ? 400 : 401;
+      return res
+        .status(statusCode)
+        .json({ message: error.message || "Не удалось подтвердить аккаунт Google" });
+    }
   })
 );
 

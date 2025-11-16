@@ -34,7 +34,17 @@ npm run dev
 
 - `POST /register` – регистрация пользователя.
 - `POST /login` – вход и получение JWT.
+- `POST /auth/google` – вход через Google Identity (OAuth 2.0, ID Token).
 - `GET /session` – проверка текущего токена.
 - `GET /protected` – пример защищённого ресурса.
 
 Все маршруты возвращают сообщения об ошибках в формате JSON, что позволяет фронтенду выводить осмысленные уведомления пользователям.
+
+## Подключение Google Identity
+
+1. Получите OAuth 2.0 Client ID в [Google Cloud Console](https://console.cloud.google.com/apis/credentials). Для тестов можно использовать тип `Web` и добавить `http://localhost:5000` в список разрешённых источников.
+2. Укажите Client ID в `.env` (переменная `GOOGLE_CLIENT_ID`). Можно перечислить несколько идентификаторов через запятую. При необходимости ограничьте доменом `GOOGLE_ALLOWED_HD=example.com`.
+3. На фронтенде задайте тот же Client ID через атрибут `data-google-client-id` тега `<body>`, через мета-тег `<meta name="google-client-id" ...>` или параметр `?googleClientId=` в URL.
+4. После этого в блоке авторизации появится кнопка «Войти через Google». Пользователь получает обычный JWT, а сервер создаёт локальную учётную запись автоматически, используя адрес электронной почты из Google.
+
+Отдельная страница `auth.html` использует те же настройки, поэтому достаточно поделиться ссылкой вроде `auth.html?apiBase=https://api.example.com&googleClientId=XXX`.
