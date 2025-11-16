@@ -462,6 +462,7 @@
       </div>
     </div>
   </footer>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.19.3/dist/xlsx.full.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
     const translations = {
@@ -615,20 +616,23 @@
       language: ['Язык книги', 'Book Language', 'Dil', 'Language'],
       specialty: ['Специальность', 'Специальность / раздел', 'Раздел', 'Категория', 'Category', 'Specialty', 'Bölüm', 'Ugry'],
       link: ['Ссылка', 'Link', 'URL', 'Download', 'Файл', 'File'],
-      cover: ['Обложка', 'Изображение', 'Фото', 'Cover', 'Image', 'Book image']
+      cover: ['Обложка', 'Изображение', 'Фото', 'Cover', 'Image', 'Book image', 'H', '__COL_H']
     };
 
     const BOOK_CACHE_KEY = 'medlibrary.bookCache';
     const BOOK_CACHE_VERSION = '2.0.0';
     const BOOK_CACHE_TTL = 1000 * 60 * 60 * 12; // 12 hours
-    const excelSources = ['Book.xlsx', 'Book.xls'];
+    const excelSources = ['Book.xlsx'];
     const fallbackCoverImages = ['1.webp', '2.webp', '3.webp', '4.webp', '5.webp', '6.webp', '1.png', '2.png', '3.png', '4.png', '5.png', '6.png'];
     const fallbackCoverCache = new Map();
+    const COVER_COLUMN_INDEX = 7;
+    const DEFAULT_WORKSHEET_PATH = 'xl/worksheets/sheet1.xml';
 
     const state = {
       lang: document.documentElement.lang || 'ru',
       books: [],
       cacheChecksum: '',
+      coverUrlRegistry: [],
       filters: {
         title: '',
         author: '',
@@ -643,6 +647,8 @@
       initFilters();
       loadBooks();
     });
+
+    window.addEventListener('beforeunload', cleanupCoverUrls);
 
     function initLanguageSwitcher() {
       const select = document.getElementById('language-select');
@@ -707,6 +713,8 @@
         try {
           const result = await loader();
           if (result && Array.isArray(result.books) && result.books.length) {
+            cleanupCoverUrls();
+            state.coverUrlRegistry = result.coverUrls || [];
             state.books = result.books;
             renderBooks();
             persistBooks(state.books, result.cachePayload).catch(() => {});
@@ -738,12 +746,25 @@
           }
           const buffer = await response.arrayBuffer();
           const workbook = XLSX.read(buffer, { type: 'array' });
-          const sheet = workbook.Sheets[workbook.SheetNames[0]];
-          const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+          const sheetName = workbook.SheetNames[0];
+          const sheet = workbook.Sheets[sheetName];
+          if (!sheet) {
+            continue;
+          }
+          const zip = await loadWorkbookArchive(buffer);
+          const worksheetPath = await resolveWorksheetPath(zip);
+          const coverExtraction = await extractEmbeddedCovers(zip, worksheetPath);
+          const rows = convertSheetRowsToObjects(sheet);
           const books = rows
-            .map((row) => normalizeRow(row))
-            .filter((book) => book.title || book.author);
-          return { books, cachePayload: buffer };
+            .map((row) => {
+              const embeddedCover = getEmbeddedCoverForRow(row.__rowNumber, coverExtraction.map);
+              return normalizeRow(row, embeddedCover);
+            })
+            .filter((book) => book.title || book.author || book.specialty);
+          if (books.length) {
+            return { books, cachePayload: buffer, coverUrls: coverExtraction.urls };
+          }
+          revokeObjectUrls(coverExtraction.urls);
         } catch (error) {
           lastError = error;
           console.warn(`Failed to load ${source}`, error);
@@ -762,7 +783,7 @@
       const books = rows
         .map((row) => normalizeRow(row))
         .filter((book) => book.title || book.author);
-      return { books, cachePayload: text };
+      return { books, cachePayload: text, coverUrls: [] };
     }
 
     function readBooksFromCache() {
@@ -809,7 +830,7 @@
           version: BOOK_CACHE_VERSION,
           timestamp: Date.now(),
           checksum,
-          books
+          books: prepareBooksForCache(books)
         };
         storage.setItem(BOOK_CACHE_KEY, JSON.stringify(cacheRecord));
         state.cacheChecksum = checksum;
@@ -872,7 +893,372 @@
       return rows;
     }
 
-    function normalizeRow(row) {
+    function convertSheetRowsToObjects(sheet) {
+      if (!sheet || !sheet['!ref'] || !XLSX?.utils) {
+        return [];
+      }
+      const range = XLSX.utils.decode_range(sheet['!ref']);
+      const columnCount = range.e.c - range.s.c + 1;
+      if (columnCount <= 0) {
+        return [];
+      }
+      const headerRowIndex = range.s.r;
+      const headerValues = Array.from({ length: columnCount }, (_, columnIndex) => {
+        const address = XLSX.utils.encode_cell({ c: range.s.c + columnIndex, r: headerRowIndex });
+        const cell = sheet[address];
+        return formatSheetCellValue(cell);
+      });
+      const result = [];
+      for (let rowIndex = headerRowIndex + 1; rowIndex <= range.e.r; rowIndex += 1) {
+        const record = { __rowNumber: rowIndex + 1 };
+        let hasValue = false;
+        for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
+          const address = XLSX.utils.encode_cell({ c: range.s.c + columnIndex, r: rowIndex });
+          const cell = sheet[address];
+          const value = formatSheetCellValue(cell);
+          if (value) {
+            hasValue = true;
+          }
+          const header = headerValues[columnIndex];
+          if (header) {
+            record[header] = value;
+          }
+          record[`__COL_${getColumnLetter(columnIndex)}`] = value;
+        }
+        if (hasValue) {
+          result.push(record);
+        }
+      }
+      return result;
+    }
+
+    function formatSheetCellValue(cell) {
+      if (!cell) {
+        return '';
+      }
+      const raw = typeof XLSX?.utils?.format_cell === 'function' ? XLSX.utils.format_cell(cell) : cell.v;
+      if (raw === undefined || raw === null) {
+        return '';
+      }
+      if (typeof raw === 'string') {
+        return raw.trim();
+      }
+      return String(raw).trim();
+    }
+
+    async function loadWorkbookArchive(buffer) {
+      if (typeof JSZip === 'undefined' || !buffer) {
+        return null;
+      }
+      try {
+        return await JSZip.loadAsync(buffer);
+      } catch (error) {
+        console.warn('Unable to open workbook archive', error);
+        return null;
+      }
+    }
+
+    async function resolveWorksheetPath(zip) {
+      if (!zip) {
+        return DEFAULT_WORKSHEET_PATH;
+      }
+      try {
+        const workbookXml = await readZipText(zip, 'xl/workbook.xml');
+        if (!workbookXml) {
+          return DEFAULT_WORKSHEET_PATH;
+        }
+        const parser = new DOMParser();
+        const workbookDoc = parser.parseFromString(workbookXml, 'application/xml');
+        const sheetNodes = workbookDoc.getElementsByTagName('sheet');
+        if (!sheetNodes || !sheetNodes.length) {
+          return DEFAULT_WORKSHEET_PATH;
+        }
+        const firstSheet = sheetNodes[0];
+        const relId = firstSheet.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships', 'id');
+        if (!relId) {
+          return DEFAULT_WORKSHEET_PATH;
+        }
+        const relsXml = await readZipText(zip, 'xl/_rels/workbook.xml.rels');
+        if (!relsXml) {
+          return DEFAULT_WORKSHEET_PATH;
+        }
+        const relsDoc = parser.parseFromString(relsXml, 'application/xml');
+        const relationships = relsDoc.getElementsByTagName('Relationship');
+        for (let i = 0; i < relationships.length; i += 1) {
+          const rel = relationships[i];
+          if (rel.getAttribute('Id') === relId) {
+            const target = rel.getAttribute('Target');
+            if (target) {
+              return `xl/${target.replace(/^\.\//, '')}`;
+            }
+            break;
+          }
+        }
+      } catch (error) {
+        console.warn('Failed to resolve worksheet path', error);
+      }
+      return DEFAULT_WORKSHEET_PATH;
+    }
+
+    async function extractEmbeddedCovers(zip, worksheetPath) {
+      const emptyResult = { map: new Map(), urls: [] };
+      if (!zip || !worksheetPath) {
+        return emptyResult;
+      }
+      try {
+        const parser = new DOMParser();
+        const worksheetDir = worksheetPath.substring(0, worksheetPath.lastIndexOf('/') + 1);
+        const worksheetFile = worksheetPath.substring(worksheetPath.lastIndexOf('/') + 1);
+        const worksheetRelsPath = `${worksheetDir}_rels/${worksheetFile}.rels`;
+        const worksheetRelsXml = await readZipText(zip, worksheetRelsPath);
+        if (!worksheetRelsXml) {
+          return emptyResult;
+        }
+        const worksheetRelsDoc = parser.parseFromString(worksheetRelsXml, 'application/xml');
+        const drawingRelationships = Array.from(
+          worksheetRelsDoc.getElementsByTagName('Relationship')
+        ).filter((node) =>
+          node.getAttribute('Type') ===
+          'http://schemas.openxmlformats.org/officeDocument/2006/relationships/drawing'
+        );
+        if (!drawingRelationships.length) {
+          return emptyResult;
+        }
+        const coverTargets = new Map();
+        for (const drawingRel of drawingRelationships) {
+          const drawingTarget = drawingRel.getAttribute('Target');
+          if (!drawingTarget) {
+            continue;
+          }
+          const drawingPath = resolveZipPath(worksheetPath, drawingTarget);
+          const drawingXml = await readZipText(zip, drawingPath);
+          if (!drawingXml) {
+            continue;
+          }
+          const drawingDoc = parser.parseFromString(drawingXml, 'application/xml');
+          const drawingDir = drawingPath.substring(0, drawingPath.lastIndexOf('/') + 1);
+          const drawingFile = drawingPath.substring(drawingPath.lastIndexOf('/') + 1);
+          const drawingRelsPath = `${drawingDir}_rels/${drawingFile}.rels`;
+          const drawingRelsXml = await readZipText(zip, drawingRelsPath);
+          if (!drawingRelsXml) {
+            continue;
+          }
+          const drawingRelsDoc = parser.parseFromString(drawingRelsXml, 'application/xml');
+          const drawingRelMap = new Map();
+          Array.from(drawingRelsDoc.getElementsByTagName('Relationship')).forEach((node) => {
+            drawingRelMap.set(node.getAttribute('Id'), node.getAttribute('Target'));
+          });
+          const anchors = [
+            ...Array.from(
+              drawingDoc.getElementsByTagNameNS(
+                'http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing',
+                'oneCellAnchor'
+              )
+            ),
+            ...Array.from(
+              drawingDoc.getElementsByTagNameNS(
+                'http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing',
+                'twoCellAnchor'
+              )
+            )
+          ];
+          anchors.forEach((anchor) => {
+            const fromNode = anchor.getElementsByTagNameNS(
+              'http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing',
+              'from'
+            )[0];
+            if (!fromNode) {
+              return;
+            }
+            const colNode = fromNode.getElementsByTagNameNS(
+              'http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing',
+              'col'
+            )[0];
+            const rowNode = fromNode.getElementsByTagNameNS(
+              'http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing',
+              'row'
+            )[0];
+            if (!colNode || !rowNode) {
+              return;
+            }
+            const columnIndex = Number(colNode.textContent || colNode.innerHTML || 0);
+            if (!Number.isFinite(columnIndex) || columnIndex !== COVER_COLUMN_INDEX) {
+              return;
+            }
+            const rowIndex = Number(rowNode.textContent || rowNode.innerHTML || 0);
+            if (!Number.isFinite(rowIndex)) {
+              return;
+            }
+            const picNode = anchor.getElementsByTagNameNS(
+              'http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing',
+              'pic'
+            )[0];
+            if (!picNode) {
+              return;
+            }
+            const blipNode = picNode.getElementsByTagNameNS(
+              'http://schemas.openxmlformats.org/drawingml/2006/main',
+              'blip'
+            )[0];
+            if (!blipNode) {
+              return;
+            }
+            const relId = blipNode.getAttributeNS(
+              'http://schemas.openxmlformats.org/officeDocument/2006/relationships',
+              'embed'
+            );
+            if (!relId || !drawingRelMap.has(relId)) {
+              return;
+            }
+            const targetPath = resolveZipPath(drawingPath, drawingRelMap.get(relId));
+            coverTargets.set(rowIndex + 1, targetPath);
+          });
+        }
+        if (!coverTargets.size) {
+          return emptyResult;
+        }
+        const coverMap = new Map();
+        const blobUrls = [];
+        const entries = Array.from(coverTargets.entries());
+        await Promise.all(
+          entries.map(async ([rowNumber, targetPath]) => {
+            const file = zip.file(targetPath);
+            if (!file) {
+              return;
+            }
+            try {
+              const mimeType = getMimeTypeFromPath(targetPath);
+              const arrayBuffer = await file.async('arraybuffer');
+              const blob = new Blob([arrayBuffer], { type: mimeType });
+              const objectUrl = URL.createObjectURL(blob);
+              coverMap.set(rowNumber, objectUrl);
+              blobUrls.push(objectUrl);
+            } catch (error) {
+              console.warn('Unable to decode embedded cover', error);
+            }
+          })
+        );
+        return { map: coverMap, urls: blobUrls };
+      } catch (error) {
+        console.warn('Failed to extract embedded covers', error);
+        return emptyResult;
+      }
+    }
+
+    async function readZipText(zip, path) {
+      if (!zip || !path) {
+        return '';
+      }
+      try {
+        const file = zip.file(path.replace(/^\/+/, ''));
+        if (!file) {
+          return '';
+        }
+        return await file.async('text');
+      } catch (error) {
+        console.warn('Unable to read zip entry', path, error);
+        return '';
+      }
+    }
+
+    function resolveZipPath(basePath, relativePath) {
+      if (!relativePath) {
+        return basePath;
+      }
+      if (/^\//.test(relativePath)) {
+        return relativePath.replace(/^\/+/, '');
+      }
+      const baseParts = basePath.split('/').slice(0, -1);
+      const segments = relativePath.split('/');
+      segments.forEach((segment) => {
+        if (!segment || segment === '.') {
+          return;
+        }
+        if (segment === '..') {
+          if (baseParts.length) {
+            baseParts.pop();
+          }
+        } else {
+          baseParts.push(segment);
+        }
+      });
+      return baseParts.join('/');
+    }
+
+    function getMimeTypeFromPath(path) {
+      if (!path) {
+        return 'image/png';
+      }
+      if (/\.jpe?g$/i.test(path)) {
+        return 'image/jpeg';
+      }
+      if (/\.gif$/i.test(path)) {
+        return 'image/gif';
+      }
+      if (/\.webp$/i.test(path)) {
+        return 'image/webp';
+      }
+      if (/\.svg$/i.test(path)) {
+        return 'image/svg+xml';
+      }
+      return 'image/png';
+    }
+
+    function getEmbeddedCoverForRow(rowNumber, coverMap) {
+      if (!coverMap || !rowNumber) {
+        return '';
+      }
+      return coverMap.get(rowNumber) || coverMap.get(rowNumber + 1) || coverMap.get(rowNumber - 1) || '';
+    }
+
+    function cleanupCoverUrls() {
+      if (!state.coverUrlRegistry || !state.coverUrlRegistry.length) {
+        return;
+      }
+      revokeObjectUrls(state.coverUrlRegistry);
+      state.coverUrlRegistry = [];
+    }
+
+    function revokeObjectUrls(urls) {
+      if (!Array.isArray(urls) || !urls.length) {
+        return;
+      }
+      urls.forEach((url) => {
+        try {
+          URL.revokeObjectURL(url);
+        } catch (error) {
+          console.warn('Unable to revoke object URL', error);
+        }
+      });
+    }
+
+    function prepareBooksForCache(books) {
+      if (!Array.isArray(books)) {
+        return [];
+      }
+      return books.map((book) => {
+        if (book?.cover && /^blob:/i.test(book.cover)) {
+          const fallbackKey = book.title || book.author || book.specialty || 'default';
+          return { ...book, cover: getFallbackCover(fallbackKey) };
+        }
+        return book;
+      });
+    }
+
+    function getColumnLetter(index) {
+      let letter = '';
+      let current = Number(index);
+      if (!Number.isFinite(current) || current < 0) {
+        return '';
+      }
+      while (current >= 0) {
+        letter = String.fromCharCode((current % 26) + 65) + letter;
+        current = Math.floor(current / 26) - 1;
+      }
+      return letter;
+    }
+
+    function normalizeRow(row, embeddedCover) {
       const getValue = (keys) => {
         for (const key of keys) {
           if (row[key] !== undefined && row[key] !== null) {
@@ -899,7 +1285,7 @@
         specialty,
         link: sanitizedLink,
         hasExternalLink,
-        cover: resolveCoverValue(getValue(columnAliases.cover), title, author, specialty)
+        cover: resolveCoverValue(getValue(columnAliases.cover), title, author, specialty, embeddedCover)
       };
     }
 
@@ -919,7 +1305,7 @@
       return { sanitizedLink: fallbackLink, hasExternalLink: false };
     }
 
-    function resolveCoverValue(value, title, author, specialty) {
+    function resolveCoverValue(value, title, author, specialty, embeddedCover) {
       let source = value;
       const fallbackKey = [title, author, specialty].filter(Boolean).join(' | ');
       if (typeof source === 'string') {
@@ -942,6 +1328,9 @@
         } else {
           source = trimmed;
         }
+      }
+      if (!source && embeddedCover) {
+        source = embeddedCover;
       }
       return sanitizeUrl(source, getFallbackCover(fallbackKey));
     }
