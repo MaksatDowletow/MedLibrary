@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="MedLibrary logo large">
+  <defs>
+    <linearGradient id="grad512" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d47a1" />
+      <stop offset="100%" stop-color="#1e88e5" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="64" fill="url(#grad512)" />
+  <g fill="#ffffff" font-family="'Segoe UI', 'Roboto', sans-serif" font-weight="700" text-anchor="middle">
+    <text x="256" y="238" font-size="180">Med</text>
+    <text x="256" y="360" font-size="150">Lib</text>
+  </g>
+</svg>
