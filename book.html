@@ -245,6 +245,23 @@
       min-height: 280px;
     }
 
+    .book-card__media {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      border-radius: 18px;
+      overflow: hidden;
+      position: relative;
+      background: linear-gradient(135deg, rgba(11, 110, 253, 0.15), rgba(15, 23, 42, 0.15));
+      box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.04);
+    }
+
+    .book-card__media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
     .book-card:hover {
       transform: translateY(-6px) scale(1.01);
       box-shadow: 0 20px 35px rgba(15, 23, 42, 0.15);
@@ -445,7 +462,7 @@
       </div>
     </div>
   </footer>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.19.3/xlsx.full.min.js" integrity="sha512-U+Sj1erWIVqABVqq9Kd7lLaZRmezMXCwiyC54m0tMpp7rKeOsXsu0JChnMSzlm4bzYI9JTYYZNNS45T8g11W0g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.19.3/dist/xlsx.full.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
     const translations = {
       ru: {
@@ -484,6 +501,7 @@
         cardPages: 'Страниц',
         cardOpen: 'Открыть файл',
         cardSearch: 'Найти книгу',
+        cardCoverAlt: 'Обложка книги',
         cardSpecialtyEmpty: 'Не указано',
         cardLanguageEmpty: '—',
         contactTitle: 'Контакты',
@@ -529,6 +547,7 @@
         cardPages: 'Pages',
         cardOpen: 'Open file',
         cardSearch: 'Search online',
+        cardCoverAlt: 'Book cover',
         cardSpecialtyEmpty: 'Not specified',
         cardLanguageEmpty: '—',
         contactTitle: 'Contacts',
@@ -574,6 +593,7 @@
         cardPages: 'Sahypa',
         cardOpen: 'Faýly aç',
         cardSearch: 'Internetden tap',
+        cardCoverAlt: 'Kitabyň suraty',
         cardSpecialtyEmpty: 'Gösterilmedik',
         cardLanguageEmpty: '—',
         contactTitle: 'Habarlaşmak üçin',
@@ -594,12 +614,20 @@
       pages: ['Количество страниц', 'Page Count', 'Pages', 'Sahypalar'],
       language: ['Язык книги', 'Book Language', 'Dil', 'Language'],
       specialty: ['Специальность', 'Специальность / раздел', 'Раздел', 'Категория', 'Category', 'Specialty', 'Bölüm', 'Ugry'],
-      link: ['Ссылка', 'Link', 'URL', 'Download', 'Файл', 'File']
+      link: ['Ссылка', 'Link', 'URL', 'Download', 'Файл', 'File'],
+      cover: ['Обложка', 'Изображение', 'Фото', 'Cover', 'Image']
     };
+
+    const BOOK_CACHE_KEY = 'medlibrary.bookCache';
+    const BOOK_CACHE_VERSION = '2.0.0';
+    const BOOK_CACHE_TTL = 1000 * 60 * 60 * 12; // 12 hours
+    const fallbackCoverImages = ['1.webp', '2.webp', '3.webp', '4.webp', '5.webp', '6.webp', '1.png', '2.png', '3.png', '4.png', '5.png', '6.png'];
+    const fallbackCoverCache = new Map();
 
     const state = {
       lang: document.documentElement.lang || 'ru',
       books: [],
+      cacheChecksum: '',
       filters: {
         title: '',
         author: '',
@@ -665,37 +693,108 @@
       });
     }
 
-    function loadBooks() {
+    async function loadBooks() {
       updateStatus('statusLoading');
+      const cached = readBooksFromCache();
+      if (cached) {
+        state.books = cached.books;
+        state.cacheChecksum = cached.checksum || '';
+        renderBooks();
+      }
       if (typeof XLSX === 'undefined') {
-        updateStatus('statusEmpty');
+        if (!state.books.length) {
+          updateStatus('statusEmpty');
+        }
         console.error('XLSX library is not available');
         return;
       }
-      fetch('Book.xls')
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error('Network error');
-          }
-          return response.arrayBuffer();
-        })
-        .then((buffer) => {
-          const workbook = XLSX.read(buffer, { type: 'array' });
-          const sheet = workbook.Sheets[workbook.SheetNames[0]];
-          const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
-          state.books = rows
-            .map((row) => normalizeRow(row))
-            .filter((book) => book.title || book.author);
-          renderBooks();
-        })
-        .catch((error) => {
-          console.error(error);
+      try {
+        const response = await fetch('Book.xls', { cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error('Network error');
+        }
+        const buffer = await response.arrayBuffer();
+        const workbook = XLSX.read(buffer, { type: 'array' });
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+        state.books = rows
+          .map((row) => normalizeRow(row))
+          .filter((book) => book.title || book.author);
+        renderBooks();
+        persistBooks(state.books, buffer).catch(() => {});
+      } catch (error) {
+        console.error(error);
+        if (!state.books.length) {
           updateStatus('statusEmpty');
           const grid = document.getElementById('book-grid');
           if (grid) {
             grid.innerHTML = `<div class="empty-state">${translations[state.lang].statusEmpty}</div>`;
           }
-        });
+        }
+      }
+    }
+
+    function readBooksFromCache() {
+      let storage;
+      try {
+        storage = window.localStorage;
+      } catch (error) {
+        console.warn('Local storage is not available', error);
+        return null;
+      }
+      if (!storage) {
+        return null;
+      }
+      try {
+        const raw = storage.getItem(BOOK_CACHE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (parsed.version !== BOOK_CACHE_VERSION) return null;
+        if (!Array.isArray(parsed.books) || !parsed.books.length) return null;
+        if (typeof parsed.timestamp !== 'number' || Date.now() - parsed.timestamp > BOOK_CACHE_TTL) {
+          return null;
+        }
+        return parsed;
+      } catch (error) {
+        console.warn('Failed to read cached books', error);
+        return null;
+      }
+    }
+
+    async function persistBooks(books, buffer) {
+      let storage;
+      try {
+        storage = window.localStorage;
+      } catch (error) {
+        console.warn('Local storage is not available', error);
+        return;
+      }
+      if (!storage) {
+        return;
+      }
+      try {
+        const checksum = await hashBuffer(buffer);
+        const payload = {
+          version: BOOK_CACHE_VERSION,
+          timestamp: Date.now(),
+          checksum,
+          books
+        };
+        storage.setItem(BOOK_CACHE_KEY, JSON.stringify(payload));
+        state.cacheChecksum = checksum;
+      } catch (error) {
+        console.warn('Failed to persist book cache', error);
+      }
+    }
+
+    async function hashBuffer(buffer) {
+      if (!window.crypto?.subtle || !(buffer instanceof ArrayBuffer)) {
+        return '';
+      }
+      const digest = await window.crypto.subtle.digest('SHA-256', buffer);
+      return Array.from(new Uint8Array(digest))
+        .map((byte) => byte.toString(16).padStart(2, '0'))
+        .join('');
     }
 
     function normalizeRow(row) {
@@ -710,17 +809,114 @@
         }
         return '';
       };
+      const title = getValue(columnAliases.title);
+      const author = getValue(columnAliases.author);
+      const specialty = getValue(columnAliases.specialty);
+      const { sanitizedLink, hasExternalLink } = normalizeLink(getValue(columnAliases.link), title, author);
       return {
-        title: getValue(columnAliases.title),
-        author: getValue(columnAliases.author),
+        title,
+        author,
         publisher: getValue(columnAliases.publisher),
         city: getValue(columnAliases.city),
         year: getValue(columnAliases.year),
         pages: getValue(columnAliases.pages),
         language: getValue(columnAliases.language),
-        specialty: getValue(columnAliases.specialty),
-        link: getValue(columnAliases.link)
+        specialty,
+        link: sanitizedLink,
+        hasExternalLink,
+        cover: resolveCoverValue(getValue(columnAliases.cover), title, author, specialty)
       };
+    }
+
+    function normalizeLink(value, title, author) {
+      const trimmed = (value || '').trim();
+      if (trimmed) {
+        if (/^https?:\/\//i.test(trimmed)) {
+          return { sanitizedLink: trimmed, hasExternalLink: true };
+        }
+        if (/^www\./i.test(trimmed)) {
+          return { sanitizedLink: `https://${trimmed}`, hasExternalLink: true };
+        }
+      }
+      const query = [title, author].filter(Boolean).join(' ').trim();
+      const fallbackQuery = query || trimmed;
+      const fallbackLink = `https://www.google.com/search?q=${encodeURIComponent(fallbackQuery || 'medical book')}`;
+      return { sanitizedLink: fallbackLink, hasExternalLink: false };
+    }
+
+    function resolveCoverValue(value, title, author, specialty) {
+      let source = value;
+      const fallbackKey = [title, author, specialty].filter(Boolean).join(' | ');
+      if (typeof source === 'string') {
+        const trimmed = source.trim();
+        if (!trimmed) {
+          source = '';
+        } else if ((trimmed.startsWith('{') || trimmed.startsWith('[')) && trimmed.length > 4) {
+          try {
+            const parsed = JSON.parse(trimmed);
+            if (typeof parsed === 'string') {
+              source = parsed;
+            } else if (Array.isArray(parsed)) {
+              source = parsed.find((item) => typeof item === 'string' && item.trim());
+            } else if (parsed && typeof parsed.url === 'string') {
+              source = parsed.url;
+            }
+          } catch (error) {
+            console.warn('Unable to parse cover value', error);
+          }
+        } else {
+          source = trimmed;
+        }
+      }
+      return sanitizeUrl(source, getFallbackCover(fallbackKey));
+    }
+
+    function sanitizeUrl(value, fallback) {
+      if (!value || typeof value !== 'string') {
+        return fallback;
+      }
+      const trimmed = value.trim();
+      if (!trimmed) {
+        return fallback;
+      }
+      if (/^(?:https?:|data:image|blob:)/i.test(trimmed)) {
+        return trimmed;
+      }
+      if (/^(?:\.\/|\/)?[\w\-./]+\.(?:png|jpe?g|webp|gif|svg)$/i.test(trimmed)) {
+        return trimmed.startsWith('./') || trimmed.startsWith('/') ? trimmed : `./${trimmed}`;
+      }
+      return fallback;
+    }
+
+    function getFallbackCover(key) {
+      const normalized = (key || 'default').toLowerCase();
+      if (fallbackCoverCache.has(normalized)) {
+        return fallbackCoverCache.get(normalized);
+      }
+      const hash = hashString(normalized);
+      const index = Math.abs(hash) % fallbackCoverImages.length;
+      const url = `./${fallbackCoverImages[index]}`;
+      fallbackCoverCache.set(normalized, url);
+      return url;
+    }
+
+    function hashString(value) {
+      let hash = 0;
+      const str = value || '';
+      for (let i = 0; i < str.length; i += 1) {
+        hash = (hash << 5) - hash + str.charCodeAt(i);
+        hash |= 0;
+      }
+      return hash;
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
     }
 
     function renderBooks() {
@@ -772,33 +968,46 @@
       article.className = 'book-card';
       const specialty = book.specialty || dict.cardSpecialtyEmpty;
       const language = book.language || dict.cardLanguageEmpty;
-      const link = book.link || `https://www.google.com/search?q=${encodeURIComponent(book.title + ' ' + book.author)}`;
-      const isExternal = Boolean(book.link);
+      const targetLink = book.link || `https://www.google.com/search?q=${encodeURIComponent((book.title || '') + ' ' + (book.author || ''))}`;
+      const isExternal = book.hasExternalLink === true && Boolean(book.link);
+      const safeTitle = escapeHtml(book.title || dict.cardSpecialtyEmpty);
+      const safeAuthor = escapeHtml(book.author || '—');
+      const safeLanguage = escapeHtml(language);
+      const safePublisher = escapeHtml(book.publisher || '—');
+      const safeCity = escapeHtml(book.city || '—');
+      const safePages = escapeHtml(book.pages || '—');
+      const safeYear = escapeHtml(book.year || dict.cardYear);
+      const safeSpecialty = escapeHtml(specialty);
+      const coverSource = escapeHtml(book.cover || getFallbackCover(book.title || book.author || specialty || 'default'));
+      const coverAlt = escapeHtml(book.title || dict.cardCoverAlt);
       article.innerHTML = `
+        <div class="book-card__media">
+          <img src="${coverSource}" alt="${coverAlt}" loading="lazy" decoding="async">
+        </div>
         <div class="book-card__top">
-          <span class="book-card__chip">${specialty}</span>
-          <span class="book-card__chip">${book.year || dict.cardYear}</span>
+          <span class="book-card__chip">${safeSpecialty}</span>
+          <span class="book-card__chip">${safeYear}</span>
         </div>
         <div>
-          <h3 class="book-card__title">${book.title || dict.cardSpecialtyEmpty}</h3>
-          <p class="book-card__author">${dict.cardAuthor}: ${book.author || '—'}</p>
+          <h3 class="book-card__title">${safeTitle}</h3>
+          <p class="book-card__author">${dict.cardAuthor}: ${safeAuthor}</p>
         </div>
         <div class="book-card__details">
           <div>
             <span class="book-card__label">${dict.cardLanguage}</span>
-            <strong>${language}</strong>
+            <strong>${safeLanguage}</strong>
           </div>
           <div>
             <span class="book-card__label">${dict.cardPublisher}</span>
-            <strong>${book.publisher || '—'}</strong>
+            <strong>${safePublisher}</strong>
           </div>
           <div>
             <span class="book-card__label">${dict.cardCity}</span>
-            <strong>${book.city || '—'}</strong>
+            <strong>${safeCity}</strong>
           </div>
           <div>
             <span class="book-card__label">${dict.cardPages}</span>
-            <strong>${book.pages || '—'}</strong>
+            <strong>${safePages}</strong>
           </div>
         </div>
       `;
@@ -807,7 +1016,7 @@
       const button = document.createElement('a');
       button.className = 'book-card__link';
       button.textContent = isExternal ? dict.cardOpen : dict.cardSearch;
-      button.href = link;
+      button.href = targetLink;
       button.target = '_blank';
       button.rel = 'noopener';
       actions.appendChild(button);
