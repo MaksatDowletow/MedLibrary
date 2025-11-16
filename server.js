@@ -6,6 +6,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const morgan = require("morgan");
+const crypto = require("crypto");
 require("dotenv").config();
 
 const PORT = process.env.PORT || 5000;
@@ -15,15 +16,6 @@ const TOKEN_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "2h";
 const SALT_ROUNDS = 12;
 
 mongoose.set("strictQuery", true);
-mongoose
-  .connect(MONGODB_URI, {
-    autoIndex: true,
-  })
-  .then(() => console.log("MongoDB connected"))
-  .catch((error) => {
-    console.error("MongoDB connection error", error);
-    process.exit(1);
-  });
 
 const userSchema = new mongoose.Schema(
   {
@@ -39,10 +31,6 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-userSchema.methods.comparePassword = function comparePassword(candidate) {
-  return bcrypt.compare(candidate, this.passwordHash);
-};
-
 userSchema.methods.toSafeObject = function toSafeObject() {
   return {
     id: this._id.toString(),
@@ -51,6 +39,81 @@ userSchema.methods.toSafeObject = function toSafeObject() {
 };
 
 const User = mongoose.model("User", userSchema);
+
+const createInMemoryUserStore = () => {
+  const usersByEmail = new Map();
+  const usersById = new Map();
+
+  const cloneUser = (user) => (user ? { ...user } : null);
+
+  const saveUser = (user) => {
+    usersByEmail.set(user.email, user);
+    usersById.set(user.id, user);
+    return cloneUser(user);
+  };
+
+  return {
+    type: "memory",
+    async findByEmail(email) {
+      return cloneUser(usersByEmail.get(email));
+    },
+    async findByEmailWithPassword(email) {
+      return cloneUser(usersByEmail.get(email));
+    },
+    async findById(id) {
+      return cloneUser(usersById.get(id));
+    },
+    async createUser(email, passwordHash) {
+      const user = {
+        id: crypto.randomUUID(),
+        email,
+        passwordHash,
+      };
+      return saveUser(user);
+    },
+  };
+};
+
+const createMongoUserStore = () => ({
+  type: "mongo",
+  async findByEmail(email) {
+    return User.findOne({ email });
+  },
+  async findByEmailWithPassword(email) {
+    return User.findOne({ email }).select("+passwordHash");
+  },
+  async findById(id) {
+    return User.findById(id);
+  },
+  async createUser(email, passwordHash) {
+    return User.create({ email, passwordHash });
+  },
+});
+
+let userStore = createInMemoryUserStore();
+
+async function initializeUserStore() {
+  if (!MONGODB_URI) {
+    console.warn("MONGODB_URI не указан. Используем хранилище в памяти.");
+    return;
+  }
+
+  try {
+    await mongoose.connect(MONGODB_URI, {
+      autoIndex: true,
+      serverSelectionTimeoutMS: 5000,
+    });
+    console.log("MongoDB connected");
+    userStore = createMongoUserStore();
+  } catch (error) {
+    console.warn(
+      "Не удалось подключиться к MongoDB. Используем временное хранилище в памяти.",
+      error.message
+    );
+  }
+}
+
+initializeUserStore();
 
 const app = express();
 
@@ -74,7 +137,24 @@ const asyncHandler = (handler) => (req, res, next) =>
 
 const validateEmail = (email = "") => /.+@.+\..+/.test(email);
 
-const sanitizeUser = (user) => user?.toSafeObject();
+const sanitizeUser = (user) => {
+  if (!user) {
+    return null;
+  }
+
+  if (typeof user.toSafeObject === "function") {
+    return user.toSafeObject();
+  }
+
+  const { id, _id, email } = user;
+  const userId = id || (typeof _id === "object" ? _id.toString() : _id);
+  return userId && email
+    ? {
+        id: userId,
+        email,
+      }
+    : null;
+};
 
 const generateToken = (user) =>
   jwt.sign(
@@ -94,7 +174,7 @@ const authenticate = asyncHandler(async (req, res, next) => {
   }
   try {
     const payload = jwt.verify(token, JWT_SECRET);
-    const user = await User.findById(payload.userId);
+    const user = await userStore.findById(payload.userId);
     if (!user) {
       return res.status(401).json({ message: "Пользователь не найден" });
     }
@@ -106,7 +186,7 @@ const authenticate = asyncHandler(async (req, res, next) => {
 });
 
 app.get("/health", (req, res) => {
-  res.json({ status: "ok" });
+  res.json({ status: "ok", store: userStore.type });
 });
 
 app.post(
@@ -121,13 +201,13 @@ app.post(
     }
 
     const normalizedEmail = email.trim().toLowerCase();
-    const existingUser = await User.findOne({ email: normalizedEmail });
+    const existingUser = await userStore.findByEmail(normalizedEmail);
     if (existingUser) {
       return res.status(409).json({ message: "Пользователь уже зарегистрирован" });
     }
 
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-    const user = await User.create({ email: normalizedEmail, passwordHash });
+    const user = await userStore.createUser(normalizedEmail, passwordHash);
     return res.status(201).json({
       message: "Пользователь зарегистрирован",
       user: sanitizeUser(user),
@@ -144,14 +224,13 @@ app.post(
       return res.status(400).json({ message: "Неверный email или пароль" });
     }
 
-    const user = await User.findOne({ email: email.trim().toLowerCase() }).select(
-      "+passwordHash"
-    );
+    const user = await userStore.findByEmailWithPassword(email.trim().toLowerCase());
     if (!user) {
       return res.status(400).json({ message: "Неверный email или пароль" });
     }
 
-    const isMatch = await user.comparePassword(password);
+    const passwordHash = user.passwordHash;
+    const isMatch = await bcrypt.compare(password, passwordHash);
     if (!isMatch) {
       return res.status(400).json({ message: "Неверный email или пароль" });
     }
