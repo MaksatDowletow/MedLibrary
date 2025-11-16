@@ -26,14 +26,51 @@ body {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
-#auth form {
+#auth h2 {
+    margin-top: 0;
+}
+
+.auth-header {
+    text-align: center;
+}
+
+.auth-tabs {
     display: flex;
+    gap: 0.5rem;
+    margin: 1rem 0;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.auth-tab {
+    flex: 1;
+    min-width: 120px;
+    border-radius: 999px;
+    border: 1px solid #009879;
+    background: transparent;
+    color: #009879;
+    padding: 0.4rem 0.75rem;
+    cursor: pointer;
+    transition: background-color var(--transition), color var(--transition);
+}
+
+.auth-tab.active {
+    background-color: #009879;
+    color: #fff;
+}
+
+.auth-panel {
+    display: none;
     flex-direction: column;
     gap: 0.75rem;
 }
 
+.auth-panel.is-active {
+    display: flex;
+}
+
 #auth input,
-#auth button {
+#auth form button {
     width: 100%;
     padding: 0.65rem 0.9rem;
     border-radius: 8px;
@@ -50,33 +87,57 @@ body {
     outline: 2px solid #009879;
 }
 
-#auth button {
+#auth form button {
     background-color: #009879;
     color: #fff;
     cursor: pointer;
     transition: background-color var(--transition);
 }
 
-#auth button[disabled] {
+#auth form button[disabled] {
     opacity: 0.6;
     cursor: progress;
 }
 
-#register-status {
+.auth-status {
     min-height: 1.5em;
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
 }
 
-#register-status.success {
+.auth-status.success {
     color: #0f7a42;
 }
 
-#register-status.error {
+.auth-status.error {
     color: #c62828;
 }
 
-#register-status.pending {
+.auth-status.pending {
     color: #b58900;
+}
+
+.auth-session {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+#logout-button {
+    width: auto;
+    padding: 0.5rem 1.5rem;
+    border-radius: 999px;
+    border: 1px solid #009879;
+    background: transparent;
+    color: #009879;
+    cursor: pointer;
+    transition: background-color var(--transition), color var(--transition);
+}
+
+#logout-button:hover {
+    background-color: #009879;
+    color: #fff;
 }
 
 .visually-hidden {

@@ -2,11 +2,16 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Lukmançylyk kitaphanasy - 1000-den gowrak kitaplara oflayn elýeterlik. Kitaplary gözlemek we kategoriýalar boýunça seretmek mümkinçiligi.">
-    <meta name="keywords" content="lukmançylyk, kitaplar, kategoriýalar, oflayn, bilim, Медицинская электронная библиотека">
-    <meta name="author" content="Maksat Döwletow" >
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="description"
+    content="Lukmançylyk kitaphanasy - 1000-den gowrak kitaplara oflayn elýeterlik. Kitaplary gözlemek we kategoriýalar boýunça seretmek mümkinçiligi."
+  >
+  <meta
+    name="keywords"
+    content="lukmançylyk, kitaplar, kategoriýalar, oflayn, bilim, Медицинская электронная библиотека"
+  >
+  <meta name="author" content="Maksat Döwletow">
   <title>Медицинская электронная библиотека</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -17,10 +22,37 @@
       <option value="ru">Русский</option>
       <option value="en">English</option>
     </select>
-    <h2>Регистрация и Вход</h2>
-<div id="auth">
-        <h3>Создайте учетную запись</h3>
-        <form id="register-form">
+    <div id="auth" aria-labelledby="auth-heading">
+      <div class="auth-header">
+        <h2 id="auth-heading">Регистрация и вход</h2>
+        <div class="auth-tabs" role="tablist">
+          <button
+            id="register-tab"
+            class="auth-tab active"
+            type="button"
+            role="tab"
+            aria-controls="register-form"
+            aria-selected="true"
+            data-target="register-form"
+          >
+            Регистрация
+          </button>
+          <button
+            id="login-tab"
+            class="auth-tab"
+            type="button"
+            role="tab"
+            aria-controls="login-form"
+            aria-selected="false"
+            data-target="login-form"
+          >
+            Вход
+          </button>
+        </div>
+      </div>
+      <div class="auth-panels">
+        <form id="register-form" class="auth-panel is-active" role="tabpanel" aria-labelledby="register-tab">
+          <h3>Создайте учетную запись</h3>
           <label class="visually-hidden" for="register-email">Email</label>
           <input type="email" id="register-email" placeholder="Email" required>
           <label class="visually-hidden" for="register-password">Пароль</label>
@@ -40,18 +72,33 @@
             required
           >
           <button id="register-button" type="submit">Зарегистрироваться</button>
+          <p id="register-status" class="auth-status" role="status" aria-live="polite"></p>
         </form>
-        <p id="register-status" role="status" aria-live="polite"></p>
+        <form id="login-form" class="auth-panel" role="tabpanel" aria-labelledby="login-tab" hidden>
+          <h3>Войдите в существующий аккаунт</h3>
+          <label class="visually-hidden" for="login-email">Email</label>
+          <input type="email" id="login-email" placeholder="Email" required>
+          <label class="visually-hidden" for="login-password">Пароль</label>
+          <input type="password" id="login-password" placeholder="Пароль" minlength="6" required>
+          <button id="login-button" type="submit">Войти</button>
+          <p id="login-status" class="auth-status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+      <div class="auth-session">
+        <p id="auth-session-status" class="auth-status" role="status" aria-live="polite"></p>
+        <button id="logout-button" type="button" hidden>Выйти</button>
+      </div>
     </div>
-   
+
     <h1 data-lang="ru" class="lang">Медицинская электронная библиотека</h1>
     <h1 data-lang="en" class="lang">Medical e-Library</h1>
     <h1 data-lang="tm" class="lang">Elektron lukmançylyk kitaphanasy</h1>
   </header>
   <nav>
-      <a href="index.html" data-lang="ru" class="lang">Главная</a>
-  <a href="index.html" data-lang="en" class="lang">Home</a>
-  <a href="index.html" data-lang="tm" class="lang">Baş sahypa</a>
+    <a href="index.html" data-lang="ru" class="lang">Главная</a>
+    <a href="index.html" data-lang="en" class="lang">Home</a>
+    <a href="index.html" data-lang="tm" class="lang">Baş sahypa</a>
+
     <a href="#about" data-lang="ru" class="lang">О библиотеке</a>
     <a href="#about" data-lang="en" class="lang">About</a>
     <a href="#about" data-lang="tm" class="lang">Kitaphana barada</a>
@@ -71,18 +118,24 @@
     <a href="#contact" data-lang="ru" class="lang">Контакты</a>
     <a href="#contact" data-lang="en" class="lang">Contact</a>
     <a href="#contact" data-lang="tm" class="lang">Habarlaşyň</a>
-  
- 
-<a href="BookCategory.html" data-lang="ru" class="lang">Категории книг</a>
-<a href="BookCategory.html" data-lang="en" class="lang">Book Categories</a>
-<a href="BookCategory.html" data-lang="tm" class="lang">Kitap kategoriýalary</a>
 
-  <!-- Новая ссылка на страницу с книгами -->
-  <a href="book.html" data-lang="ru" class="lang">Список книг</a>
-  <a href="book.html" data-lang="en" class="lang">Book List</a>
-  <a href="book.html" data-lang="tm" class="lang">Kitaplar</a>
-    <a href="https://sites.google.com/view/lukmanylyksanlykitaphanasy/ba%C5%9F-sahypa" target="_blank" class="external-link" style="color: blue; font-weight: bold;">Другой сайт библиотеки</a>
-</nav>
+    <a href="BookCategory.html" data-lang="ru" class="lang">Категории книг</a>
+    <a href="BookCategory.html" data-lang="en" class="lang">Book Categories</a>
+    <a href="BookCategory.html" data-lang="tm" class="lang">Kitap kategoriýalary</a>
+
+    <a href="book.html" data-lang="ru" class="lang">Список книг</a>
+    <a href="book.html" data-lang="en" class="lang">Book List</a>
+    <a href="book.html" data-lang="tm" class="lang">Kitaplar</a>
+
+    <a
+      href="https://sites.google.com/view/lukmanylyksanlykitaphanasy/ba%C5%9F-sahypa"
+      target="_blank"
+      class="external-link"
+      style="color: blue; font-weight: bold;"
+    >
+      Другой сайт библиотеки
+    </a>
+  </nav>
   <main class="container">
     <section id="about" aria-labelledby="about-heading">
       <h2 id="about-heading" data-lang="ru" class="lang">О библиотеке</h2>
@@ -184,8 +237,8 @@
   <div class="slide">
     <img src="6.webp" alt="Description 6" loading="lazy">
   </div>
-  <button class="prev" onclick="plusSlides(-1)">&#10094;</button>
-  <button class="next" onclick="plusSlides(1)">&#10095;</button>
+  <button class="prev" type="button" aria-label="Предыдущее изображение">&#10094;</button>
+  <button class="next" type="button" aria-label="Следующее изображение">&#10095;</button>
 </section>
     <section id="contact" aria-labelledby="contact-heading">
       <h2 id="contact-heading" data-lang="ru" class="lang">Контакты</h2>
