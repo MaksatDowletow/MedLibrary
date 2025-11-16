@@ -54,13 +54,20 @@
         <form id="register-form" class="auth-panel is-active" role="tabpanel" aria-labelledby="register-tab">
           <h3>Создайте учетную запись</h3>
           <label class="visually-hidden" for="register-email">Email</label>
-          <input type="email" id="register-email" placeholder="Email" required>
+          <input
+            type="email"
+            id="register-email"
+            placeholder="Email"
+            autocomplete="email"
+            required
+          >
           <label class="visually-hidden" for="register-password">Пароль</label>
           <input
             type="password"
             id="register-password"
             placeholder="Пароль (мин. 6 символов)"
             minlength="6"
+            autocomplete="new-password"
             required
           >
           <label class="visually-hidden" for="register-confirm">Подтверждение пароля</label>
@@ -69,6 +76,7 @@
             id="register-confirm"
             placeholder="Повторите пароль"
             minlength="6"
+            autocomplete="new-password"
             required
           >
           <button id="register-button" type="submit">Зарегистрироваться</button>
@@ -77,9 +85,22 @@
         <form id="login-form" class="auth-panel" role="tabpanel" aria-labelledby="login-tab" hidden>
           <h3>Войдите в существующий аккаунт</h3>
           <label class="visually-hidden" for="login-email">Email</label>
-          <input type="email" id="login-email" placeholder="Email" required>
+          <input
+            type="email"
+            id="login-email"
+            placeholder="Email"
+            autocomplete="email"
+            required
+          >
           <label class="visually-hidden" for="login-password">Пароль</label>
-          <input type="password" id="login-password" placeholder="Пароль" minlength="6" required>
+          <input
+            type="password"
+            id="login-password"
+            placeholder="Пароль"
+            minlength="6"
+            autocomplete="current-password"
+            required
+          >
           <button id="login-button" type="submit">Войти</button>
           <p id="login-status" class="auth-status" role="status" aria-live="polite"></p>
         </form>

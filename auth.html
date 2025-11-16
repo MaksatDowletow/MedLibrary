@@ -41,16 +41,28 @@
 <body>
     <h2>Регистрация</h2>
     <form id="registerForm">
-        <input type="email" id="email" placeholder="Email" required>
-        <input type="password" id="password" placeholder="Пароль" required>
+        <input type="email" id="email" placeholder="Email" autocomplete="email" required>
+        <input
+          type="password"
+          id="password"
+          placeholder="Пароль"
+          autocomplete="new-password"
+          required
+        >
         <button id="register" type="button">Зарегистрироваться</button>
         <div id="registerMessage" class="message"></div>
     </form>
 
     <h2>Вход</h2>
     <form id="loginForm">
-        <input type="email" id="email" placeholder="Email" required>
-        <input type="password" id="password" placeholder="Пароль" required>
+        <input type="email" id="email" placeholder="Email" autocomplete="email" required>
+        <input
+          type="password"
+          id="password"
+          placeholder="Пароль"
+          autocomplete="current-password"
+          required
+        >
         <button id="login" type="button">Войти</button>
         <div id="loginMessage" class="message"></div>
     </form>
