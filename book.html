@@ -615,12 +615,13 @@
       language: ['Язык книги', 'Book Language', 'Dil', 'Language'],
       specialty: ['Специальность', 'Специальность / раздел', 'Раздел', 'Категория', 'Category', 'Specialty', 'Bölüm', 'Ugry'],
       link: ['Ссылка', 'Link', 'URL', 'Download', 'Файл', 'File'],
-      cover: ['Обложка', 'Изображение', 'Фото', 'Cover', 'Image']
+      cover: ['Обложка', 'Изображение', 'Фото', 'Cover', 'Image', 'Book image']
     };
 
     const BOOK_CACHE_KEY = 'medlibrary.bookCache';
     const BOOK_CACHE_VERSION = '2.0.0';
     const BOOK_CACHE_TTL = 1000 * 60 * 60 * 12; // 12 hours
+    const excelSources = ['Book.xlsx', 'Book.xls'];
     const fallbackCoverImages = ['1.webp', '2.webp', '3.webp', '4.webp', '5.webp', '6.webp', '1.png', '2.png', '3.png', '4.png', '5.png', '6.png'];
     const fallbackCoverCache = new Map();
 
@@ -728,18 +729,27 @@
       if (typeof XLSX === 'undefined') {
         throw new Error('XLSX library is not available');
       }
-      const response = await fetch('Book.xls', { cache: 'no-store' });
-      if (!response.ok) {
-        throw new Error('Network error while requesting Book.xls');
+      let lastError = null;
+      for (const source of excelSources) {
+        try {
+          const response = await fetch(source, { cache: 'no-store' });
+          if (!response.ok) {
+            throw new Error(`Network error while requesting ${source}`);
+          }
+          const buffer = await response.arrayBuffer();
+          const workbook = XLSX.read(buffer, { type: 'array' });
+          const sheet = workbook.Sheets[workbook.SheetNames[0]];
+          const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+          const books = rows
+            .map((row) => normalizeRow(row))
+            .filter((book) => book.title || book.author);
+          return { books, cachePayload: buffer };
+        } catch (error) {
+          lastError = error;
+          console.warn(`Failed to load ${source}`, error);
+        }
       }
-      const buffer = await response.arrayBuffer();
-      const workbook = XLSX.read(buffer, { type: 'array' });
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
-      const books = rows
-        .map((row) => normalizeRow(row))
-        .filter((book) => book.title || book.author);
-      return { books, cachePayload: buffer };
+      throw lastError || new Error('Excel sources are not available');
     }
 
     async function loadFromTsvSource() {
