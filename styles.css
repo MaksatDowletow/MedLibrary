@@ -184,6 +184,60 @@ nav a:hover {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.feature-card {
+    position: relative;
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid #e3e6ec;
+    background: linear-gradient(145deg, #ffffff, #f3f6fb);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.feature-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+}
+
+.feature-card h3 {
+    margin: 0 0 0.75rem;
+    color: #0f1c3f;
+}
+
+.feature-card ul {
+    padding-left: 1.2rem;
+    margin: 0 0 1rem;
+    color: #1f2a44;
+}
+
+.feature-card li {
+    margin-bottom: 0.35rem;
+}
+
+.feature-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1.25rem;
+    border-radius: 999px;
+    border: 1px solid #009879;
+    color: #009879;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color var(--transition), color var(--transition);
+}
+
+.feature-cta:hover {
+    background-color: #009879;
+    color: #fff;
+}
+
 footer {
     text-align: center;
     margin-top: 2rem;
