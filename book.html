@@ -49,6 +49,36 @@
           <button type="button" id="clear-search" class="search-clear" aria-label="Очистить поиск">&times;</button>
         </div>
       </section>
+      <section class="search-filters" aria-label="Фильтры по столбцам">
+        <div class="filter-field">
+          <label for="filter-title">Название книги</label>
+          <input type="text" id="filter-title" placeholder="Например: терапия" autocomplete="off">
+        </div>
+        <div class="filter-field">
+          <label for="filter-author">Имя автора</label>
+          <input type="text" id="filter-author" placeholder="Например: Иванов" autocomplete="off">
+        </div>
+        <div class="filter-field">
+          <label for="filter-publisher">Издатель</label>
+          <input type="text" id="filter-publisher" placeholder="Например: Медицина" autocomplete="off">
+        </div>
+        <div class="filter-field">
+          <label for="filter-city">Город публикации</label>
+          <input type="text" id="filter-city" placeholder="Например: Москва" autocomplete="off">
+        </div>
+        <div class="filter-field">
+          <label for="filter-year">Год</label>
+          <input type="text" id="filter-year" inputmode="numeric" placeholder="Например: 2019" autocomplete="off">
+        </div>
+        <div class="filter-field">
+          <label for="filter-pages">Количество страниц</label>
+          <input type="text" id="filter-pages" inputmode="numeric" placeholder="Например: 320" autocomplete="off">
+        </div>
+        <div class="filter-field">
+          <label for="filter-language">Язык книги</label>
+          <input type="text" id="filter-language" placeholder="Например: Русский" autocomplete="off">
+        </div>
+      </section>
       <div class="table-wrapper" role="region" aria-live="polite">
         <table id="book-table" class="styled-table">
           <thead>
@@ -82,6 +112,7 @@
         </table>
       </div>
     </section>
+    <section id="card-results" class="card-results" aria-live="polite"></section>
   </main>
   <footer>
     <div class="footer-container">
