@@ -615,13 +615,13 @@
       language: ['Язык книги', 'Book Language', 'Dil', 'Language'],
       specialty: ['Специальность', 'Специальность / раздел', 'Раздел', 'Категория', 'Category', 'Specialty', 'Bölüm', 'Ugry'],
       link: ['Ссылка', 'Link', 'URL', 'Download', 'Файл', 'File'],
-      cover: ['Обложка', 'Изображение', 'Фото', 'Cover', 'Image', 'Book image']
+      cover: ['Обложка', 'Изображение', 'Фото', 'Cover', 'Image', 'Book image', 'H', '__COL_H']
     };
 
     const BOOK_CACHE_KEY = 'medlibrary.bookCache';
     const BOOK_CACHE_VERSION = '2.0.0';
     const BOOK_CACHE_TTL = 1000 * 60 * 60 * 12; // 12 hours
-    const excelSources = ['Book.xlsx', 'Book.xls'];
+    const excelSources = ['Book.xlsx'];
     const fallbackCoverImages = ['1.webp', '2.webp', '3.webp', '4.webp', '5.webp', '6.webp', '1.png', '2.png', '3.png', '4.png', '5.png', '6.png'];
     const fallbackCoverCache = new Map();
 
@@ -739,7 +739,8 @@
           const buffer = await response.arrayBuffer();
           const workbook = XLSX.read(buffer, { type: 'array' });
           const sheet = workbook.Sheets[workbook.SheetNames[0]];
-          const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+          const rawRows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+          const rows = convertSheetRowsToObjects(rawRows);
           const books = rows
             .map((row) => normalizeRow(row))
             .filter((book) => book.title || book.author);
@@ -870,6 +871,67 @@
         }
       }
       return rows;
+    }
+
+    function convertSheetRowsToObjects(rawRows) {
+      if (!Array.isArray(rawRows) || rawRows.length <= 1) {
+        return [];
+      }
+      const width = rawRows.reduce((max, row) => Math.max(max, Array.isArray(row) ? row.length : 0), 0);
+      if (width === 0) {
+        return [];
+      }
+      const headerRow = rawRows[0];
+      const normalizedHeaders = Array.from({ length: width }, (_, index) => {
+        const cell = headerRow[index];
+        if (typeof cell === 'string') {
+          const trimmed = cell.trim();
+          if (trimmed) {
+            return trimmed;
+          }
+        }
+        return '';
+      });
+      const result = [];
+      for (let rowIndex = 1; rowIndex < rawRows.length; rowIndex += 1) {
+        const row = Array.isArray(rawRows[rowIndex]) ? rawRows[rowIndex] : [];
+        const record = {};
+        let hasValue = false;
+        for (let colIndex = 0; colIndex < width; colIndex += 1) {
+          const value = row[colIndex] ?? '';
+          const hasCellValue =
+            typeof value === 'number'
+              ? true
+              : typeof value === 'string'
+              ? Boolean(value.trim())
+              : Boolean(value);
+          if (hasCellValue) {
+            hasValue = true;
+          }
+          const header = normalizedHeaders[colIndex];
+          if (header) {
+            record[header] = value;
+          }
+          record[`__COL_${getColumnLetter(colIndex)}`] = value;
+        }
+        if (hasValue) {
+          result.push(record);
+        }
+      }
+      return result;
+    }
+
+    function getColumnLetter(index) {
+      let letter = '';
+      let current = Number(index);
+      if (!Number.isFinite(current) || current < 0) {
+        return '';
+      }
+      while (current >= 0) {
+        letter = String.fromCharCode((current % 26) + 65) + letter;
+        current = Math.floor(current / 26) - 1;
+      }
+      return letter;
     }
 
     function normalizeRow(row) {
