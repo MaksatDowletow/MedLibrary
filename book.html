@@ -40,56 +40,186 @@
           <p data-lang="en" class="lang panel-subtitle">Quick search across the library catalogue</p>
           <p data-lang="tm" class="lang panel-subtitle">Kitaphana katalogy boýunça çalt gözleg</p>
         </div>
-        <p id="book-status" class="table-status" role="status" aria-live="polite">Загружаем каталог...</p>
+        <p
+          id="book-status"
+          class="table-status"
+          role="status"
+          aria-live="polite"
+          data-i18n-key="tableLoading"
+        >
+          Загружаем каталог...
+        </p>
       </div>
       <section class="search" aria-label="Поиск по книгам">
         <label for="searchInput" class="visually-hidden">Поиск по названию или автору</label>
         <div class="search-field">
-          <input type="text" id="searchInput" placeholder="Gözleg..." autocomplete="off">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Gözleg..."
+            autocomplete="off"
+            data-placeholder-ru="Поиск..."
+            data-placeholder-en="Search..."
+            data-placeholder-tm="Gözleg..."
+          >
           <button type="button" id="clear-search" class="search-clear" aria-label="Очистить поиск">&times;</button>
         </div>
       </section>
       <section class="search-filters" aria-label="Фильтры по столбцам">
         <div class="filter-field">
-          <label for="filter-title">Название книги</label>
-          <input type="text" id="filter-title" placeholder="Например: терапия" autocomplete="off">
+          <label for="filter-title">
+            <span data-lang="ru" class="lang">Название книги</span>
+            <span data-lang="en" class="lang">Book title</span>
+            <span data-lang="tm" class="lang">Kitabyň ady</span>
+          </label>
+          <input
+            type="text"
+            id="filter-title"
+            placeholder="Например: терапия"
+            autocomplete="off"
+            data-placeholder-ru="Например: терапия"
+            data-placeholder-en="e.g. therapy"
+            data-placeholder-tm="mysal üçin: terapiýa"
+          >
         </div>
         <div class="filter-field">
-          <label for="filter-author">Имя автора</label>
-          <input type="text" id="filter-author" placeholder="Например: Иванов" autocomplete="off">
+          <label for="filter-author">
+            <span data-lang="ru" class="lang">Имя автора</span>
+            <span data-lang="en" class="lang">Author</span>
+            <span data-lang="tm" class="lang">Awtoryň ady</span>
+          </label>
+          <input
+            type="text"
+            id="filter-author"
+            placeholder="Например: Иванов"
+            autocomplete="off"
+            data-placeholder-ru="Например: Иванов"
+            data-placeholder-en="e.g. Ivanov"
+            data-placeholder-tm="mysal üçin: Ivanow"
+          >
         </div>
         <div class="filter-field">
-          <label for="filter-publisher">Издатель</label>
-          <input type="text" id="filter-publisher" placeholder="Например: Медицина" autocomplete="off">
+          <label for="filter-publisher">
+            <span data-lang="ru" class="lang">Издатель</span>
+            <span data-lang="en" class="lang">Publisher</span>
+            <span data-lang="tm" class="lang">Neşirçi</span>
+          </label>
+          <input
+            type="text"
+            id="filter-publisher"
+            placeholder="Например: Медицина"
+            autocomplete="off"
+            data-placeholder-ru="Например: Медицина"
+            data-placeholder-en="e.g. Medicine"
+            data-placeholder-tm="mysal üçin: Medisina"
+          >
         </div>
         <div class="filter-field">
-          <label for="filter-city">Город публикации</label>
-          <input type="text" id="filter-city" placeholder="Например: Москва" autocomplete="off">
+          <label for="filter-city">
+            <span data-lang="ru" class="lang">Город публикации</span>
+            <span data-lang="en" class="lang">City</span>
+            <span data-lang="tm" class="lang">Şäher</span>
+          </label>
+          <input
+            type="text"
+            id="filter-city"
+            placeholder="Например: Москва"
+            autocomplete="off"
+            data-placeholder-ru="Например: Москва"
+            data-placeholder-en="e.g. Moscow"
+            data-placeholder-tm="mysal üçin: Moskwa"
+          >
         </div>
         <div class="filter-field">
-          <label for="filter-year">Год</label>
-          <input type="text" id="filter-year" inputmode="numeric" placeholder="Например: 2019" autocomplete="off">
+          <label for="filter-year">
+            <span data-lang="ru" class="lang">Год</span>
+            <span data-lang="en" class="lang">Year</span>
+            <span data-lang="tm" class="lang">Ýyl</span>
+          </label>
+          <input
+            type="text"
+            id="filter-year"
+            inputmode="numeric"
+            placeholder="Например: 2019"
+            autocomplete="off"
+            data-placeholder-ru="Например: 2019"
+            data-placeholder-en="e.g. 2019"
+            data-placeholder-tm="mysal üçin: 2019"
+          >
         </div>
         <div class="filter-field">
-          <label for="filter-pages">Количество страниц</label>
-          <input type="text" id="filter-pages" inputmode="numeric" placeholder="Например: 320" autocomplete="off">
+          <label for="filter-pages">
+            <span data-lang="ru" class="lang">Количество страниц</span>
+            <span data-lang="en" class="lang">Pages</span>
+            <span data-lang="tm" class="lang">Sahypalar</span>
+          </label>
+          <input
+            type="text"
+            id="filter-pages"
+            inputmode="numeric"
+            placeholder="Например: 320"
+            autocomplete="off"
+            data-placeholder-ru="Например: 320"
+            data-placeholder-en="e.g. 320"
+            data-placeholder-tm="mysal üçin: 320"
+          >
         </div>
         <div class="filter-field">
-          <label for="filter-language">Язык книги</label>
-          <input type="text" id="filter-language" placeholder="Например: Русский" autocomplete="off">
+          <label for="filter-language">
+            <span data-lang="ru" class="lang">Язык книги</span>
+            <span data-lang="en" class="lang">Book language</span>
+            <span data-lang="tm" class="lang">Kitabyň dili</span>
+          </label>
+          <input
+            type="text"
+            id="filter-language"
+            placeholder="Например: Русский"
+            autocomplete="off"
+            data-placeholder-ru="Например: Русский"
+            data-placeholder-en="e.g. Russian"
+            data-placeholder-tm="mysal üçin: Rus dili"
+          >
         </div>
       </section>
       <div class="table-wrapper" role="region" aria-live="polite">
         <table id="book-table" class="styled-table">
           <thead>
             <tr>
-              <th>Название книги</th>
-              <th>Имя автора</th>
-              <th>Издатель</th>
-              <th>Город публикации</th>
-              <th>Год публикации</th>
-              <th>Количество страниц</th>
-              <th>Язык книги</th>
+              <th>
+                <span data-lang="ru" class="lang">Название книги</span>
+                <span data-lang="en" class="lang">Book title</span>
+                <span data-lang="tm" class="lang">Kitabyň ady</span>
+              </th>
+              <th>
+                <span data-lang="ru" class="lang">Имя автора</span>
+                <span data-lang="en" class="lang">Author</span>
+                <span data-lang="tm" class="lang">Awtoryň ady</span>
+              </th>
+              <th>
+                <span data-lang="ru" class="lang">Издатель</span>
+                <span data-lang="en" class="lang">Publisher</span>
+                <span data-lang="tm" class="lang">Neşirçi</span>
+              </th>
+              <th>
+                <span data-lang="ru" class="lang">Город публикации</span>
+                <span data-lang="en" class="lang">City</span>
+                <span data-lang="tm" class="lang">Şäher</span>
+              </th>
+              <th>
+                <span data-lang="ru" class="lang">Год публикации</span>
+                <span data-lang="en" class="lang">Year</span>
+                <span data-lang="tm" class="lang">Ýyl</span>
+              </th>
+              <th>
+                <span data-lang="ru" class="lang">Количество страниц</span>
+                <span data-lang="en" class="lang">Pages</span>
+                <span data-lang="tm" class="lang">Sahypalar</span>
+              </th>
+              <th>
+                <span data-lang="ru" class="lang">Язык книги</span>
+                <span data-lang="en" class="lang">Book language</span>
+                <span data-lang="tm" class="lang">Kitabyň dili</span>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -117,14 +247,28 @@
   <footer>
     <div class="footer-container">
       <div class="contact-info">
-        <p>Контактный телефон: <a href="tel:+99362234094">+99362234094</a></p>
-        <p>Email: <a href="mailto:tdlipf@gmail.com">tdlipf@gmail.com</a></p>
+        <p>
+          <span data-lang="ru" class="lang">Контактный телефон:</span>
+          <span data-lang="en" class="lang">Phone:</span>
+          <span data-lang="tm" class="lang">Telefon:</span>
+          <a href="tel:+99362234094">+99362234094</a>
+        </p>
+        <p>
+          <span data-lang="ru" class="lang">Email:</span>
+          <span data-lang="en" class="lang">Email:</span>
+          <span data-lang="tm" class="lang">Email:</span>
+          <a href="mailto:tdlipf@gmail.com">tdlipf@gmail.com</a>
+        </p>
       </div>
       <div class="footer-nav">
-        <a href="index.html">Главная</a>
+        <a href="index.html" data-lang="ru" class="lang">Главная</a>
+        <a href="index.html" data-lang="en" class="lang">Home</a>
+        <a href="index.html" data-lang="tm" class="lang">Baş sahypa</a>
       </div>
       <div class="copyright">
-        <p>&copy; 2025 Медицинская электронная библиотека. Все права защищены.</p>
+        <p data-lang="ru" class="lang">&copy; 2025 Медицинская электронная библиотека. Все права защищены.</p>
+        <p data-lang="en" class="lang">&copy; 2025 Medical e-Library. All rights reserved.</p>
+        <p data-lang="tm" class="lang">&copy; 2025 Elektron lukmançylyk kitaphanasy. Ähli hukuklar goralan.</p>
       </div>
     </div>
   </footer>
