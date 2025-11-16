@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">    <meta charset="UTF-8">
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Lukmançylyk kitaphanasy - 1000-den gowrak kitaplara oflayn elýeterlik. Kitaplary gözlemek we kategoriýalar boýunça seretmek mümkinçiligi.">
     <meta name="keywords" content="lukmançylyk, kitaplar, kategoriýalar, oflayn, bilim, Медицинская электронная библиотека">
@@ -42,24 +44,100 @@
   <a href="book.html" data-lang="tm" class="lang">Kitaplar</a>
     <a href="https://sites.google.com/view/lukmanylyksanlykitaphanasy/ba%C5%9F-sahypa" target="_blank" class="external-link" style="color: blue; font-weight: bold;">Другой сайт библиотеки</a>
   </nav>
-    <nav>
-  <input type="text" id="searchInput" placeholder="Gözleg...">
-    </nav>
-    <div style="height: 300px; overflow-y: auto;">
-    <table id="book-table" class="styled-table">
-      <thead>
-        <tr>
-          <th>Название книги</th>
-          <th>Имя автора</th>
-          <th>Издатель</th>
-          <th>Город публикации</th>
-          <th>Год публикации</th>
-          <th>Количество страниц</th>
-          <th>Язык книги</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <div class="table-wrapper">
+      <table id="book-table" class="styled-table">
+        <thead>
+          <tr>
+            <th data-i18n="bookTitle">Название книги</th>
+            <th data-i18n="authorName">Имя автора</th>
+            <th data-i18n="publisher">Издатель</th>
+            <th data-i18n="city">Город публикации</th>
+            <th data-i18n="year">Год публикации</th>
+            <th data-i18n="pages">Количество страниц</th>
+            <th data-i18n="language">Язык книги</th>
+          </tr>
+          <tr class="filter-row">
+            <th>
+              <label class="sr-only" for="filter-title" data-i18n="bookTitle">Название книги</label>
+              <input
+                id="filter-title"
+                type="text"
+                class="column-search"
+                data-column="0"
+                data-placeholder-i18n="bookTitlePlaceholder"
+                placeholder="Поиск..."
+              />
+            </th>
+            <th>
+              <label class="sr-only" for="filter-author" data-i18n="authorName">Имя автора</label>
+              <input
+                id="filter-author"
+                type="text"
+                class="column-search"
+                data-column="1"
+                data-placeholder-i18n="authorNamePlaceholder"
+                placeholder="Поиск..."
+              />
+            </th>
+            <th>
+              <label class="sr-only" for="filter-publisher" data-i18n="publisher">Издатель</label>
+              <input
+                id="filter-publisher"
+                type="text"
+                class="column-search"
+                data-column="2"
+                data-placeholder-i18n="publisherPlaceholder"
+                placeholder="Поиск..."
+              />
+            </th>
+            <th>
+              <label class="sr-only" for="filter-city" data-i18n="city">Город публикации</label>
+              <input
+                id="filter-city"
+                type="text"
+                class="column-search"
+                data-column="3"
+                data-placeholder-i18n="cityPlaceholder"
+                placeholder="Поиск..."
+              />
+            </th>
+            <th>
+              <label class="sr-only" for="filter-year" data-i18n="year">Год публикации</label>
+              <input
+                id="filter-year"
+                type="text"
+                class="column-search"
+                data-column="4"
+                data-placeholder-i18n="yearPlaceholder"
+                placeholder="Поиск..."
+              />
+            </th>
+            <th>
+              <label class="sr-only" for="filter-pages" data-i18n="pages">Количество страниц</label>
+              <input
+                id="filter-pages"
+                type="text"
+                class="column-search"
+                data-column="5"
+                data-placeholder-i18n="pagesPlaceholder"
+                placeholder="Поиск..."
+              />
+            </th>
+            <th>
+              <label class="sr-only" for="filter-language" data-i18n="language">Язык книги</label>
+              <input
+                id="filter-language"
+                type="text"
+                class="column-search"
+                data-column="6"
+                data-placeholder-i18n="languagePlaceholder"
+                placeholder="Поиск..."
+              />
+            </th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
   <footer>
   <div class="footer-container">

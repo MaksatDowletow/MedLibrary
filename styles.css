@@ -159,19 +159,60 @@ footer {
 .styled-table tbody tr:last-of-type {
   border-bottom: 2px solid #009879;
 }
-#searchInput {
+.column-search {
     width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    box-sizing: border-box;
-    border: 2px solid #ccc;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #ccc;
     border-radius: 4px;
-    font-size: 16px;
-  }
-  #searchInput:focus {
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+.column-search:focus {
     border-color: #66afe9;
     outline: none;
-  }
+    box-shadow: 0 0 3px rgba(102, 175, 233, 0.6);
+}
+ 
+.table-wrapper {
+    height: 300px;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    margin: 1rem;
+    padding-bottom: 1rem;
+}
+
+.filter-row th {
+    background-color: #f6f8f7;
+    position: sticky;
+    top: 56px;
+    z-index: 1;
+}
+
+.styled-table thead tr:first-child th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.filter-row input {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.6rem;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
 /* Основные стили для таблицы */
 table {
   width: 100%;

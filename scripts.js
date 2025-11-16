@@ -1,8 +1,83 @@
 document.addEventListener("DOMContentLoaded", () => {
   const languageSelect = document.getElementById("language-select");
+  const i18nMap = {
+    bookTitle: {
+      ru: "Название книги",
+      tm: "Kitabyň ady",
+      en: "Book Title",
+    },
+    authorName: {
+      ru: "Имя автора",
+      tm: "Awtor",
+      en: "Author",
+    },
+    publisher: {
+      ru: "Издатель",
+      tm: "Neşirçi",
+      en: "Publisher",
+    },
+    city: {
+      ru: "Город публикации",
+      tm: "Neşir edilen şäher",
+      en: "City",
+    },
+    year: {
+      ru: "Год публикации",
+      tm: "Neşir edilen ýyl",
+      en: "Year",
+    },
+    pages: {
+      ru: "Количество страниц",
+      tm: "Sahypa sany",
+      en: "Pages",
+    },
+    language: {
+      ru: "Язык книги",
+      tm: "Kitabyň dili",
+      en: "Language",
+    },
+    bookTitlePlaceholder: {
+      ru: "Поиск по названию",
+      tm: "Ady boýunça gözleg",
+      en: "Search by title",
+    },
+    authorNamePlaceholder: {
+      ru: "Поиск по автору",
+      tm: "Awtor boýunça gözleg",
+      en: "Search by author",
+    },
+    publisherPlaceholder: {
+      ru: "Поиск по издателю",
+      tm: "Neşirçi boýunça gözleg",
+      en: "Search by publisher",
+    },
+    cityPlaceholder: {
+      ru: "Поиск по городу",
+      tm: "Şäher boýunça gözleg",
+      en: "Search by city",
+    },
+    yearPlaceholder: {
+      ru: "Поиск по году",
+      tm: "Ýyl boýunça gözleg",
+      en: "Search by year",
+    },
+    pagesPlaceholder: {
+      ru: "Поиск по страницам",
+      tm: "Sahypa boýunça gözleg",
+      en: "Search by pages",
+    },
+    languagePlaceholder: {
+      ru: "Поиск по языку",
+      tm: "Dil boýunça gözleg",
+      en: "Search by language",
+    },
+  };
+
   if (languageSelect) {
     languageSelect.addEventListener("change", changeLanguage);
     changeLanguage();
+  } else {
+    updateI18nContent("ru");
   }
 
   function changeLanguage() {
@@ -12,6 +87,26 @@ document.addEventListener("DOMContentLoaded", () => {
       element.style.display =
         element.getAttribute("data-lang") === lang ? "block" : "none";
     });
+    updateI18nContent(lang);
+  }
+
+  function updateI18nContent(lang) {
+    document.querySelectorAll("[data-i18n]").forEach((element) => {
+      const key = element.dataset.i18n;
+      if (i18nMap[key]?.[lang]) {
+        element.textContent = i18nMap[key][lang];
+      }
+    });
+
+    document
+      .querySelectorAll("[data-placeholder-i18n]")
+      .forEach((input) => {
+        const key = input.dataset.placeholderI18n;
+        if (i18nMap[key]?.[lang]) {
+          input.placeholder = i18nMap[key][lang];
+          input.setAttribute("aria-label", i18nMap[key][lang]);
+        }
+      });
   }
 
   let slideIndex = 0;
@@ -57,9 +152,14 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch((error) => console.error("Error:", error));
   }
 
-  const registerButton = document.getElementById("register");
-  if (registerButton) {
-    registerButton.addEventListener("click", register);
+  const registerElement = document.getElementById("register");
+  if (registerElement) {
+    registerElement.addEventListener("click", register);
+  }
+
+  if (typeof login === "function") {
+    const loginElement = document.getElementById("login");
+    loginElement?.addEventListener("click", login);
   }
 
   function sendMail() {
@@ -73,33 +173,40 @@ document.addEventListener("DOMContentLoaded", () => {
       "mailto:tdlipfmdm@gmail.com?subject=" + subject + "&body=" + body;
   }
 
-  document.getElementById("register")?.addEventListener("click", register);
-  document.getElementById("login")?.addEventListener("click", login);
+  const columnSearchInputs = document.querySelectorAll(".column-search");
 
-  document.getElementById("searchInput").addEventListener("input", function () {
-    var input, filter, table, tr, td, i, txtValue1, txtValue2;
-    input = document.getElementById("searchInput");
-    filter = input.value.toUpperCase();
-    table = document.querySelector("table tbody");
-    tr = table.getElementsByTagName("tr");
-
-    for (i = 0; i < tr.length; i++) {
-      td = tr[i].getElementsByTagName("td");
-      if (td.length > 0) {
-        txtValue1 = td[0].textContent || td[0].innerText;
-        txtValue2 = td[1].textContent || td[1].innerText;
-
-        if (
-          txtValue1.toUpperCase().indexOf(filter) > -1 ||
-          txtValue2.toUpperCase().indexOf(filter) > -1
-        ) {
-          tr[i].style.display = "";
-        } else {
-          tr[i].style.display = "none";
-        }
+  function buildColumnFilters() {
+    return Array.from(columnSearchInputs).reduce((filters, input) => {
+      const columnIndex = Number(input.dataset.column);
+      const value = input.value.trim().toUpperCase();
+      if (!Number.isNaN(columnIndex) && value) {
+        filters[columnIndex] = value;
       }
-    }
-  });
+      return filters;
+    }, {});
+  }
+
+  function filterByColumns() {
+    if (!columnSearchInputs.length) return;
+
+    const filters = buildColumnFilters();
+    const rows = document.querySelectorAll("#book-table tbody tr");
+
+    rows.forEach((row) => {
+      const cells = row.getElementsByTagName("td");
+      const isVisible = Object.entries(filters).every(([index, filter]) => {
+        const cellText = (cells[index]?.textContent || "").toUpperCase();
+        return cellText.includes(filter);
+      });
+      row.style.display = isVisible ? "" : "none";
+    });
+  }
+
+  if (columnSearchInputs.length) {
+    columnSearchInputs.forEach((input) => {
+      input.addEventListener("input", filterByColumns);
+    });
+  }
 
   fetch("Book.xls")
     .then((response) => {
@@ -125,31 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
                           <td>${row["Язык книги"]}</td>`;
         tbody.appendChild(tr);
       });
+      filterByColumns();
     })
     .catch((error) => console.error("Error:", error));
-  document.addEventListener("DOMContentLoaded", () => {
-    const labelSelect = document.getElementById("label-select");
-    if (labelSelect) {
-      labelSelect.addEventListener("change", changeLabel);
-      changeLabel();
-    }
-
-    function filterTable() {
-      var input = document.getElementById("search-inputb");
-      var filter = input.value.toLowerCase();
-      var table = document.getElementById("book-table");
-      var tr = table.getElementsByTagName("tr");
-
-      for (var i = 1; i < tr.length; i++) {
-        tr[i].style.display = "none";
-        var td = tr[i].getElementsByTagName("td");
-        for (var j = 0; j < td.length; j++) {
-          if (td[j] && td[j].innerHTML.toLowerCase().indexOf(filter) > -1) {
-            tr[i].style.display = "";
-            break;
-          }
-        }
-      }
-    }
-  });
 });
