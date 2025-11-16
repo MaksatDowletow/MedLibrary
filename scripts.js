@@ -1,4 +1,13 @@
 const TOKEN_KEY = "medlibraryToken";
+const BOOK_FIELD_KEYS = [
+  "title",
+  "author",
+  "publisher",
+  "city",
+  "year",
+  "pages",
+  "language",
+];
 
 document.addEventListener("DOMContentLoaded", () => {
   const apiBase = (document.body?.dataset.apiBase || "").replace(/\/$/, "");
@@ -22,7 +31,11 @@ function initLanguageSwitcher() {
     const lang = languageSelect.value || "ru";
     document.querySelectorAll(".lang").forEach((element) => {
       const isVisible = element.getAttribute("data-lang") === lang;
-      element.style.display = isVisible ? "block" : "none";
+      element.hidden = !isVisible;
+      element.setAttribute("aria-hidden", isVisible ? "false" : "true");
+      if (isVisible) {
+        element.style.removeProperty("display");
+      }
     });
   };
 
@@ -304,44 +317,192 @@ function initLoginForm(apiBase) {
 
 function initSearchFilter() {
   const searchInput = document.getElementById("searchInput");
-  if (!searchInput) {
+  const tableBody = document.querySelector("#book-table tbody");
+  if (!searchInput || !tableBody) {
     return;
   }
 
-  searchInput.addEventListener("input", () => {
-    const filter = searchInput.value.toUpperCase();
-    const table = document.querySelector("#book-table tbody");
-    if (!table) {
+  const clearButton = document.getElementById("clear-search");
+  const columnFilters = document.querySelectorAll("[data-column-filter]");
+  const resetFiltersButton = document.getElementById("reset-filters");
+  const statusElement = document.getElementById("book-status");
+  let isTableReady = false;
+  let totalRows = 0;
+
+  const updateStatus = (visibleRows) => {
+    if (!statusElement) {
       return;
     }
 
-    const rows = table.getElementsByTagName("tr");
-    for (let i = 0; i < rows.length; i += 1) {
-      const cells = rows[i].getElementsByTagName("td");
+    if (!totalRows) {
+      return;
+    }
+
+    if (!visibleRows) {
+      statusElement.textContent = "Ничего не найдено";
+      statusElement.dataset.state = "error";
+      return;
+    }
+
+    const prefix = visibleRows === totalRows ? "Показаны" : "Найдено";
+    statusElement.textContent = `${prefix} ${visibleRows} из ${totalRows} записей`;
+    statusElement.dataset.state = "success";
+  };
+
+  const filterRows = () => {
+    clearButton?.classList.toggle("is-visible", Boolean(searchInput.value));
+
+    if (!isTableReady) {
+      return;
+    }
+
+    const filter = searchInput.value.trim().toUpperCase();
+    const rows = Array.from(tableBody.rows).filter(
+      (row) => !row.classList.contains("skeleton-row")
+    );
+    const perColumnFilters = Array.from(columnFilters).map((input) => ({
+      column: Number(input.dataset.columnFilter),
+      value: input.value.trim().toUpperCase(),
+    }));
+    let visibleCount = 0;
+
+    rows.forEach((row) => {
+      const cells = row.getElementsByTagName("td");
       if (!cells.length) {
-        continue;
+        return;
       }
 
-      const bookTitle = cells[0].textContent || cells[0].innerText;
-      const author = cells[1].textContent || cells[1].innerText;
-      const matches =
-        bookTitle.toUpperCase().includes(filter) ||
-        author.toUpperCase().includes(filter);
-      rows[i].style.display = matches ? "" : "none";
+      const matchesQuickSearch =
+        !filter ||
+        Array.from(cells).some((cell) =>
+          (cell.textContent || "").toUpperCase().includes(filter)
+        );
+      const matchesColumnFilters = perColumnFilters.every((columnFilter) => {
+        if (!columnFilter.value) {
+          return true;
+        }
+        const cellText =
+          cells[columnFilter.column]?.textContent?.toUpperCase() || "";
+        return cellText.includes(columnFilter.value);
+      });
+
+      const matches = matchesQuickSearch && matchesColumnFilters;
+      row.hidden = !matches;
+      if (matches) {
+        visibleCount += 1;
+      }
+    });
+
+    totalRows = rows.length;
+    updateStatus(visibleCount);
+    syncSelectionAfterFilter(tableBody);
+    renderBookCards(rows);
+  };
+
+  const debouncedFilter = debounce(filterRows, 160);
+  searchInput.addEventListener("input", debouncedFilter);
+  columnFilters.forEach((input) => {
+    input.addEventListener("input", debouncedFilter);
+  });
+
+  clearButton?.addEventListener("click", () => {
+    if (!searchInput.value) {
+      return;
     }
+    searchInput.value = "";
+    filterRows();
+    searchInput.focus();
+  });
+
+  resetFiltersButton?.addEventListener("click", () => {
+    searchInput.value = "";
+    columnFilters.forEach((input) => {
+      input.value = "";
+    });
+    filterRows();
+    searchInput.focus();
+  });
+
+  tableBody.addEventListener("booktable:ready", (event) => {
+    isTableReady = true;
+    totalRows = event?.detail?.totalRows ?? tableBody.rows.length;
+    filterRows();
   });
 }
 
 function initBookTable() {
   const bookTableBody = document.querySelector("#book-table tbody");
+  const statusElement = document.getElementById("book-status");
   if (!bookTableBody) {
     return;
   }
 
   if (typeof XLSX === "undefined") {
     console.error("XLSX library is not loaded");
+    if (statusElement) {
+      statusElement.textContent = "Библиотека недоступна";
+      statusElement.dataset.state = "error";
+    }
     return;
   }
+
+  const tablePanel = document.querySelector(".table-panel");
+  let activeRow = null;
+
+  const resetSelection = () => {
+    if (activeRow) {
+      activeRow.classList.remove("is-selected");
+    }
+    activeRow = null;
+    setBookDetail();
+  };
+
+  const selectRow = (row) => {
+    if (!row || row === activeRow) {
+      return;
+    }
+    activeRow?.classList.remove("is-selected");
+    activeRow = row;
+    row.classList.add("is-selected");
+    setBookDetail(getRowDetail(row));
+  };
+
+  setBookDetail();
+  const setTableStatus = (message, state) => {
+    if (!statusElement) {
+      return;
+    }
+    statusElement.textContent = message;
+    if (state) {
+      statusElement.dataset.state = state;
+    } else {
+      delete statusElement.dataset.state;
+    }
+  };
+
+  tablePanel?.classList.add("is-loading");
+  setTableStatus("Загружаем каталог...", "pending");
+
+  const columns = [
+    "Название книги",
+    "Имя автора",
+    "Издатель",
+    "Город публикации",
+    "Год публикации",
+    "Количество страниц",
+    "Язык книги",
+  ];
+  const MAX_ROWS = 1400;
+  const CHUNK_SIZE = 200;
+
+  const dispatchReady = (totalRows) => {
+    bookTableBody.dispatchEvent(
+      new CustomEvent("booktable:ready", {
+        bubbles: true,
+        detail: { totalRows },
+      })
+    );
+  };
 
   fetch("Book.xls")
     .then((response) => {
@@ -354,20 +515,77 @@ function initBookTable() {
       const workbook = XLSX.read(data, { type: "array" });
       const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
       const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+      const rows = jsonData.slice(0, MAX_ROWS).map((row) =>
+        columns.map((column) => row[column] || "")
+      );
+
+      if (!rows.length) {
+        tablePanel?.classList.remove("is-loading");
+        tablePanel?.classList.add("is-ready");
+        bookTableBody.innerHTML = "";
+        setTableStatus("Каталог пуст", "error");
+        dispatchReady(0);
+        return;
+      }
+
       bookTableBody.innerHTML = "";
-      jsonData.slice(0, 1400).forEach((row) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${row["Название книги"] || ""}</td>
-                        <td>${row["Имя автора"] || ""}</td>
-                        <td>${row["Издатель"] || ""}</td>
-                        <td>${row["Город публикации"] || ""}</td>
-                        <td>${row["Год публикации"] || ""}</td>
-                        <td>${row["Количество страниц"] || ""}</td>
-                        <td>${row["Язык книги"] || ""}</td>`;
-        bookTableBody.appendChild(tr);
-      });
+      let startIndex = 0;
+      const totalRows = rows.length;
+
+      const renderChunk = () => {
+        const fragment = document.createDocumentFragment();
+        const limit = Math.min(startIndex + CHUNK_SIZE, totalRows);
+        for (let i = startIndex; i < limit; i += 1) {
+          const tr = document.createElement("tr");
+          tr.dataset.rowIndex = String(i);
+          tr.tabIndex = 0;
+          rows[i].forEach((cellValue) => {
+            const td = document.createElement("td");
+            td.textContent = cellValue;
+            tr.appendChild(td);
+          });
+          tr.addEventListener("click", () => selectRow(tr));
+          tr.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              selectRow(tr);
+            }
+          });
+          fragment.appendChild(tr);
+        }
+        bookTableBody.appendChild(fragment);
+        startIndex = limit;
+        if (startIndex < totalRows) {
+          window.requestAnimationFrame(renderChunk);
+        } else {
+          tablePanel?.classList.remove("is-loading");
+          tablePanel?.classList.add("is-ready");
+          setTableStatus(`Показаны ${totalRows} записей`, "success");
+          dispatchReady(totalRows);
+          const firstRow = bookTableBody.querySelector("tr");
+          if (firstRow) {
+            selectRow(firstRow);
+          } else {
+            resetSelection();
+          }
+          renderBookCards(
+            Array.from(bookTableBody.rows).filter(
+              (row) => !row.classList.contains("skeleton-row")
+            )
+          );
+        }
+      };
+
+      renderChunk();
     })
-    .catch((error) => console.error("Error:", error));
+    .catch((error) => {
+      console.error("Error:", error);
+      tablePanel?.classList.remove("is-loading");
+      tablePanel?.classList.add("is-ready");
+      bookTableBody.innerHTML = "";
+      setTableStatus("Не удалось загрузить каталог. Попробуйте позже.", "error");
+      resetSelection();
+    });
 }
 
 function setStatusMessage(element, message, state) {
@@ -394,6 +612,148 @@ function isEmailValid(email) {
 function buildEndpoint(apiBase, path) {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
   return apiBase ? `${apiBase}${normalizedPath}` : normalizedPath;
+}
+
+function debounce(callback, delay = 200) {
+  let timeoutId;
+  return function debounced(...args) {
+    const context = this;
+    window.clearTimeout(timeoutId);
+    timeoutId = window.setTimeout(() => {
+      callback.apply(context, args);
+    }, delay);
+  };
+}
+
+function setBookDetail(detail) {
+  const detailPanel = document.getElementById("book-detail");
+  if (!detailPanel) {
+    return;
+  }
+  const emptyState = detailPanel.querySelector(".detail-empty");
+  const titleElement = detailPanel.querySelector(".detail-title");
+  const content = detailPanel.querySelector(".detail-content");
+  if (!content) {
+    return;
+  }
+
+  if (!detail) {
+    if (titleElement) {
+      titleElement.textContent = "Выберите книгу";
+    }
+    if (emptyState) {
+      emptyState.hidden = false;
+    }
+    content.hidden = true;
+    content.querySelectorAll("[data-detail-field]").forEach((field) => {
+      field.textContent = "—";
+    });
+    detailPanel.classList.remove("has-data");
+    return;
+  }
+
+  if (titleElement) {
+    titleElement.textContent = detail.title || "Без названия";
+  }
+  content.querySelectorAll("[data-detail-field]").forEach((field) => {
+    const key = field.getAttribute("data-detail-field");
+    field.textContent = detail[key] || "—";
+  });
+  detailPanel.classList.add("has-data");
+  if (emptyState) {
+    emptyState.hidden = true;
+  }
+  content.hidden = false;
+}
+
+function getRowDetail(row) {
+  if (!row) {
+    return null;
+  }
+  const cells = row.getElementsByTagName("td");
+  const detail = {};
+  BOOK_FIELD_KEYS.forEach((key, index) => {
+    detail[key] = cells[index]?.textContent?.trim() || "—";
+  });
+  return detail;
+}
+
+function syncSelectionAfterFilter(tableBody) {
+  if (!tableBody) {
+    return;
+  }
+  const selectedRow = tableBody.querySelector("tr.is-selected");
+  if (selectedRow && selectedRow.hidden) {
+    selectedRow.classList.remove("is-selected");
+    setBookDetail();
+  }
+}
+
+function renderBookCards(rows) {
+  const cardContainer = document.getElementById("book-card-container");
+  if (!cardContainer) {
+    return;
+  }
+  const cardStatus = document.getElementById("card-status");
+  const visibleRows = rows.filter(
+    (row) => !row.hidden && !row.classList.contains("skeleton-row")
+  );
+  const maxCards = Number(cardContainer.dataset.maxCards) || 12;
+
+  if (!visibleRows.length) {
+    cardContainer.innerHTML = "";
+    if (cardStatus) {
+      cardStatus.textContent = "Карточки появятся после выбора книги";
+    }
+    return;
+  }
+
+  const fragment = document.createDocumentFragment();
+  const cardsToRender = Math.min(visibleRows.length, maxCards);
+  for (let i = 0; i < cardsToRender; i += 1) {
+    fragment.appendChild(createBookCard(getRowDetail(visibleRows[i])));
+  }
+  cardContainer.innerHTML = "";
+  cardContainer.appendChild(fragment);
+  if (cardStatus) {
+    cardStatus.textContent = `Показаны ${cardsToRender} из ${visibleRows.length} найденных книг`;
+  }
+}
+
+function createBookCard(detail) {
+  const card = document.createElement("article");
+  card.className = "book-card";
+  const title = document.createElement("h3");
+  title.textContent = detail?.title || "Без названия";
+  card.appendChild(title);
+
+  const meta = document.createElement("p");
+  meta.className = "book-card__meta";
+  const author = detail?.author || "Автор неизвестен";
+  const year = detail?.year || "—";
+  meta.textContent = `${author} • ${year}`;
+  card.appendChild(meta);
+
+  const detailsList = document.createElement("ul");
+  detailsList.className = "book-card__details";
+  [
+    ["Издатель", detail?.publisher],
+    ["Город", detail?.city],
+    ["Язык", detail?.language],
+    ["Страниц", detail?.pages],
+  ].forEach(([label, value]) => {
+    const item = document.createElement("li");
+    const labelSpan = document.createElement("span");
+    labelSpan.textContent = label;
+    const valueElement = document.createElement("strong");
+    valueElement.textContent = value || "—";
+    item.appendChild(labelSpan);
+    item.appendChild(valueElement);
+    detailsList.appendChild(item);
+  });
+  card.appendChild(detailsList);
+
+  return card;
 }
 
 window.sendMail = () => {

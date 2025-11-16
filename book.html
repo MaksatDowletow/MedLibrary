@@ -8,19 +8,8 @@
     <meta name="author" content="Maksat Döwletow">
     <title>Медицинская электронная библиотека — список книг</title>
     <link rel="stylesheet" href="styles.css">
-    <style>
-        table tr:hover {
-            background-color: #f1f1f1;
-        }
-        table tr:nth-child(even) {
-            background-color: #a5aa95;
-        }
-        table tr:nth-child(odd) {
-            background-color: #fff;
-        }
-    </style>
 </head>
-<body>
+<body class="book-page">
   <header>
     <select id="language-select">
       <option value="tm">Türkmençe</option>
@@ -43,25 +32,141 @@
     <a href="book.html" data-lang="tm" class="lang">Kitaplar</a>
     <a href="https://sites.google.com/view/lukmanylyksanlykitaphanasy/ba%C5%9F-sahypa" target="_blank" class="external-link" style="color: blue; font-weight: bold;">Другой сайт библиотеки</a>
   </nav>
-  <section class="search" aria-label="Поиск по книгам">
-      <input type="text" id="searchInput" placeholder="Gözleg..." aria-label="Поиск по названию или автору">
-  </section>
-  <div style="height: 300px; overflow-y: auto;">
-    <table id="book-table" class="styled-table">
-      <thead>
-        <tr>
-          <th>Название книги</th>
-          <th>Имя автора</th>
-          <th>Издатель</th>
-          <th>Город публикации</th>
-          <th>Год публикации</th>
-          <th>Количество страниц</th>
-          <th>Язык книги</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
+  <main class="page-container" aria-label="Каталог книг">
+    <section class="table-panel">
+      <div class="panel-header">
+        <div>
+          <p data-lang="ru" class="lang panel-subtitle">Быстрый поиск по каталогу библиотеки</p>
+          <p data-lang="en" class="lang panel-subtitle">Quick search across the library catalogue</p>
+          <p data-lang="tm" class="lang panel-subtitle">Kitaphana katalogy boýunça çalt gözleg</p>
+        </div>
+        <p id="book-status" class="table-status" role="status" aria-live="polite">Загружаем каталог...</p>
+      </div>
+      <section class="search" aria-label="Поиск по книгам">
+        <label for="searchInput" class="visually-hidden">Поиск по названию или автору</label>
+        <div class="search-field">
+          <input type="text" id="searchInput" placeholder="Gözleg..." autocomplete="off">
+          <button type="button" id="clear-search" class="search-clear" aria-label="Очистить поиск">&times;</button>
+        </div>
+      </section>
+      <section class="filter-panel" aria-label="Расширенный поиск">
+        <div class="filter-panel__header">
+          <div>
+            <p class="detail-tag">Фильтр по столбцам</p>
+            <h2>Отберите книги по любому параметру</h2>
+          </div>
+          <button type="button" id="reset-filters" class="ghost-button">Сбросить фильтры</button>
+        </div>
+        <div class="filter-grid">
+          <label class="filter-field">
+            <span>Название книги</span>
+            <input type="text" id="filter-title" class="column-filter" data-column-filter="0" placeholder="Кардиология" autocomplete="off">
+          </label>
+          <label class="filter-field">
+            <span>Имя автора</span>
+            <input type="text" id="filter-author" class="column-filter" data-column-filter="1" placeholder="Например: Павлов" autocomplete="off">
+          </label>
+          <label class="filter-field">
+            <span>Издатель</span>
+            <input type="text" id="filter-publisher" class="column-filter" data-column-filter="2" placeholder="Медицина" autocomplete="off">
+          </label>
+          <label class="filter-field">
+            <span>Город</span>
+            <input type="text" id="filter-city" class="column-filter" data-column-filter="3" placeholder="Москва" autocomplete="off">
+          </label>
+          <label class="filter-field">
+            <span>Год</span>
+            <input type="text" id="filter-year" class="column-filter" data-column-filter="4" placeholder="2010" inputmode="numeric" autocomplete="off">
+          </label>
+          <label class="filter-field">
+            <span>Язык</span>
+            <input type="text" id="filter-language" class="column-filter" data-column-filter="6" placeholder="Русский" autocomplete="off">
+          </label>
+        </div>
+      </section>
+      <div class="table-wrapper" role="region" aria-live="polite">
+        <table id="book-table" class="styled-table">
+          <thead>
+            <tr>
+              <th>Название книги</th>
+              <th>Имя автора</th>
+              <th>Издатель</th>
+              <th>Город публикации</th>
+              <th>Год публикации</th>
+              <th>Количество страниц</th>
+              <th>Язык книги</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="skeleton-row" aria-hidden="true">
+              <td colspan="7"></td>
+            </tr>
+            <tr class="skeleton-row" aria-hidden="true">
+              <td colspan="7"></td>
+            </tr>
+            <tr class="skeleton-row" aria-hidden="true">
+              <td colspan="7"></td>
+            </tr>
+            <tr class="skeleton-row" aria-hidden="true">
+              <td colspan="7"></td>
+            </tr>
+            <tr class="skeleton-row" aria-hidden="true">
+              <td colspan="7"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <section class="detail-panel" id="book-detail" aria-live="polite">
+        <div class="detail-header">
+          <div>
+            <p class="detail-tag">Карточка книги</p>
+            <h2 class="detail-title">Выберите книгу</h2>
+          </div>
+          <p class="detail-empty">Кликните по строке таблицы или примените фильтры, чтобы увидеть подробности.</p>
+        </div>
+        <dl class="detail-content" hidden>
+          <div>
+            <dt>Название</dt>
+            <dd data-detail-field="title">—</dd>
+          </div>
+          <div>
+            <dt>Автор</dt>
+            <dd data-detail-field="author">—</dd>
+          </div>
+          <div>
+            <dt>Издатель</dt>
+            <dd data-detail-field="publisher">—</dd>
+          </div>
+          <div>
+            <dt>Город</dt>
+            <dd data-detail-field="city">—</dd>
+          </div>
+          <div>
+            <dt>Год</dt>
+            <dd data-detail-field="year">—</dd>
+          </div>
+          <div>
+            <dt>Страниц</dt>
+            <dd data-detail-field="pages">—</dd>
+          </div>
+          <div>
+            <dt>Язык</dt>
+            <dd data-detail-field="language">—</dd>
+          </div>
+        </dl>
+      </section>
+      <section class="card-panel" aria-live="polite">
+        <div class="cards-header">
+          <div>
+            <p class="detail-tag">Найденные книги</p>
+            <h2>Карточки результатов</h2>
+          </div>
+          <p id="card-status" class="card-status">Карточки появятся после загрузки таблицы.</p>
+        </div>
+        <div id="book-card-container" class="book-card-grid" data-max-cards="12"></div>
+      </section>
+    </section>
+  </main>
   <footer>
     <div class="footer-container">
       <div class="contact-info">
