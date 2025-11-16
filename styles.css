@@ -52,6 +52,76 @@ body.book-page {
     color: #111;
 }
 
+.header-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.auth-open-button {
+    border-radius: 999px;
+    border: 1px solid #ffffffb3;
+    background: transparent;
+    color: #fff;
+    padding: 0.45rem 1.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    gap: 0.35rem;
+    align-items: center;
+    justify-content: center;
+    transition: background-color var(--transition), color var(--transition);
+}
+
+.auth-open-button:hover,
+.auth-open-button:focus-visible {
+    background-color: #fff;
+    color: #0d324d;
+}
+
+.auth-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    z-index: 1000;
+}
+
+.auth-modal[hidden] {
+    display: none;
+}
+
+.auth-modal__dialog {
+    position: relative;
+    max-width: 420px;
+    width: 100%;
+}
+
+.auth-modal__close {
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    border-radius: 50%;
+    border: none;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    background: #ffffff;
+    color: #0d324d;
+    font-size: 1.4rem;
+    line-height: 1;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+
 @media (min-width: 768px) {
     .book-page header {
         justify-content: space-between;
@@ -61,8 +131,8 @@ body.book-page {
 
 #auth {
     max-width: 360px;
-    margin: 1rem auto;
-    background: #ffffff10;
+    margin: 0 auto;
+    background: #ffffff;
     padding: 1.5rem;
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);

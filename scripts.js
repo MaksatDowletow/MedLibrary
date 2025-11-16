@@ -112,16 +112,69 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.dataset.apiBase = apiBase;
   }
 
+  const authModal = initAuthModal();
+
   initLanguageSwitcher();
   initGallerySlider();
   initAuthTabs();
-  initRegistrationForm(apiBase);
-  const refreshSession = initLoginForm(apiBase) || (() => {});
-  initFederatedLogin(apiBase, refreshSession);
+  initRegistrationForm(apiBase, authModal);
+  const refreshSession = initLoginForm(apiBase, authModal) || (() => {});
+  initFederatedLogin(apiBase, refreshSession, authModal);
   initSearchFilter();
   initColumnSearchFilters();
   initBookTable();
 });
+
+function initAuthModal() {
+  const modal = document.getElementById("auth-modal");
+  const openButton = document.getElementById("auth-open-button");
+  const closeButton = document.getElementById("auth-close-button");
+  const authTriggers = document.querySelectorAll(".auth-trigger");
+
+  const fallbackControls = { open: () => {}, close: () => {} };
+
+  if (!modal) {
+    return fallbackControls;
+  }
+
+  const setVisibility = (isVisible) => {
+    modal.hidden = !isVisible;
+    modal.setAttribute("aria-hidden", isVisible ? "false" : "true");
+    document.body?.classList.toggle("modal-open", isVisible);
+  };
+
+  const openModal = () => setVisibility(true);
+  const closeModal = () => setVisibility(false);
+
+  const attachOpenHandler = (element) => {
+    if (!element) {
+      return;
+    }
+    element.addEventListener("click", (event) => {
+      event.preventDefault();
+      openModal();
+    });
+  };
+
+  attachOpenHandler(openButton);
+  authTriggers.forEach((trigger) => attachOpenHandler(trigger));
+
+  closeButton?.addEventListener("click", () => closeModal());
+
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) {
+      closeModal();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !modal.hidden) {
+      closeModal();
+    }
+  });
+
+  return { open: openModal, close: closeModal };
+}
 
 function initLanguageSwitcher() {
   const languageSelect = document.getElementById("language-select");
@@ -248,7 +301,7 @@ function initAuthTabs() {
   activateTab(initialTab);
 }
 
-function initRegistrationForm(apiBase) {
+function initRegistrationForm(apiBase, modalControls = {}) {
   const form = document.getElementById("register-form");
   if (!form) {
     return;
@@ -260,6 +313,8 @@ function initRegistrationForm(apiBase) {
   const statusElement = document.getElementById("register-status");
   const registerButton = document.getElementById("register-button");
   const registerEndpoint = buildEndpoint(apiBase, "/register");
+
+  const closeModal = typeof modalControls.close === "function" ? modalControls.close : () => {};
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -308,6 +363,7 @@ function initRegistrationForm(apiBase) {
       clearLocalSession();
       form.reset();
       document.getElementById("login-tab")?.click();
+      closeModal();
     } catch (error) {
       if (isNetworkError(error)) {
         try {
@@ -315,6 +371,7 @@ function initRegistrationForm(apiBase) {
           setStatusMessage(statusElement, message, "success");
           form.reset();
           document.getElementById("login-tab")?.click();
+          closeModal();
         } catch (fallbackError) {
           setStatusMessage(statusElement, fallbackError.message, "error");
         }
@@ -331,7 +388,7 @@ function initRegistrationForm(apiBase) {
   });
 }
 
-function initLoginForm(apiBase) {
+function initLoginForm(apiBase, modalControls = {}) {
   const form = document.getElementById("login-form");
   if (!form) {
     return null;
@@ -408,6 +465,8 @@ function initLoginForm(apiBase) {
     }
   });
 
+  const closeModal = typeof modalControls.close === "function" ? modalControls.close : () => {};
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -449,6 +508,7 @@ function initLoginForm(apiBase) {
       setStatusMessage(statusElement, data?.message || "Вход выполнен", "success");
       refreshSession(false);
       form.reset();
+      closeModal();
     } catch (error) {
       if (isNetworkError(error)) {
         try {
@@ -456,6 +516,7 @@ function initLoginForm(apiBase) {
           setStatusMessage(statusElement, message, "success");
           renderLocalSession(sessionStatus, logoutButton, session);
           form.reset();
+          closeModal();
         } catch (fallbackError) {
           setStatusMessage(statusElement, fallbackError.message, "error");
         }
@@ -475,7 +536,7 @@ function initLoginForm(apiBase) {
   return refreshSession;
 }
 
-function initFederatedLogin(apiBase, refreshSession = () => {}) {
+function initFederatedLogin(apiBase, refreshSession = () => {}, modalControls = {}) {
   const container = document.getElementById("google-signin-button");
   if (!container) {
     return;
@@ -485,6 +546,7 @@ function initFederatedLogin(apiBase, refreshSession = () => {}) {
   const sessionStatus = document.getElementById("auth-session-status");
   const logoutButton = document.getElementById("logout-button");
   const googleClientId = resolveGoogleClientId();
+  const closeModal = typeof modalControls.close === "function" ? modalControls.close : () => {};
 
   if (!googleClientId) {
     container.textContent =
@@ -538,6 +600,7 @@ function initFederatedLogin(apiBase, refreshSession = () => {}) {
           logoutButton.hidden = false;
         }
       }
+      closeModal();
     } catch (error) {
       setStatusMessage(
         loginStatus,
