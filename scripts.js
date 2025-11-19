@@ -1088,8 +1088,7 @@ function buildCategoriesFromBooks(books = []) {
   );
 }
 
-async function loadCategoryList() {
-  const apiBase = resolveApiBase(document.body?.dataset.apiBase);
+async function loadCategoryList(apiBase = resolveApiBase(document.body?.dataset.apiBase)) {
   const fromApi = await fetchSpecialtiesFromApi(apiBase);
   if (fromApi.length) {
     return fromApi;
@@ -1107,7 +1106,21 @@ async function loadCategoryList() {
     return jsonCategories;
   }
 
-  return CATEGORY_FALLBACK.map((item) => ({ ...item, count: 0 }));
+  return CATEGORY_FALLBACK.map((item) => ({ ...item, count: null }));
+}
+
+async function loadBookCount(apiBase = resolveApiBase(document.body?.dataset.apiBase)) {
+  const apiBooks = await fetchBooksFromApi(apiBase);
+  if (apiBooks.length) {
+    return apiBooks.length;
+  }
+
+  const jsonBooks = await fetchBooksFromJson();
+  if (jsonBooks.length) {
+    return jsonBooks.length;
+  }
+
+  return 0;
 }
 
 function initCategoryFilter() {
@@ -1118,11 +1131,19 @@ function initCategoryFilter() {
   }
 
   const counter = document.getElementById("category-count");
+  const apiBase = resolveApiBase(document.body?.dataset.apiBase);
   let categories = [];
+  let bookCount = 0;
 
-  const updateCount = (visible, total) => {
+  const getVisibleRows = () =>
+    Array.from(tableBody.querySelectorAll("tr")).filter((row) => !row.hidden)
+      .length;
+  const getTotalRows = () => categories.length || tableBody.rows.length;
+
+  const updateCount = (visible = getVisibleRows(), total = getTotalRows()) => {
     if (!counter) return;
-    counter.textContent = `${visible} / ${total}`;
+    const bookInfo = bookCount ? ` · книг: ${bookCount}` : "";
+    counter.textContent = `${visible} / ${total}${bookInfo}`;
   };
 
   const renderCategories = (items) => {
@@ -1177,11 +1198,27 @@ function initCategoryFilter() {
   const debouncedFilter = debounce(filterRows, 120);
   searchInput.addEventListener("input", debouncedFilter);
 
-  loadCategoryList().then((items) => {
-    categories = items;
-    renderCategories(items);
-    filterRows();
-  });
+  loadCategoryList(apiBase)
+    .then((items) => {
+      categories = items;
+      renderCategories(items);
+      filterRows();
+    })
+    .catch((error) => {
+      console.error("Не удалось загрузить направления", error);
+      categories = CATEGORY_FALLBACK.map((item) => ({ ...item, count: null }));
+      renderCategories(categories);
+      filterRows();
+    });
+
+  loadBookCount(apiBase)
+    .then((count) => {
+      bookCount = count;
+      updateCount();
+    })
+    .catch(() => {
+      bookCount = 0;
+    });
 }
 
 function updateBookStatus(visibleRows) {
@@ -1403,6 +1440,10 @@ function resolveApiBase(attributeBase = "") {
   const params = new URLSearchParams(window.location.search);
   const overrideBase = params.get("apiBase");
   let base = (overrideBase || attributeBase || "").trim();
+
+  if (window.location.hostname.endsWith("github.io")) {
+    return "";
+  }
 
   if (!base) {
     base = window.location.origin;
