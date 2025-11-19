@@ -465,6 +465,7 @@
     </div>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.19.3/dist/xlsx.full.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script>
     const translations = {
       ru: {
@@ -626,6 +627,24 @@
     const excelSources = ['Book.xlsx'];
     const fallbackCoverImages = ['1.webp', '2.webp', '3.webp', '4.webp', '5.webp', '6.webp', '1.png', '2.png', '3.png', '4.png', '5.png', '6.png'];
     const fallbackCoverCache = new Map();
+    const accentPattern = /[\u0300-\u036f]/g;
+    const REMOTE_COVER_CACHE_KEY = 'medlibrary.remoteCovers';
+    const REMOTE_COVER_CACHE_VERSION = '1';
+    const remoteCoverCache = new Map();
+    const coverFetchPromises = new Map();
+    const idleCallback = window.requestIdleCallback || ((cb) => window.setTimeout(cb, 280));
+    let remoteCoverCacheLoaded = false;
+    let coverObserver = null;
+    if (typeof IntersectionObserver !== 'undefined') {
+      coverObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            observer.unobserve(entry.target);
+            upgradeCoverImage(entry.target);
+          }
+        });
+      }, { rootMargin: '200px' });
+    }
     let excelImageMap = new Map();
     const EXCEL_REL_NS = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
     const DRAWING_REL_TYPE = `${EXCEL_REL_NS}/drawing`;
@@ -644,6 +663,13 @@
         language: ''
       }
     };
+
+    function normalizeText(value) {
+      if (typeof value !== 'string') {
+        value = value == null ? '' : String(value);
+      }
+      return value.trim().toLowerCase().normalize('NFD').replace(accentPattern, '');
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
       initLanguageSwitcher();
@@ -688,7 +714,7 @@
         input.addEventListener('input', (event) => {
           const target = event.currentTarget;
           const name = target.dataset.filter;
-          state.filters[name] = target.value.trim().toLowerCase();
+          state.filters[name] = normalizeText(target.value);
           renderBooks();
         });
       });
@@ -1307,23 +1333,29 @@
         grid.appendChild(fragment);
       }
       updateCountStatus(books.length, state.books.length);
+      hydrateCoverImages();
     }
 
     function getFilteredBooks() {
       return state.books.filter((book) => {
-        if (state.filters.title && !(book.title || '').toLowerCase().includes(state.filters.title)) {
+        const normalizedTitle = normalizeText(book.title);
+        if (state.filters.title && !normalizedTitle.includes(state.filters.title)) {
           return false;
         }
-        if (state.filters.author && !(book.author || '').toLowerCase().includes(state.filters.author)) {
+        const normalizedAuthor = normalizeText(book.author);
+        if (state.filters.author && !normalizedAuthor.includes(state.filters.author)) {
           return false;
         }
-        if (state.filters.year && !(book.year || '').toLowerCase().includes(state.filters.year)) {
+        const normalizedYear = normalizeText(book.year);
+        if (state.filters.year && !normalizedYear.includes(state.filters.year)) {
           return false;
         }
-        if (state.filters.specialty && !(book.specialty || '').toLowerCase().includes(state.filters.specialty)) {
+        const normalizedSpecialty = normalizeText(book.specialty);
+        if (state.filters.specialty && !normalizedSpecialty.includes(state.filters.specialty)) {
           return false;
         }
-        if (state.filters.language && !(book.language || '').toLowerCase().includes(state.filters.language)) {
+        const normalizedLanguage = normalizeText(book.language);
+        if (state.filters.language && !normalizedLanguage.includes(state.filters.language)) {
           return false;
         }
         return true;
@@ -1346,6 +1378,10 @@
       const safeYear = escapeHtml(book.year || dict.cardYear);
       const safeSpecialty = escapeHtml(specialty);
       const coverSource = escapeHtml(book.cover || getFallbackCover(book.title || book.author || specialty || 'default'));
+      const coverQuery = [book.title, book.author, book.specialty]
+        .filter((value) => Boolean(value && value.trim()))
+        .join(' ')
+        .trim();
       const coverAlt = escapeHtml(book.title || dict.cardCoverAlt);
       article.innerHTML = `
         <div class="book-card__media">
@@ -1388,7 +1424,165 @@
       button.rel = 'noopener';
       actions.appendChild(button);
       article.appendChild(actions);
+      const image = article.querySelector('.book-card__media img');
+      if (image && coverQuery) {
+        image.dataset.coverQuery = coverQuery;
+        image.dataset.coverTitle = book.title || '';
+        image.dataset.coverAuthor = book.author || '';
+      }
       return article;
+    }
+
+    function hydrateCoverImages() {
+      const images = document.querySelectorAll('.book-card__media img[data-cover-query]');
+      images.forEach((image) => {
+        if (!image || image.dataset.coverHydrated === 'true') {
+          return;
+        }
+        if (coverObserver) {
+          coverObserver.observe(image);
+        } else {
+          upgradeCoverImage(image);
+        }
+      });
+    }
+
+    async function upgradeCoverImage(image) {
+      if (!image || image.dataset.coverHydrated === 'true') {
+        return;
+      }
+      const rawQuery = image.dataset.coverQuery || `${image.dataset.coverTitle || ''} ${image.dataset.coverAuthor || ''}`;
+      const cacheKey = normalizeText(rawQuery);
+      if (!cacheKey) {
+        return;
+      }
+      const cached = getCachedCover(cacheKey);
+      if (cached) {
+        image.src = cached;
+        image.dataset.coverHydrated = 'true';
+        return;
+      }
+      if (!coverFetchPromises.has(cacheKey)) {
+        coverFetchPromises.set(cacheKey, fetchRemoteCover(image.dataset.coverTitle, image.dataset.coverAuthor));
+      }
+      try {
+        const remoteUrl = await coverFetchPromises.get(cacheKey);
+        if (remoteUrl) {
+          image.src = remoteUrl;
+          image.dataset.coverHydrated = 'true';
+          cacheRemoteCover(cacheKey, remoteUrl);
+        }
+      } catch (error) {
+        console.warn('Unable to load remote cover', error);
+      } finally {
+        coverFetchPromises.delete(cacheKey);
+      }
+    }
+
+    function ensureRemoteCoverCache() {
+      if (remoteCoverCacheLoaded) {
+        return;
+      }
+      remoteCoverCacheLoaded = true;
+      try {
+        const raw = localStorage.getItem(REMOTE_COVER_CACHE_KEY);
+        if (!raw) {
+          return;
+        }
+        const parsed = JSON.parse(raw);
+        if (parsed?.version !== REMOTE_COVER_CACHE_VERSION || !Array.isArray(parsed?.entries)) {
+          return;
+        }
+        parsed.entries.forEach(([key, value]) => {
+          if (typeof key === 'string' && typeof value === 'string') {
+            remoteCoverCache.set(key, value);
+          }
+        });
+      } catch (error) {
+        console.warn('Unable to parse cover cache', error);
+      }
+    }
+
+    function getCachedCover(key) {
+      if (!key) {
+        return '';
+      }
+      ensureRemoteCoverCache();
+      return remoteCoverCache.get(key) || '';
+    }
+
+    const scheduleCoverCachePersist = (() => {
+      let pending = false;
+      return () => {
+        if (pending) {
+          return;
+        }
+        pending = true;
+        idleCallback(() => {
+          pending = false;
+          persistCoverCache();
+        });
+      };
+    })();
+
+    function cacheRemoteCover(key, url) {
+      if (!key || !url) {
+        return;
+      }
+      ensureRemoteCoverCache();
+      remoteCoverCache.set(key, url);
+      scheduleCoverCachePersist();
+    }
+
+    function persistCoverCache() {
+      if (!remoteCoverCacheLoaded) {
+        return;
+      }
+      const entries = Array.from(remoteCoverCache.entries()).slice(-200);
+      try {
+        localStorage.setItem(
+          REMOTE_COVER_CACHE_KEY,
+          JSON.stringify({ version: REMOTE_COVER_CACHE_VERSION, entries })
+        );
+      } catch (error) {
+        console.warn('Unable to persist cover cache', error);
+      }
+    }
+
+    async function fetchRemoteCover(title, author) {
+      const normalizedTitle = (title || '').trim();
+      const normalizedAuthor = (author || '').trim();
+      if (!normalizedTitle && !normalizedAuthor) {
+        return '';
+      }
+      const params = new URLSearchParams({ limit: '1' });
+      if (normalizedTitle) {
+        params.set('title', title);
+      }
+      if (normalizedAuthor) {
+        params.set('author', author);
+      }
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(() => controller.abort(), 4500);
+      try {
+        const response = await fetch(`https://openlibrary.org/search.json?${params.toString()}`, {
+          signal: controller.signal
+        });
+        if (!response.ok) {
+          throw new Error('Network error while fetching cover');
+        }
+        const payload = await response.json();
+        const doc = payload?.docs?.[0];
+        if (doc?.cover_i) {
+          return `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg`;
+        }
+        if (Array.isArray(doc?.isbn) && doc.isbn.length) {
+          return `https://covers.openlibrary.org/b/isbn/${encodeURIComponent(doc.isbn[0])}-L.jpg`;
+        }
+        return '';
+      } finally {
+        window.clearTimeout(timeoutId);
+      }
     }
 
     function updateStatus(key) {

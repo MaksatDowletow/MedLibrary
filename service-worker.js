@@ -1,53 +1,84 @@
-const CACHE_NAME = "medlibrary-v1";
-
-const URLS_TO_CACHE = [
-  "/MedLibrary/",
-  "/MedLibrary/index.html",
-  "/MedLibrary/book.html",
-  "/MedLibrary/books.html",
-  "/MedLibrary/books2.html",
-  "/MedLibrary/BookCategory.html",
-  "/MedLibrary/auth.html",
-  "/MedLibrary/auth.js",
-  "/MedLibrary/styles.css",
-  "/MedLibrary/scripts.js",
-  "/MedLibrary/lang.js",
-  "/MedLibrary/pwa.js",
-  "/MedLibrary/manifest.webmanifest",
-  "/MedLibrary/icons/icon-192.svg",
-  "/MedLibrary/icons/icon-512.svg"
+const CACHE_NAME = 'medlibrary-v3';
+const APP_SHELL = [
+  './',
+  './index.html',
+  './book.html',
+  './BookCategory.html',
+  './styles.css',
+  './scripts.js',
+  './pwa.js',
+  './manifest.webmanifest',
+  './Book.xlsx',
+  './icons/icon-192.svg',
+  './icons/icon-512.svg'
 ];
 
-self.addEventListener("install", (event) => {
+self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(URLS_TO_CACHE))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)).then(() => self.skipWaiting())
   );
 });
 
-self.addEventListener("activate", (event) => {
+self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches
       .keys()
-      .then((cacheNames) =>
+      .then((keys) =>
         Promise.all(
-          cacheNames.map((cacheName) => {
-            if (cacheName !== CACHE_NAME) {
-              return caches.delete(cacheName);
+          keys.map((key) => {
+            if (key !== CACHE_NAME) {
+              return caches.delete(key);
             }
             return null;
           })
         )
       )
+      .then(() => self.clients.claim())
   );
 });
 
-self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      if (response) {
-        return response;
-      }
-      return fetch(event.request);
-    })
-  );
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  if (request.method !== 'GET') {
+    return;
+  }
+
+  const url = new URL(request.url);
+
+  if (url.origin !== self.location.origin) {
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
+  const normalizedPath = url.pathname === '/' ? './' : `.${url.pathname}`;
+  if (APP_SHELL.includes(normalizedPath) || request.destination === 'document') {
+    event.respondWith(networkFirst(request));
+  } else {
+    event.respondWith(cacheFirst(request));
+  }
 });
+
+function networkFirst(request) {
+  return fetch(request)
+    .then((response) => {
+      const copy = response.clone();
+      caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+      return response;
+    })
+    .catch(() => caches.match(request).then((cached) => cached || caches.match('./index.html')));
+}
+
+function cacheFirst(request) {
+  return caches.match(request).then((cached) => {
+    if (cached) {
+      return cached;
+    }
+    return fetch(request)
+      .then((response) => {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+        return response;
+      })
+      .catch(() => caches.match('./index.html'));
+  });
+}

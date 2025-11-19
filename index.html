@@ -3,433 +3,401 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#050b1d">
   <meta
     name="description"
-    content="Lukmançylyk kitaphanasy - 1000-den gowrak kitaplara oflayn elýeterlik. Kitaplary gözlemek we kategoriýalar boýunça seretmek mümkinçiligi."
+    content="MedLibrary — современная медицинская электронная библиотека с офлайн‑доступом, PWA, быстрым поиском и более чем 1000 книгами."
   >
-  <meta
-    name="keywords"
-    content="lukmançylyk, kitaplar, kategoriýalar, oflayn, bilim, Медицинская электронная библиотека"
-  >
-  <meta name="author" content="Maksat Döwletow">
-  <meta name="google-client-id" content="">
-  <meta name="theme-color" content="#0d47a1">
-  <title>Медицинская электронная библиотека</title>
+  <title>MedLibrary — медицинская электронная библиотека</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <link rel="manifest" href="/MedLibrary/manifest.webmanifest">
+  <link rel="manifest" href="manifest.webmanifest">
 </head>
-<body data-api-base="http://localhost:5000" data-google-client-id="">
-  <header>
-    <div class="header-controls">
-      <select id="language-select">
+<body class="home" data-api-base="http://localhost:5000" data-google-client-id="">
+  <header class="site-header">
+    <div class="site-header__brand">
+      <p class="eyebrow lang" data-lang="ru">Цифровая платформа знаний</p>
+      <p class="eyebrow lang" data-lang="en">Digital knowledge platform</p>
+      <p class="eyebrow lang" data-lang="tm">Sanly bilim platformasy</p>
+      <h1 class="site-header__title lang" data-lang="ru">Медицинская электронная библиотека</h1>
+      <h1 class="site-header__title lang" data-lang="en">Medical e-Library</h1>
+      <h1 class="site-header__title lang" data-lang="tm">Elektron lukmançylyk kitaphanasy</h1>
+    </div>
+    <div class="site-header__actions">
+      <select id="language-select" aria-label="Сменить язык">
         <option value="tm">Türkmençe</option>
-        <option value="ru">Русский</option>
+        <option value="ru" selected>Русский</option>
         <option value="en">English</option>
       </select>
-      <button id="auth-open-button" class="auth-open-button" type="button">
-        <span data-lang="ru" class="lang">Регистрация / Вход</span>
-        <span data-lang="en" class="lang">Sign up / Sign in</span>
-        <span data-lang="tm" class="lang">Hasaba al / Içeri gir</span>
+      <button
+        id="install-button"
+        class="button button--ghost"
+        type="button"
+        hidden
+        data-install-trigger
+      >
+        <span class="lang" data-lang="ru">Скачать приложение</span>
+        <span class="lang" data-lang="en">Download app</span>
+        <span class="lang" data-lang="tm">Programmany ýükläň</span>
+      </button>
+      <button id="auth-open-button" class="button button--outline auth-open-button" type="button">
+        <span class="lang" data-lang="ru">Регистрация / вход</span>
+        <span class="lang" data-lang="en">Sign up / Sign in</span>
+        <span class="lang" data-lang="tm">Hasaba al / Içeri gir</span>
       </button>
     </div>
-
-    <h1 data-lang="ru" class="lang">Медицинская электронная библиотека</h1>
-    <h1 data-lang="en" class="lang">Medical e-Library</h1>
-    <h1 data-lang="tm" class="lang">Elektron lukmançylyk kitaphanasy</h1>
+    <nav class="site-nav" aria-label="Основная навигация">
+      <a href="#hero">
+        <span class="lang" data-lang="ru">Обзор</span>
+        <span class="lang" data-lang="en">Overview</span>
+        <span class="lang" data-lang="tm">Gysgaça</span>
+      </a>
+      <a href="#features">
+        <span class="lang" data-lang="ru">Функции</span>
+        <span class="lang" data-lang="en">Features</span>
+        <span class="lang" data-lang="tm">Mümkinçilikler</span>
+      </a>
+      <a href="#gallery">
+        <span class="lang" data-lang="ru">Галерея</span>
+        <span class="lang" data-lang="en">Gallery</span>
+        <span class="lang" data-lang="tm">Suratlar</span>
+      </a>
+      <a href="#contact">
+        <span class="lang" data-lang="ru">Контакты</span>
+        <span class="lang" data-lang="en">Contacts</span>
+        <span class="lang" data-lang="tm">Habarlaşyň</span>
+      </a>
+      <a href="BookCategory.html">
+        <span class="lang" data-lang="ru">Категории</span>
+        <span class="lang" data-lang="en">Categories</span>
+        <span class="lang" data-lang="tm">Kategoriýalar</span>
+      </a>
+      <a href="book.html">
+        <span class="lang" data-lang="ru">Каталог</span>
+        <span class="lang" data-lang="en">Catalog</span>
+        <span class="lang" data-lang="tm">Katalog</span>
+      </a>
+      <a
+        href="https://sites.google.com/view/lukmanylyksanlykitaphanasy/ba%C5%9F-sahypa"
+        target="_blank"
+        rel="noopener"
+        class="site-nav__external"
+      >
+        <span class="lang" data-lang="ru">Другой сайт</span>
+        <span class="lang" data-lang="en">Alt site</span>
+        <span class="lang" data-lang="tm">Goşmaça sahypa</span>
+      </a>
+    </nav>
   </header>
+
+  <main>
+    <section id="hero" class="hero">
+      <div class="hero__content">
+        <p class="hero__eyebrow lang" data-lang="ru">69 направлений, 1000+ книг, офлайн‑режим</p>
+        <p class="hero__eyebrow lang" data-lang="en">69 specialties, 1K+ books, offline mode</p>
+        <p class="hero__eyebrow lang" data-lang="tm">69 ugur, 1000+ kitap, oflaýn elýeterlik</p>
+        <h2 class="hero__title lang" data-lang="ru">Ultra‑modern библиотека с поиском 2× быстрее</h2>
+        <h2 class="hero__title lang" data-lang="en">Ultra‑modern library with 2× faster search</h2>
+        <h2 class="hero__title lang" data-lang="tm">2 gezek çalt gözlegli döwrebap kitaphana</h2>
+        <p class="hero__text lang" data-lang="ru">
+          Новая архитектура кода ускоряет загрузку страниц, а адаптивный интерфейс подстраивается под мобильные и настольные
+          устройства. Каталог доступен даже без интернета и теперь устанавливается как полноценное PWA‑приложение.
+        </p>
+        <p class="hero__text lang" data-lang="en">
+          The refreshed architecture ships pages faster and adapts to any device. The catalog now works offline and can be installed
+          as a full PWA app.
+        </p>
+        <p class="hero__text lang" data-lang="tm">
+          Täzelenen arhitektura sahypalary has çalt ýükläp, ähli enjamlara uýgunlaşýar. Katalog internetsiz işleýär we PWA
+          programmasy hökmünde gurnalmaga taýýar.
+        </p>
+        <div class="hero__actions">
+          <a class="button button--primary" href="book.html">
+            <span class="lang" data-lang="ru">Открыть каталог</span>
+            <span class="lang" data-lang="en">Open catalog</span>
+            <span class="lang" data-lang="tm">Katalogy aç</span>
+          </a>
+          <button class="button button--ghost" type="button" data-install-trigger data-install-sticky>
+            <span class="lang" data-lang="ru">Скачать приложение</span>
+            <span class="lang" data-lang="en">Download app</span>
+            <span class="lang" data-lang="tm">Programmany ýükläň</span>
+          </button>
+          <a class="button button--text" href="Book.xlsx" download>
+            <span class="lang" data-lang="ru">Каталог в Excel</span>
+            <span class="lang" data-lang="en">Catalog in Excel</span>
+            <span class="lang" data-lang="tm">Excel katalogy</span>
+          </a>
+        </div>
+        <div class="hero__metrics">
+          <article class="metric-card">
+            <p class="metric-card__value">1000+</p>
+            <p class="metric-card__label lang" data-lang="ru">Книг и учебников</p>
+            <p class="metric-card__label lang" data-lang="en">Books & textbooks</p>
+            <p class="metric-card__label lang" data-lang="tm">Kitaplar</p>
+          </article>
+          <article class="metric-card">
+            <p class="metric-card__value">69</p>
+            <p class="metric-card__label lang" data-lang="ru">Медицинских направлений</p>
+            <p class="metric-card__label lang" data-lang="en">Medical specialties</p>
+            <p class="metric-card__label lang" data-lang="tm">Lukmançylyk ugurlary</p>
+          </article>
+          <article class="metric-card">
+            <p class="metric-card__value">2×</p>
+            <p class="metric-card__label lang" data-lang="ru">Быстрее поиск и фильтры</p>
+            <p class="metric-card__label lang" data-lang="en">Faster search & filters</p>
+            <p class="metric-card__label lang" data-lang="tm">Çalt gözleg</p>
+          </article>
+        </div>
+      </div>
+      <div class="hero__preview" aria-hidden="true">
+        <div class="preview-card">
+          <p>Offline&nbsp;PWA</p>
+          <strong>Install MedLibrary</strong>
+          <span>Works on desktop & mobile</span>
+        </div>
+        <div class="preview-card">
+          <p>Real covers</p>
+          <strong>Open Library API</strong>
+          <span>Automatic artwork for каждый запрос</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="section">
+      <div class="section__head">
+        <p class="eyebrow lang" data-lang="ru">Ключевые возможности</p>
+        <p class="eyebrow lang" data-lang="en">Key capabilities</p>
+        <p class="eyebrow lang" data-lang="tm">Esasy mümkinçilikler</p>
+        <h2 class="section__title lang" data-lang="ru">Умный поиск, фильтры и мульти‑язычность</h2>
+        <h2 class="section__title lang" data-lang="en">Smart search, filters and localization</h2>
+        <h2 class="section__title lang" data-lang="tm">Akylly gözleg we köp dilli interfeýs</h2>
+        <p class="section__subtitle lang" data-lang="ru">
+          Комбинируйте глобальный поиск, фильтры по колонкам и категориальный словарь. Для офлайн‑режима все кэшируется в
+          браузере и в сервис‑воркере.
+        </p>
+        <p class="section__subtitle lang" data-lang="en">
+          Mix global search, column filters and the categorized dictionary. Offline mode caches everything in the browser and the
+          service worker.
+        </p>
+        <p class="section__subtitle lang" data-lang="tm">
+          Umumy gözlegi, sütün filtrlerini we kategoriýa sözlügini utgaşdyryň. Oflaýn tertibi üçin maglumatlar brauzerde we
+          hyzmatçy işçisinde keshlenýär.
+        </p>
+      </div>
+      <div class="feature-grid" role="list">
+        <article class="feature-card" role="listitem">
+          <div class="feature-icon" aria-hidden="true">⚡</div>
+          <h3>Performance</h3>
+          <p>Ленивая загрузка, оптимизированные таблицы и мини‑кэш ускоряют интерфейс до 2–3×.</p>
+        </article>
+        <article class="feature-card" role="listitem">
+          <div class="feature-icon" aria-hidden="true">📱</div>
+          <h3>PWA</h3>
+          <p>Установите библиотеку как приложение: сервис‑воркер кэширует страницы и офлайн‑каталог.</p>
+        </article>
+        <article class="feature-card" role="listitem">
+          <div class="feature-icon" aria-hidden="true">🔍</div>
+          <h3>Поиск</h3>
+          <p>Улучшенный движок сопоставляет языки, учитывает диакритику и выводит карточки по категории.</p>
+        </article>
+        <article class="feature-card" role="listitem">
+          <div class="feature-icon" aria-hidden="true">🖼️</div>
+          <h3>Обложки</h3>
+          <p>Связь с Open Library автоматически подставляет реальные обложки книг без ручного редактирования.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section section--split" id="smart-search">
+      <div>
+        <h2 class="section__title lang" data-lang="ru">Плавные фильтры</h2>
+        <h2 class="section__title lang" data-lang="en">Smooth filters</h2>
+        <h2 class="section__title lang" data-lang="tm">Ýumşak filtrler</h2>
+        <p class="section__subtitle lang" data-lang="ru">Поиск по всем колонкам Book.xlsx с подсветкой категорий и выводом карточек.</p>
+        <p class="section__subtitle lang" data-lang="en">Search across every Book.xlsx column with highlighted categories and rendered cards.</p>
+        <p class="section__subtitle lang" data-lang="tm">Book.xlsx faýlynyň ähli sütünleri boýunça gözleg we kategoriýalar üçin kartlar.</p>
+        <ul class="checklist">
+          <li>Дебаунс 160 мс и кеширование запросов</li>
+          <li>Нормализация текста без диакритики</li>
+          <li>Гибридный вывод: таблица + карточки</li>
+        </ul>
+      </div>
+      <div class="accent-card">
+        <p class="accent-card__eyebrow">Категории</p>
+        <h3>69 тематик</h3>
+        <p>Поиск по словарю категорий теперь мгновенный и показывает количество совпадений.</p>
+        <a class="button button--primary" href="BookCategory.html">Перейти к категориям</a>
+      </div>
+    </section>
+
+    <section id="gallery" class="gallery-slider">
+      <div class="section__head">
+        <p class="eyebrow">Gallery</p>
+        <h2>Интерфейс в действии</h2>
+      </div>
+      <div class="gallery-slider__viewport">
+        <div class="slide"><img src="1.webp" alt="Каталог MedLibrary" loading="lazy" decoding="async"></div>
+        <div class="slide"><img src="2.webp" alt="Список категорий" loading="lazy" decoding="async"></div>
+        <div class="slide"><img src="3.webp" alt="Интерфейс авторизации" loading="lazy" decoding="async"></div>
+        <div class="slide"><img src="4.webp" alt="Адаптивный дизайн" loading="lazy" decoding="async"></div>
+        <div class="slide"><img src="5.webp" alt="Страница книги" loading="lazy" decoding="async"></div>
+        <div class="slide"><img src="6.webp" alt="Поиск по каталогу" loading="lazy" decoding="async"></div>
+      </div>
+      <button class="gallery-slider__control prev" type="button" aria-label="Предыдущее изображение">&#10094;</button>
+      <button class="gallery-slider__control next" type="button" aria-label="Следующее изображение">&#10095;</button>
+    </section>
+
+    <section id="download" class="download">
+      <div class="section__head">
+        <p class="eyebrow">Install</p>
+        <h2>MedLibrary как приложение</h2>
+        <p>Нажмите кнопку ниже, чтобы установить PWA или скачайте каталог для офлайн‑просмотра.</p>
+      </div>
+      <div class="download__actions">
+        <button class="button button--primary" type="button" data-install-trigger data-install-sticky>Скачать приложение</button>
+        <a class="button button--ghost" href="Book.xlsx" download>Скачать каталог</a>
+      </div>
+      <ul class="checklist checklist--inline">
+        <li>Поддержка Android / Windows / macOS</li>
+        <li>Сервис‑воркер с динамическим кэшем</li>
+        <li>Фоновое обновление ресурсов</li>
+      </ul>
+    </section>
+
+    <section id="contact" class="contact">
+      <div class="section__head">
+        <p class="eyebrow lang" data-lang="ru">Всегда на связи</p>
+        <p class="eyebrow lang" data-lang="en">Stay in touch</p>
+        <p class="eyebrow lang" data-lang="tm">Habarlaşyň</p>
+        <h2 class="section__title lang" data-lang="ru">Напишите разработчику</h2>
+        <h2 class="section__title lang" data-lang="en">Get in touch</h2>
+        <h2 class="section__title lang" data-lang="tm">Habarlaşyň</h2>
+        <p class="section__subtitle lang" data-lang="ru">Ответим на вопросы, добавим новые книги и подключим интеграции.</p>
+        <p class="section__subtitle lang" data-lang="en">Ask for new books, integrations or onboarding support.</p>
+        <p class="section__subtitle lang" data-lang="tm">Täze kitaplar, integrasiýalar ýa-da goldaw barada sorag iberiň.</p>
+      </div>
+      <form class="contact__form" onsubmit="sendMail(); return false;">
+        <label class="form-group">
+          <span class="lang" data-lang="ru">Ваше имя</span>
+          <span class="lang" data-lang="en">Name</span>
+          <span class="lang" data-lang="tm">Adyňyz</span>
+          <input type="text" id="name" name="name" required>
+        </label>
+        <label class="form-group">
+          <span class="lang" data-lang="ru">Ваш email</span>
+          <span class="lang" data-lang="en">Email</span>
+          <span class="lang" data-lang="tm">Email</span>
+          <input type="email" id="email" name="email" required>
+        </label>
+        <label class="form-group">
+          <span class="lang" data-lang="ru">Сообщение</span>
+          <span class="lang" data-lang="en">Message</span>
+          <span class="lang" data-lang="tm">Habar</span>
+          <textarea id="message" name="message" required></textarea>
+        </label>
+        <button class="button button--primary" type="submit">
+          <span class="lang" data-lang="ru">Отправить</span>
+          <span class="lang" data-lang="en">Send</span>
+          <span class="lang" data-lang="tm">Ugrat</span>
+        </button>
+      </form>
+      <div class="contact__info">
+        <a href="tel:+99362234094">+993 62 23 40 94</a>
+        <a href="mailto:tdlipf@gmail.com">tdlipf@gmail.com</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div>
+      <strong>© 2025 MedLibrary</strong>
+      <p>Медицинская электронная библиотека. Все права защищены.</p>
+    </div>
+    <div class="site-footer__links">
+      <a href="index.html">Главная</a>
+      <a href="BookCategory.html">Категории</a>
+      <a href="book.html">Каталог</a>
+    </div>
+  </footer>
 
   <div id="auth-modal" class="auth-modal" hidden aria-hidden="true">
     <div class="auth-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="auth-heading">
-      <button id="auth-close-button" class="auth-modal__close" type="button" aria-label="Закрыть окно авторизации">
-        ×
-      </button>
+      <button id="auth-close-button" class="auth-modal__close" type="button" aria-label="Закрыть окно авторизации">×</button>
       <div id="auth" aria-labelledby="auth-heading">
         <div class="auth-header">
-        <h2 id="auth-heading">Регистрация и вход</h2>
-        <div class="auth-tabs" role="tablist">
-          <button
-            id="register-tab"
-            class="auth-tab active"
-            type="button"
-            role="tab"
-            aria-controls="register-form"
-            aria-selected="true"
-            data-target="register-form"
-          >
-            Регистрация
-          </button>
-          <button
-            id="login-tab"
-            class="auth-tab"
-            type="button"
-            role="tab"
-            aria-controls="login-form"
-            aria-selected="false"
-            data-target="login-form"
-          >
-            Вход
-          </button>
-        </div>
-      </div>
-      <div class="auth-panels">
-        <form id="register-form" class="auth-panel is-active" role="tabpanel" aria-labelledby="register-tab">
-          <h3>Создайте учетную запись</h3>
-          <label class="visually-hidden" for="register-email">Email</label>
-          <input
-            type="email"
-            id="register-email"
-            placeholder="Email"
-            autocomplete="email"
-            required
-          >
-          <label class="visually-hidden" for="register-password">Пароль</label>
-          <input
-            type="password"
-            id="register-password"
-            placeholder="Пароль (мин. 6 символов)"
-            minlength="6"
-            autocomplete="new-password"
-            required
-          >
-          <label class="visually-hidden" for="register-confirm">Подтверждение пароля</label>
-          <input
-            type="password"
-            id="register-confirm"
-            placeholder="Повторите пароль"
-            minlength="6"
-            autocomplete="new-password"
-            required
-          >
-          <button id="register-button" type="submit">Зарегистрироваться</button>
-          <p id="register-status" class="auth-status" role="status" aria-live="polite"></p>
-        </form>
-        <form id="login-form" class="auth-panel" role="tabpanel" aria-labelledby="login-tab" hidden>
-          <h3>Войдите в существующий аккаунт</h3>
-          <label class="visually-hidden" for="login-email">Email</label>
-          <input
-            type="email"
-            id="login-email"
-            placeholder="Email"
-            autocomplete="email"
-            required
-          >
-          <label class="visually-hidden" for="login-password">Пароль</label>
-          <input
-            type="password"
-            id="login-password"
-            placeholder="Пароль"
-            minlength="6"
-            autocomplete="current-password"
-            required
-          >
-          <button id="login-button" type="submit">Войти</button>
-          <div class="auth-divider"><span>или</span></div>
-          <div class="auth-provider-card">
-            <p class="auth-provider-card__title">Используйте учетную запись Google</p>
-            <div
-              id="google-signin-button"
-              class="google-signin-placeholder"
-              data-loading-text="Подключаем Google Identity..."
-              aria-live="polite"
-            ></div>
-            <p class="auth-helper-text">
-              Мы подтвердим вашу личность через Google и автоматически создадим профиль в библиотеке.
-            </p>
+          <h2 id="auth-heading">Регистрация и вход</h2>
+          <div class="auth-tabs" role="tablist">
+            <button
+              id="register-tab"
+              class="auth-tab active"
+              type="button"
+              role="tab"
+              aria-controls="register-form"
+              aria-selected="true"
+              data-target="register-form"
+            >
+              Регистрация
+            </button>
+            <button
+              id="login-tab"
+              class="auth-tab"
+              type="button"
+              role="tab"
+              aria-controls="login-form"
+              aria-selected="false"
+              data-target="login-form"
+            >
+              Вход
+            </button>
           </div>
-          <p id="login-status" class="auth-status" role="status" aria-live="polite"></p>
-        </form>
-      </div>
-      <div class="auth-session">
-        <p id="auth-session-status" class="auth-status" role="status" aria-live="polite"></p>
-        <button id="logout-button" type="button" hidden>Выйти</button>
+        </div>
+        <div class="auth-panels">
+          <form id="register-form" class="auth-panel is-active" role="tabpanel" aria-labelledby="register-tab">
+            <h3>Создайте учетную запись</h3>
+            <label class="visually-hidden" for="register-email">Email</label>
+            <input type="email" id="register-email" placeholder="Email" autocomplete="email" required>
+            <label class="visually-hidden" for="register-password">Пароль</label>
+            <input type="password" id="register-password" placeholder="Пароль (мин. 6 символов)" minlength="6" autocomplete="new-password" required>
+            <label class="visually-hidden" for="register-confirm">Подтверждение пароля</label>
+            <input type="password" id="register-confirm" placeholder="Повторите пароль" minlength="6" autocomplete="new-password" required>
+            <button id="register-button" type="submit">Зарегистрироваться</button>
+            <p id="register-status" class="auth-status" role="status" aria-live="polite"></p>
+          </form>
+          <form id="login-form" class="auth-panel" role="tabpanel" aria-labelledby="login-tab" hidden>
+            <h3>Войдите в существующий аккаунт</h3>
+            <label class="visually-hidden" for="login-email">Email</label>
+            <input type="email" id="login-email" placeholder="Email" autocomplete="email" required>
+            <label class="visually-hidden" for="login-password">Пароль</label>
+            <input type="password" id="login-password" placeholder="Пароль" minlength="6" autocomplete="current-password" required>
+            <button id="login-button" type="submit">Войти</button>
+            <div class="auth-divider"><span>или</span></div>
+            <div class="auth-provider-card">
+              <p class="auth-provider-card__title">Используйте учетную запись Google</p>
+              <div
+                id="google-signin-button"
+                class="google-signin-placeholder"
+                data-loading-text="Подключаем Google Identity..."
+                aria-live="polite"
+              ></div>
+              <p class="auth-helper-text">
+                Мы подтвердим вашу личность через Google и автоматически создадим профиль в библиотеке.
+              </p>
+            </div>
+            <p id="login-status" class="auth-status" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+        <div class="auth-session">
+          <p id="auth-session-status" class="auth-status" role="status" aria-live="polite"></p>
+          <button id="logout-button" type="button" hidden>Выйти</button>
+        </div>
       </div>
     </div>
   </div>
-  </div>
-  <nav>
-    <a href="index.html" data-lang="ru" class="lang">Главная</a>
-    <a href="index.html" data-lang="en" class="lang">Home</a>
-    <a href="index.html" data-lang="tm" class="lang">Baş sahypa</a>
 
-    <a href="#about" data-lang="ru" class="lang">О библиотеке</a>
-    <a href="#about" data-lang="en" class="lang">About</a>
-    <a href="#about" data-lang="tm" class="lang">Kitaphana barada</a>
-
-    <a href="#features" data-lang="ru" class="lang">Особенности</a>
-    <a href="#features" data-lang="en" class="lang">Features</a>
-    <a href="#features" data-lang="tm" class="lang">Aýratynlyklary</a>
-
-    <a href="#priorities" data-lang="ru" class="lang">Преимущества</a>
-    <a href="#priorities" data-lang="en" class="lang">Priorities</a>
-    <a href="#priorities" data-lang="tm" class="lang">Artykmaçlygy</a>
-
-    <a href="#education" data-lang="ru" class="lang">Наука и образование</a>
-    <a href="#education" data-lang="en" class="lang">Education</a>
-    <a href="#education" data-lang="tm" class="lang">Ylym we bilim</a>
-
-    <a href="#contact" data-lang="ru" class="lang">Контакты</a>
-    <a href="#contact" data-lang="en" class="lang">Contact</a>
-    <a href="#contact" data-lang="tm" class="lang">Habarlaşyň</a>
-
-    <a href="BookCategory.html" data-lang="ru" class="lang">Категории книг</a>
-    <a href="BookCategory.html" data-lang="en" class="lang">Book Categories</a>
-    <a href="BookCategory.html" data-lang="tm" class="lang">Kitap kategoriýalary</a>
-
-    <a href="book.html" data-lang="ru" class="lang">Список книг</a>
-    <a href="book.html" data-lang="en" class="lang">Book List</a>
-    <a href="book.html" data-lang="tm" class="lang">Kitaplar</a>
-
-    <a
-      href="https://sites.google.com/view/lukmanylyksanlykitaphanasy/ba%C5%9F-sahypa"
-      target="_blank"
-      class="external-link"
-      style="color: blue; font-weight: bold;"
-    >
-      Другой сайт библиотеки
-    </a>
-  </nav>
-  <main class="container">
-    <section id="about" aria-labelledby="about-heading">
-      <h2 id="about-heading" data-lang="ru" class="lang">О библиотеке</h2>
-      <h2 id="about-heading" data-lang="en" class="lang">About</h2>
-      <h2 id="about-heading" data-lang="tm" class="lang">Kitaphana barada</h2>
-      <p data-lang="ru" class="lang">
-        Добро пожаловать в библиотеку 21-го века! <br>
-        🔹 Более 1000 книг по всем направлениям медицины <br>
-        🔹 Удобный и понятный интерфейс <br>
-        🔹 Доступно всегда и везде без интернета
-      </p>
-      <p data-lang="en" class="lang">
-        Welcome to the 21st Century Library! <br>
-        🔹 Over 1000 books in all areas of medicine <br>
-        🔹 Convenient and user-friendly interface <br>
-        🔹 Always and everywhere available offline
-      </p>
-      <p data-lang="tm" class="lang">
-        21-nji asyryň Lukmançylyk Kitaphanasyna hoş geldiňiz! <br>
-        🔹 Lukmançylygyň ähli ugurlary boýunça 1000-den gowrak kitap <br>
-        🔹 Amatly we düşnükli interfeýs <br>
-        🔹 Internetsiz hemişe we hemme ýerde elýeterli
-      </p>
-    </section>
-    <section id="features" aria-labelledby="features-heading">
-      <h2 id="features-heading" data-lang="ru" class="lang">Особенности</h2>
-      <h2 id="features-heading" data-lang="en" class="lang">Features</h2>
-      <h2 id="features-heading" data-lang="tm" class="lang">Aýratynlyklary</h2>
-      <p data-lang="ru" class="lang">
-        В разделе ниже собраны ключевые функции сайта: регистрация, быстрый поиск книг и
-        поддержка трёх языков интерфейса.
-      </p>
-      <p data-lang="en" class="lang">
-        Explore the key functions of the site below: registration, lightning-fast catalog
-        search, and a tri-lingual interface.
-      </p>
-      <p data-lang="tm" class="lang">
-        Aşakdaky bölümde sahypanyň esasy aýratynlyklary: hasaba alyş, kitaplary çalt gözlemek
-        we üç dilde interfeýs görkezilýär.
-      </p>
-      <div class="feature-grid" role="list">
-        <article class="feature-card" role="listitem">
-          <div class="feature-icon" aria-hidden="true">🔐</div>
-          <h3 data-lang="ru" class="lang">Регистрация и вход</h3>
-          <h3 data-lang="en" class="lang">Registration & Login</h3>
-          <h3 data-lang="tm" class="lang">Hasaba alyş we giriş</h3>
-          <ul data-lang="ru" class="lang">
-            <li>Создайте аккаунт или войдите прямо на главной странице.</li>
-            <li>Поля валидируются до отправки запроса.</li>
-            <li>Под формами отображаются статусы загрузки и ошибок.</li>
-          </ul>
-          <ul data-lang="en" class="lang">
-            <li>Create an account or sign in directly from the home page.</li>
-            <li>Inputs are validated locally before sending the request.</li>
-            <li>Inline status messages explain loading, success, or errors.</li>
-          </ul>
-          <ul data-lang="tm" class="lang">
-            <li>Baş sahypada hasap dörediň ýa-da bar bolan hasaba giriň.</li>
-            <li>Ulgam maglumatlary ugratmazdan öň barlaýar.</li>
-            <li>Formanyň aşagynda ýükleme, üstünlik ýa-da säwlik habar berilýär.</li>
-          </ul>
-          <a class="feature-cta lang auth-trigger" data-lang="ru" href="#auth-modal" role="button">Перейти к регистрации</a>
-          <a class="feature-cta lang auth-trigger" data-lang="en" href="#auth-modal" role="button">Start registration</a>
-          <a class="feature-cta lang auth-trigger" data-lang="tm" href="#auth-modal" role="button">Hasaba başlaň</a>
-        </article>
-        <article class="feature-card" role="listitem">
-          <div class="feature-icon" aria-hidden="true">📚</div>
-          <h3 data-lang="ru" class="lang">Каталог и поиск</h3>
-          <h3 data-lang="en" class="lang">Catalog & Search</h3>
-          <h3 data-lang="tm" class="lang">Katalog we gözleg</h3>
-          <ul data-lang="ru" class="lang">
-            <li>Поиск моментально фильтрует таблицу книг.</li>
-            <li>Скрипт бережно обрабатывает отсутствие данных или сети.</li>
-            <li>Поддерживается загрузка из Excel-файла Book.xlsx.</li>
-          </ul>
-          <ul data-lang="en" class="lang">
-            <li>Live search instantly filters the book table.</li>
-            <li>Scripts guard against empty data or offline states.</li>
-            <li>Data loads directly from the Book.xlsx spreadsheet.</li>
-          </ul>
-          <ul data-lang="tm" class="lang">
-            <li>Gözleg tablisadaky kitaplary bada-bat süzýär.</li>
-            <li>Skriptler maglumat bolmadyk ýagdaýlary seresap saklaýar.</li>
-            <li>Maglumat Book.xlsx faýlyndan gönüden-göni alynýar.</li>
-          </ul>
-          <a class="feature-cta lang" data-lang="ru" href="book.html">Открыть список книг</a>
-          <a class="feature-cta lang" data-lang="en" href="book.html">Open the catalog</a>
-          <a class="feature-cta lang" data-lang="tm" href="book.html">Katalogy aç</a>
-        </article>
-        <article class="feature-card" role="listitem">
-          <div class="feature-icon" aria-hidden="true">🌐</div>
-          <h3 data-lang="ru" class="lang">Мультиязычный интерфейс</h3>
-          <h3 data-lang="en" class="lang">Multilingual Interface</h3>
-          <h3 data-lang="tm" class="lang">Köp dilli interfeýs</h3>
-          <ul data-lang="ru" class="lang">
-            <li>Выпадающий список моментально переключает язык страницы.</li>
-            <li>Контент группируется по атрибуту data-lang.</li>
-            <li>Текст скрывается/показывается без перезагрузки.</li>
-          </ul>
-          <ul data-lang="en" class="lang">
-            <li>The dropdown instantly switches the language of the page.</li>
-            <li>Content is grouped by the shared data-lang attribute.</li>
-            <li>Text is toggled without reloading the browser tab.</li>
-          </ul>
-          <ul data-lang="tm" class="lang">
-            <li>Sazlaýjy düşürme menýu dilini bada-bat üýtgedýär.</li>
-            <li>Mazmun umumy data-lang atributy boýunça toparlanýar.</li>
-            <li>Tekst sahypany täzeden ýüklemezden görkezilýär/gizlenýär.</li>
-          </ul>
-          <a class="feature-cta lang" data-lang="ru" href="#language-select">Сменить язык</a>
-          <a class="feature-cta lang" data-lang="en" href="#language-select">Change language</a>
-          <a class="feature-cta lang" data-lang="tm" href="#language-select">Dili üýtget</a>
-        </article>
-      </div>
-    </section>
-    <section id="priorities" aria-labelledby="priorities-heading">
-      <h2 id="priorities-heading" data-lang="ru" class="lang">Преимущества</h2>
-      <h2 id="priorities-heading" data-lang="en" class="lang">Priorities</h2>
-      <h2 id="priorities-heading" data-lang="tm" class="lang">Artykmaçlygy</h2>
-      <p data-lang="ru" class="lang">
-        Наши преимущества: <br>
-        🔹 Все направления медицины: Помощь в учебе и профессиональной практике! <br>
-        🔹 Понятный интерфейс: Легко находите нужную информацию и ориентируйтесь в библиотеке. <br>
-        🔹 Безопасность и конфиденциальность: Все данные хранятся на вашем устройстве.
-      </p>
-      <p data-lang="en" class="lang">
-        Our advantages: <br>
-        🔹 All areas of medicine: Help in study and professional practice! <br>
-        🔹 User-friendly interface: Easily find the information you need and navigate the library. <br>
-        🔹 Security and privacy: All data is stored on your device.
-      </p>
-      <p data-lang="tm" class="lang">
-        Biziň artykmaçlyklarymyz: <br>
-        🔹 Lukmançylygyň ähli ugurlary: Okuwda we hünär tejribesinde kömek! <br>
-        🔹 Düşnükli interfeýs: Zerur maglumaty aňsatlyk bilen tapyň we kitaphanada gezim ediň. <br>
-        🔹 Howpsuzlyk we gizlinlik: Ähli maglumatlar siziň enjamyňyzda saklanýar.
-      </p>
-    </section>
-    <section id="education" aria-labelledby="education-heading">
-      <h2 id="education-heading" data-lang="ru" class="lang">Наука и образование</h2>
-      <h2 id="education-heading" data-lang="en" class="lang">Education</h2>
-      <h2 id="education-heading" data-lang="tm" class="lang">Ylym we bilim</h2>
-      <p data-lang="ru" class="lang">
-        Не упустите возможность держать медицинские знания под рукой! <br>
-        Загрузите нашу медицинскую библиотеку сегодня и начните путешествие в мир знаний и профессионального роста!
-      </p>
-      <p data-lang="en" class="lang">
-        Don't miss the opportunity to keep medical knowledge at your fingertips! <br>
-        Download our medical library today and start your journey into the world of knowledge and professional growth!
-      </p>
-      <p data-lang="tm" class="lang">
-        Zerur lukmançylyk bilimlerini elýeterde saklamak mümkinçiligini elden berme! <br>
-        Biziň lukmançylyk kitaphanamyzyny şu gün ýükläň we bilimler we hünär ösüşi dünýäňize syýahatyňyzy başlaň!
-      </p>
-    </section>
-    <!-- Начало слайдера -->
-    <section id="gallery" aria-labelledby="gallery-heading" class="gallery-slider">
-  <h2 id="gallery-heading" data-lang="ru" class="lang">Галерея</h2>
-  <h2 id="gallery-heading" data-lang="en" class="lang">Gallery</h2>
-  <h2 id="gallery-heading" data-lang="tm" class="lang">Suratlar</h2>
-  <div class="slide">
-    <img src="1.webp" alt="Description 1" loading="lazy">
-  </div>
-  <div class="slide">
-    <img src="2.webp" alt="Description 2" loading="lazy">
-  </div>
-  <div class="slide">
-    <img src="3.webp" alt="Description 3" loading="lazy">
-  </div>
-  <div class="slide">
-    <img src="4.webp" alt="Description 4" loading="lazy">
-  </div>
-  <div class="slide">
-    <img src="5.webp" alt="Description 5" loading="lazy">
-  </div>
-  <div class="slide">
-    <img src="6.webp" alt="Description 6" loading="lazy">
-  </div>
-  <button class="prev" type="button" aria-label="Предыдущее изображение">&#10094;</button>
-  <button class="next" type="button" aria-label="Следующее изображение">&#10095;</button>
-</section>
-    <section id="contact" aria-labelledby="contact-heading">
-      <h2 id="contact-heading" data-lang="ru" class="lang">Контакты</h2>
-      <h2 id="contact-heading" data-lang="en" class="lang">Contact</h2>
-      <h2 id="contact-heading" data-lang="tm" class="lang">Habarlaşyň</h2>
-        <p data-lang="ru" class="lang">
-        Номера телефонов: <br>
-        <a href="tel:+99362234094"> +99362234094 Максат</a><br>
-  
-      </p>
-      <p data-lang="en" class="lang">
-        Phone numbers: <br>
-        <a href="tel:+99362234094"> +99362234094 Maksat</a><br>
-     
-      </p>
-      <p data-lang="tm" class="lang">
-        Telefon belgileri: <br>
-        <a href="tel:+99362234094"> +99362234094 Maksat </a><br>
-     
-      </p>
-      <form onsubmit="sendMail(); return false;">
-        <div class="form-group">
-          <label for="name" data-lang="ru" class="lang">Ваше имя:</label>
-          <label for="name" data-lang="en" class="lang">Your name:</label>
-          <label for="name" data-lang="tm" class="lang">Adyňyz:</label>
-          <input type="text" id="name" name="name" required>
-        </div>
-        <div class="form-group">
-          <label for="email" data-lang="ru" class="lang">Ваш email:</label>
-          <label for="email" data-lang="en" class="lang">Your email:</label>
-          <label for="email" data-lang="tm" class="lang">Email:</label>
-          <input type="email" id="email" name="email" required>
-        </div>
-        <div class="form-group">
-          <label for="message" data-lang="ru" class="lang">Ваше сообщение:</label>
-          <label for="message" data-lang="en" class="lang">Your message:</label>
-          <label for="message" data-lang="tm" class="lang">Habaryňyz:</label>
-          <textarea id="message" name="message" required></textarea>
-        </div>
-        <div class="form-group">
-          <button type="submit" data-lang="ru" class="lang">Отправить</button>
-          <button type="submit" data-lang="en" class="lang">Send</button>
-          <button type="submit" data-lang="tm" class="lang">Ugrat</button>
-        </div>
-      </form>
-    </section>
-  </main>
-  <footer>
-  <div class="footer-container">
-    <div class="contact-info">
-      <p>Контактный телефон: <a href="tel:+99362234094">+99362234094</a></p>
-      <p>Email: <a href="mailto:example@example.com">tdlipf@gmail.com</a></p>
-    </div>
-    <div class="footer-nav">
-      <a href="index.html">Главная</a>
-     </div>
-    <div class="copyright">
-      <p>&copy; 2025 Медицинская электронная библиотека. Все права защищены.</p>
-    </div>
-  </div>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script defer src="scripts.js"></script>
-    <script defer src="pwa.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script defer src="scripts.js"></script>
+  <script defer src="pwa.js"></script>
 </body>
 </html>
