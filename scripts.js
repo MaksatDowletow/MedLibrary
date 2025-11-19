@@ -1049,21 +1049,26 @@ async function fetchBooksFromApi(apiBase) {
 }
 
 async function fetchBooksFromJson() {
-  try {
-    const response = await fetch("data/books.json");
-    if (!response.ok) {
-      return [];
+  const sources = ["data/books_with_specialties.json", "data/books.json"];
+
+  for (const source of sources) {
+    try {
+      const response = await fetch(source);
+      if (!response.ok) {
+        continue;
+      }
+      const payload = await response.json();
+      if (Array.isArray(payload)) {
+        return payload;
+      }
+      if (Array.isArray(payload?.books)) {
+        return payload.books;
+      }
+    } catch (error) {
+      console.warn("Не удалось загрузить книги из JSON", error?.message);
     }
-    const payload = await response.json();
-    if (Array.isArray(payload)) {
-      return payload;
-    }
-    if (Array.isArray(payload?.books)) {
-      return payload.books;
-    }
-  } catch (error) {
-    console.warn("Не удалось загрузить книги из JSON", error?.message);
   }
+
   return [];
 }
 
