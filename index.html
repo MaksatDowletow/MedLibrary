@@ -155,6 +155,10 @@
     <a href="#about" data-lang="en" class="lang">About</a>
     <a href="#about" data-lang="tm" class="lang">Kitaphana barada</a>
 
+    <a href="#download" data-lang="ru" class="lang">Скачать приложение</a>
+    <a href="#download" data-lang="en" class="lang">Download app</a>
+    <a href="#download" data-lang="tm" class="lang">Programmany indir</a>
+
     <a href="#features" data-lang="ru" class="lang">Особенности</a>
     <a href="#features" data-lang="en" class="lang">Features</a>
     <a href="#features" data-lang="tm" class="lang">Aýratynlyklary</a>
@@ -189,6 +193,113 @@
     </a>
   </nav>
   <main class="container">
+    <section
+      id="download"
+      class="hero"
+      aria-labelledby="download-heading"
+    >
+      <div class="hero__content">
+        <p class="hero__eyebrow">
+          <span data-lang="ru" class="lang">PWA-приложение и офлайн-каталог</span>
+          <span data-lang="en" class="lang">PWA app and offline catalog</span>
+          <span data-lang="tm" class="lang">PWA programma we oflaýn katalog</span>
+        </p>
+        <h2 id="download-heading" class="hero__title">
+          <span data-lang="ru" class="lang">Доступ к библиотеке в один тап</span>
+          <span data-lang="en" class="lang">Library access in one tap</span>
+          <span data-lang="tm" class="lang">Kitaphana elýeterligi bir basmada</span>
+        </h2>
+        <p class="hero__text">
+          <span data-lang="ru" class="lang">
+            Установите MedLibrary как приложение или скачайте установочный файл, чтобы
+            пользоваться всеми 1000+ книг офлайн.
+          </span>
+          <span data-lang="en" class="lang">
+            Install MedLibrary as a PWA or download the installer archive to keep 1000+
+            medical books with you offline.
+          </span>
+          <span data-lang="tm" class="lang">
+            MedLibrary programmasyny goýberiň ýa-da gurmak faýlyny ýükläp alň,
+            1000+ lukmançylyk kitabyny oflaýn saklaň.
+          </span>
+        </p>
+        <ul class="hero__features">
+          <li>
+            <span data-lang="ru" class="lang">Работает без интернета</span>
+            <span data-lang="en" class="lang">Works without internet</span>
+            <span data-lang="tm" class="lang">Internet bolmazdan işleýär</span>
+          </li>
+          <li>
+            <span data-lang="ru" class="lang">Поддержка Android, Windows, iOS</span>
+            <span data-lang="en" class="lang">Android, Windows, iOS support</span>
+            <span data-lang="tm" class="lang">Android, Windows, iOS goldawy</span>
+          </li>
+          <li>
+            <span data-lang="ru" class="lang">Обновления через GitHub Pages</span>
+            <span data-lang="en" class="lang">Updates via GitHub Pages</span>
+            <span data-lang="tm" class="lang">Täzelenmeler GitHub Pages arkaly</span>
+          </li>
+        </ul>
+        <div class="hero__actions">
+          <button id="install-button" class="cta-button" type="button" hidden>
+            <span data-lang="ru" class="lang">Скачать приложение</span>
+            <span data-lang="en" class="lang">Install app</span>
+            <span data-lang="tm" class="lang">Programmany goý</span>
+          </button>
+          <button
+            id="offline-download-button"
+            class="cta-button cta-button--ghost"
+            type="button"
+          >
+            <span data-lang="ru" class="lang">Создать установочный файл (.zip)</span>
+            <span data-lang="en" class="lang">Create installer (.zip)</span>
+            <span data-lang="tm" class="lang">Gurmak faýlyny döret (.zip)</span>
+          </button>
+        </div>
+        <div class="hero__status-list">
+          <p
+            id="install-hint"
+            class="install-hint"
+            data-i18n-key="installHintDefault"
+          >
+            Установка доступна в поддерживаемых браузерах.
+          </p>
+          <p
+            id="offline-download-status"
+            class="install-hint"
+            data-i18n-key="offlineIdle"
+          >
+            Сформируйте офлайн-архив одним нажатием.
+          </p>
+        </div>
+      </div>
+      <div class="hero__metrics" aria-label="Статистика библиотеки">
+        <article class="metric-card">
+          <p class="metric-card__value">1000+</p>
+          <p class="metric-card__label">
+            <span data-lang="ru" class="lang">медицинских книг</span>
+            <span data-lang="en" class="lang">medical books</span>
+            <span data-lang="tm" class="lang">lukmançylyk kitaplary</span>
+          </p>
+        </article>
+        <article class="metric-card">
+          <p class="metric-card__value">69</p>
+          <p class="metric-card__label">
+            <span data-lang="ru" class="lang">направлений</span>
+            <span data-lang="en" class="lang">specialties</span>
+            <span data-lang="tm" class="lang">ugur</span>
+          </p>
+        </article>
+        <article class="metric-card">
+          <p class="metric-card__value">3</p>
+          <p class="metric-card__label">
+            <span data-lang="ru" class="lang">языка интерфейса</span>
+            <span data-lang="en" class="lang">interface languages</span>
+            <span data-lang="tm" class="lang">interfeýs dili</span>
+          </p>
+        </article>
+      </div>
+    </section>
     <section id="about" aria-labelledby="about-heading">
       <h2 id="about-heading" data-lang="ru" class="lang">О библиотеке</h2>
       <h2 id="about-heading" data-lang="en" class="lang">About</h2>
@@ -429,7 +540,9 @@
     </div>
   </div>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script defer src="offline-assets.js"></script>
     <script defer src="scripts.js"></script>
+    <script defer src="offline-download.js"></script>
     <script defer src="pwa.js"></script>
 </body>
 </html>
