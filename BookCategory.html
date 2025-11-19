@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="manifest" href="manifest.webmanifest">
 </head>
-<body>
+<body data-api-base="http://localhost:5000">
   <header class="site-header">
     <div class="site-header__brand">
       <p class="eyebrow lang" data-lang="ru">Категории библиотеки</p>
@@ -63,7 +63,7 @@
           <span class="lang" data-lang="tm">Kategoriýalar boýunça gözleg</span>
         </label>
         <input id="category-search" type="search" placeholder="Анатомия, Kardiologiýa..." autocomplete="off">
-        <p id="category-count" class="category-count">69 категорий</p>
+        <p id="category-count" class="category-count">—</p>
       </div>
       <div class="table-wrapper">
         <table class="category-table" aria-live="polite">
@@ -71,71 +71,13 @@
             <tr>
               <th>RU</th>
               <th>TM</th>
+              <th>Книг</th>
             </tr>
           </thead>
-          <tbody>
-            <tr data-category-row><td>Акушерство и Гинекология</td><td>Akuşerçilik we Ginekologiýa</td></tr>
-            <tr data-category-row><td>Анатомия</td><td>Anatomiýa</td></tr>
-            <tr data-category-row><td>Ангиография</td><td>Angiografiýa</td></tr>
-            <tr data-category-row><td>Английский язык</td><td>Iňlis dili</td></tr>
-            <tr data-category-row><td>Анестезиология</td><td>Anesteziologiýa</td></tr>
-            <tr data-category-row><td>Биохимия</td><td>Biohimiýa</td></tr>
-            <tr data-category-row><td>Внутренние болезни</td><td>Iç keseller</td></tr>
-            <tr data-category-row><td>Военно-полевая терапия</td><td>Harby-meýdan terapiýasy</td></tr>
-            <tr data-category-row><td>Военно-полевая хирургия</td><td>Harby-meýdan hirurgiýasy</td></tr>
-            <tr data-category-row><td>Гастроэнтерология</td><td>Gastroenterologiýa</td></tr>
-            <tr data-category-row><td>Гематология</td><td>Gematologiýa</td></tr>
-            <tr data-category-row><td>Гигиена</td><td>Gigiýena</td></tr>
-            <tr data-category-row><td>Гистология, цитология</td><td>Gistologiýa, sitologiýa</td></tr>
-            <tr data-category-row><td>Детская хирургия</td><td>Çaga hirurgiýasy</td></tr>
-            <tr data-category-row><td>Диетология</td><td>Dietologiýa</td></tr>
-            <tr data-category-row><td>Инфекционные болезни</td><td>Ýokanç keseller</td></tr>
-            <tr data-category-row><td>Инфекционные болезни детей</td><td>Çaga ýokanç keselleri</td></tr>
-            <tr data-category-row><td>История медицины</td><td>Lukmançylyk taryhy</td></tr>
-            <tr data-category-row><td>Кардиология</td><td>Kardiologiýa</td></tr>
-            <tr data-category-row><td>Кардиохирургия</td><td>Kardiohirurgiýa</td></tr>
-            <tr data-category-row><td>Клиническая лаборатория</td><td>Kliniki laboratoriýa</td></tr>
-            <tr data-category-row><td>Кожные и венерические болезни</td><td>Deri we weneriki keseller</td></tr>
-            <tr data-category-row><td>Компьютерная томография</td><td>Kompýuter tomografiýasy</td></tr>
-            <tr data-category-row><td>Латинский язык и медицинская терминология</td><td>Latin dili we lukmançylyk terminologiýasy</td></tr>
-            <tr data-category-row><td>Лечебная физкультура</td><td>Bejeriş beden terbiyesi</td></tr>
-            <tr data-category-row><td>Магнитно-резонансная томография</td><td>Magnit rezonans tomografiýasy</td></tr>
-            <tr data-category-row><td>Медицинская биология</td><td>Lukmançylyk biologiýasy</td></tr>
-            <tr data-category-row><td>Медицинская генетика</td><td>Lukmançylyk genetikasy</td></tr>
-            <tr data-category-row><td>Медицинская и биологическая физика</td><td>Lukmançylyk we biologik fizika</td></tr>
-            <tr data-category-row><td>Медицинская иммунология</td><td>Lukmançylyk immunologiýasy</td></tr>
-            <tr data-category-row><td>Микробиология</td><td>Mikrobiologiýa</td></tr>
-            <tr data-category-row><td>Наркология</td><td>Narkologiýa</td></tr>
-            <tr data-category-row><td>Неврология</td><td>Newrologiýa</td></tr>
-            <tr data-category-row><td>Нейрохирургия</td><td>Neýrohirurgiýa</td></tr>
-            <tr data-category-row><td>Неонатология</td><td>Neonatologiýa</td></tr>
-            <tr data-category-row><td>Общая и медицинская химия</td><td>Umumy we lukmançylyk himiýasy</td></tr>
-            <tr data-category-row><td>Общая и неорганическая химия</td><td>Umumy we organiki däl himiýa</td></tr>
-            <tr data-category-row><td>Онкология</td><td>Onkologiýa</td></tr>
-            <tr data-category-row><td>Ортопедия и травматология</td><td>Ortopediýa we trawmatologiýa</td></tr>
-            <tr data-category-row><td>Отоларингология</td><td>Otolaringologiýa</td></tr>
-            <tr data-category-row><td>Офтальмология</td><td>Oftalmologiýa</td></tr>
-            <tr data-category-row><td>Патологическая анатомия</td><td>Patologik anatomiýa</td></tr>
-            <tr data-category-row><td>Педиатрия</td><td>Pediatriýa</td></tr>
-            <tr data-category-row><td>Пластическая хирургия</td><td>Plastiki hirurgiýa</td></tr>
-            <tr data-category-row><td>Психиатрия</td><td>Psihiatriýa</td></tr>
-            <tr data-category-row><td>Психология</td><td>Psihologiýa</td></tr>
-            <tr data-category-row><td>Пульмонология</td><td>Pulmonologiýa</td></tr>
-            <tr data-category-row><td>Радиология</td><td>Radiologiýa</td></tr>
-            <tr data-category-row><td>Сердечно-сосудистая хирургия</td><td>Ýürek-damar hirurgiýasy</td></tr>
-            <tr data-category-row><td>Сестринское дело</td><td>Şepagat uýasy işi</td></tr>
-            <tr data-category-row><td>Судебная медицина</td><td>Kazyýet lukmançylygy</td></tr>
-            <tr data-category-row><td>Стоматология</td><td>Stomatologiýa</td></tr>
-            <tr data-category-row><td>Терапия</td><td>Terapia</td></tr>
-            <tr data-category-row><td>Травматология</td><td>Trawmatologiýa</td></tr>
-            <tr data-category-row><td>Ультразвуковая диагностика</td><td>Ultrases barlagy</td></tr>
-            <tr data-category-row><td>Фармакология</td><td>Farmakologiýa</td></tr>
-            <tr data-category-row><td>Физиология</td><td>Fiziologiýa</td></tr>
-            <tr data-category-row><td>Фтизиатрия</td><td>Ftiziatriýa</td></tr>
-            <tr data-category-row><td>Хирургия</td><td>Hirurgiýa</td></tr>
-            <tr data-category-row><td>Электрокардиография</td><td>Elektrokardiografiýa</td></tr>
-            <tr data-category-row><td>Эндокринология</td><td>Endokrinologiýa</td></tr>
-            <tr data-category-row><td>Эпидемиология</td><td>Epidemiologiýa</td></tr>
+          <tbody data-category-body>
+            <tr>
+              <td colspan="3" style="text-align: center">Загружаем направления...</td>
+            </tr>
           </tbody>
         </table>
       </div>

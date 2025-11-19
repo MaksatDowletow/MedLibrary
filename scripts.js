@@ -94,7 +94,75 @@ const UI_TEXTS = {
   },
 };
 
+const CATEGORY_FALLBACK = [
+  { ru: "Акушерство и Гинекология", tm: "Akuşerçilik we Ginekologiýa" },
+  { ru: "Анатомия", tm: "Anatomiýa" },
+  { ru: "Ангиография", tm: "Angiografiýa" },
+  { ru: "Английский язык", tm: "Iňlis dili" },
+  { ru: "Анестезиология", tm: "Anesteziologiýa" },
+  { ru: "Биохимия", tm: "Biohimiýa" },
+  { ru: "Внутренние болезни", tm: "Iç keseller" },
+  { ru: "Военно-полевая терапия", tm: "Harby-meýdan terapiýasy" },
+  { ru: "Военно-полевая хирургия", tm: "Harby-meýdan hirurgiýasy" },
+  { ru: "Гастроэнтерология", tm: "Gastroenterologiýa" },
+  { ru: "Гематология", tm: "Gematologiýa" },
+  { ru: "Гигиена", tm: "Gigiýena" },
+  { ru: "Гистология, цитология", tm: "Gistologiýa, sitologiýa" },
+  { ru: "Детская хирургия", tm: "Çaga hirurgiýasy" },
+  { ru: "Диетология", tm: "Dietologiýa" },
+  { ru: "Инфекционные болезни", tm: "Ýokanç keseller" },
+  { ru: "Инфекционные болезни детей", tm: "Çaga ýokanç keselleri" },
+  { ru: "История медицины", tm: "Lukmançylyk taryhy" },
+  { ru: "Кардиология", tm: "Kardiologiýa" },
+  { ru: "Кардиохирургия", tm: "Kardiohirurgiýa" },
+  { ru: "Клиническая лаборатория", tm: "Kliniki laboratoriýa" },
+  { ru: "Кожные и венерические болезни", tm: "Deri we weneriki keseller" },
+  { ru: "Компьютерная томография", tm: "Kompýuter tomografiýasy" },
+  { ru: "Латинский язык и медицинская терминология", tm: "Latin dili we lukmançylyk terminologiýasy" },
+  { ru: "Лечебная физкультура", tm: "Bejeriş beden terbiyesi" },
+  { ru: "Магнитно-резонансная томография", tm: "Magnit rezonans tomografiýasy" },
+  { ru: "Медицинская биология", tm: "Lukmançylyk biologiýasy" },
+  { ru: "Медицинская генетика", tm: "Lukmançylyk genetikasy" },
+  { ru: "Медицинская и биологическая физика", tm: "Lukmançylyk we biologik fizika" },
+  { ru: "Медицинская иммунология", tm: "Lukmançylyk immunologiýasy" },
+  { ru: "Микробиология", tm: "Mikrobiologiýa" },
+  { ru: "Наркология", tm: "Narkologiýa" },
+  { ru: "Неврология", tm: "Newrologiýa" },
+  { ru: "Нейрохирургия", tm: "Neýrohirurgiýa" },
+  { ru: "Неонатология", tm: "Neonatologiýa" },
+  { ru: "Общая и медицинская химия", tm: "Umumy we lukmançylyk himiýasy" },
+  { ru: "Общая и неорганическая химия", tm: "Umumy we organiki däl himiýa" },
+  { ru: "Онкология", tm: "Onkologiýa" },
+  { ru: "Ортопедия и травматология", tm: "Ortopediýa we trawmatologiýa" },
+  { ru: "Отоларингология", tm: "Otolaringologiýa" },
+  { ru: "Офтальмология", tm: "Oftalmologiýa" },
+  { ru: "Патологическая анатомия", tm: "Patologik anatomiýa" },
+  { ru: "Педиатрия", tm: "Pediatriýa" },
+  { ru: "Пластическая хирургия", tm: "Plastiki hirurgiýa" },
+  { ru: "Психиатрия", tm: "Psihiatriýa" },
+  { ru: "Психология", tm: "Psihologiýa" },
+  { ru: "Пульмонология", tm: "Pulmonologiýa" },
+  { ru: "Радиология", tm: "Radiologiýa" },
+  { ru: "Сердечно-сосудистая хирургия", tm: "Ýürek-damar hirurgiýasy" },
+  { ru: "Сестринское дело", tm: "Şepagat uýasy işi" },
+  { ru: "Судебная медицина", tm: "Kazyýet lukmançylygy" },
+  { ru: "Стоматология", tm: "Stomatologiýa" },
+  { ru: "Терапия", tm: "Terapia" },
+  { ru: "Травматология", tm: "Trawmatologiýa" },
+  { ru: "Ультразвуковая диагностика", tm: "Ultrases barlagy" },
+  { ru: "Фармакология", tm: "Farmakologiýa" },
+  { ru: "Физиология", tm: "Fiziologiýa" },
+  { ru: "Фтизиатрия", tm: "Ftiziatriýa" },
+  { ru: "Хирургия", tm: "Hirurgiýa" },
+  { ru: "Электрокардиография", tm: "Elektrokardiografiýa" },
+  { ru: "Эндокринология", tm: "Endokrinologiýa" },
+  { ru: "Эпидемиология", tm: "Epidemiologiýa" },
+];
+
 const accentPattern = /[\u0300-\u036f]/g;
+const categoryTranslationMap = new Map(
+  CATEGORY_FALLBACK.map((entry) => [normalizeSearchValue(entry.ru), entry.tm])
+);
 
 const bookSearchState = {
   tableBody: null,
@@ -929,41 +997,189 @@ function applyBookFilters() {
   renderBookCards(cardEntries, hasActiveFilter);
 }
 
+function translateSpecialty(value) {
+  if (!value) return "";
+  return categoryTranslationMap.get(normalizeSearchValue(value)) || value;
+}
+
+async function fetchSpecialtiesFromApi(apiBase) {
+  if (!apiBase) {
+    return [];
+  }
+  try {
+    const response = await fetch(`${apiBase}/specialties`);
+    if (!response.ok) {
+      return [];
+    }
+    const payload = await response.json();
+    const items = Array.isArray(payload?.specialties) ? payload.specialties : [];
+    return items
+      .map((item) => {
+        const ru = item?.name?.toString().trim();
+        if (!ru) return null;
+        return {
+          ru,
+          tm: translateSpecialty(ru),
+          count: Number(item.count) || 0,
+        };
+      })
+      .filter(Boolean);
+  } catch (error) {
+    console.warn("Не удалось загрузить специальности из API", error?.message);
+    return [];
+  }
+}
+
+async function fetchBooksFromApi(apiBase) {
+  if (!apiBase) {
+    return [];
+  }
+  try {
+    const response = await fetch(`${apiBase}/books`);
+    if (!response.ok) {
+      return [];
+    }
+    const payload = await response.json();
+    const books = Array.isArray(payload?.books) ? payload.books : [];
+    return books;
+  } catch (error) {
+    console.warn("Не удалось загрузить книги из API", error?.message);
+    return [];
+  }
+}
+
+async function fetchBooksFromJson() {
+  try {
+    const response = await fetch("data/books.json");
+    if (!response.ok) {
+      return [];
+    }
+    const payload = await response.json();
+    if (Array.isArray(payload)) {
+      return payload;
+    }
+    if (Array.isArray(payload?.books)) {
+      return payload.books;
+    }
+  } catch (error) {
+    console.warn("Не удалось загрузить книги из JSON", error?.message);
+  }
+  return [];
+}
+
+function buildCategoriesFromBooks(books = []) {
+  const specialties = new Map();
+  books.forEach((book) => {
+    const specialty = book?.specialty?.toString().trim();
+    if (!specialty) return;
+    const key = normalizeSearchValue(specialty);
+    const existing =
+      specialties.get(key) || {
+        ru: specialty,
+        tm: translateSpecialty(specialty),
+        count: 0,
+      };
+    existing.count += 1;
+    specialties.set(key, existing);
+  });
+
+  return Array.from(specialties.values()).sort((a, b) =>
+    a.ru.localeCompare(b.ru, "ru", { sensitivity: "accent" })
+  );
+}
+
+async function loadCategoryList() {
+  const apiBase = resolveApiBase(document.body?.dataset.apiBase);
+  const fromApi = await fetchSpecialtiesFromApi(apiBase);
+  if (fromApi.length) {
+    return fromApi;
+  }
+
+  const apiBooks = await fetchBooksFromApi(apiBase);
+  const apiCategories = buildCategoriesFromBooks(apiBooks);
+  if (apiCategories.length) {
+    return apiCategories;
+  }
+
+  const jsonBooks = await fetchBooksFromJson();
+  const jsonCategories = buildCategoriesFromBooks(jsonBooks);
+  if (jsonCategories.length) {
+    return jsonCategories;
+  }
+
+  return CATEGORY_FALLBACK.map((item) => ({ ...item, count: 0 }));
+}
+
 function initCategoryFilter() {
   const searchInput = document.getElementById("category-search");
-  const rows = Array.from(document.querySelectorAll("[data-category-row]"));
-  if (!searchInput || !rows.length) {
+  const tableBody = document.querySelector("[data-category-body]");
+  if (!searchInput || !tableBody) {
     return;
   }
-  const counter = document.getElementById("category-count");
-  const total = rows.length;
 
-  const updateCount = (visible) => {
-    if (!counter) {
+  const counter = document.getElementById("category-count");
+  let categories = [];
+
+  const updateCount = (visible, total) => {
+    if (!counter) return;
+    counter.textContent = `${visible} / ${total}`;
+  };
+
+  const renderCategories = (items) => {
+    tableBody.innerHTML = "";
+    if (!items.length) {
+      const row = document.createElement("tr");
+      const cell = document.createElement("td");
+      cell.colSpan = 3;
+      cell.style.textAlign = "center";
+      cell.textContent = "Направления не найдены";
+      row.appendChild(cell);
+      tableBody.appendChild(row);
+      updateCount(0, 0);
       return;
     }
-    counter.textContent = `${visible} / ${total}`;
+
+    items.forEach((item) => {
+      const row = document.createElement("tr");
+      row.dataset.searchValue = normalizeSearchValue(`${item.ru} ${item.tm}`);
+
+      const ruCell = document.createElement("td");
+      ruCell.textContent = item.ru;
+      const tmCell = document.createElement("td");
+      tmCell.textContent = item.tm;
+      const countCell = document.createElement("td");
+      countCell.textContent = item.count ? String(item.count) : "—";
+
+      row.appendChild(ruCell);
+      row.appendChild(tmCell);
+      row.appendChild(countCell);
+      tableBody.appendChild(row);
+    });
+
+    updateCount(items.length, items.length);
   };
 
   const filterRows = () => {
     const query = normalizeSearchValue(searchInput.value);
     let visible = 0;
-    rows.forEach((row) => {
-      if (!row.dataset.searchValue) {
-        row.dataset.searchValue = normalizeSearchValue(row.textContent || "");
-      }
-      const matches = !query || row.dataset.searchValue.includes(query);
+    tableBody.querySelectorAll("tr").forEach((row) => {
+      const matches = !query || row.dataset.searchValue?.includes(query);
       row.hidden = !matches;
       if (matches) {
         visible += 1;
       }
     });
-    updateCount(visible);
+    updateCount(visible, categories.length);
   };
 
   const debouncedFilter = debounce(filterRows, 120);
   searchInput.addEventListener("input", debouncedFilter);
-  filterRows();
+
+  loadCategoryList().then((items) => {
+    categories = items;
+    renderCategories(items);
+    filterRows();
+  });
 }
 
 function updateBookStatus(visibleRows) {
