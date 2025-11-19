@@ -1177,11 +1177,18 @@ function initCategoryFilter() {
   const debouncedFilter = debounce(filterRows, 120);
   searchInput.addEventListener("input", debouncedFilter);
 
-  loadCategoryList().then((items) => {
-    categories = items;
-    renderCategories(items);
-    filterRows();
-  });
+  loadCategoryList()
+    .then((items) => {
+      categories = items;
+      renderCategories(items);
+      filterRows();
+    })
+    .catch((error) => {
+      console.error("Не удалось загрузить направления", error);
+      categories = CATEGORY_FALLBACK.map((item) => ({ ...item, count: 0 }));
+      renderCategories(categories);
+      filterRows();
+    });
 }
 
 function updateBookStatus(visibleRows) {
