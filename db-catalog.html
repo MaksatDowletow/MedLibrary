@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#050b1d">
+  <meta name="description" content="Каталог MedLibrary из базы dbMedicalLib.sqlite: категории и книги в одном окне.">
+  <title>Каталог БД — MedLibrary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="manifest.webmanifest">
+</head>
+<body>
+  <header class="site-header">
+    <div class="site-header__brand">
+      <p class="eyebrow">MedLibrary</p>
+      <h1 class="site-header__title">Каталог из базы данных</h1>
+      <p class="site-header__subtitle">dbMedicalLib.sqlite → категории, книги и быстрый поиск</p>
+    </div>
+    <div class="site-header__actions">
+      <a class="button button--ghost" href="BookCategory.html">Категории</a>
+      <a class="button button--outline" href="book.html">Каталог JSON</a>
+    </div>
+    <nav class="site-nav" aria-label="Основная навигация">
+      <a href="index.html">Главная</a>
+      <a href="BookCategory.html">Категории</a>
+      <a href="book.html">Каталог</a>
+      <a href="db-catalog.html" aria-current="page">Каталог БД</a>
+    </nav>
+  </header>
+
+  <main class="sqlite-shell">
+    <section class="section">
+      <div class="sqlite-hero">
+        <div>
+          <h2 class="section__title">Интегрированные категории и книги</h2>
+          <p class="section__subtitle">Данные берутся напрямую из dbMedicalLib.sqlite. Фильтруйте по названию, авторам, категориям, языку и году.</p>
+          <div class="sqlite-stats" aria-live="polite">
+            <div class="stat-card">
+              <p class="stat-label">Книг</p>
+              <p class="stat-value" data-books-count>—</p>
+            </div>
+            <div class="stat-card">
+              <p class="stat-label">Категорий</p>
+              <p class="stat-value" data-categories-count>—</p>
+            </div>
+          </div>
+        </div>
+        <div class="sqlite-panel">
+          <p class="panel-title">Поиск</p>
+          <div class="panel-grid">
+            <label class="panel-field">
+              <span>Свободный поиск</span>
+              <input type="search" placeholder="Название, автор, ISBN..." data-search-input>
+            </label>
+            <label class="panel-field">
+              <span>Категория</span>
+              <select data-category-filter>
+                <option value="">Все категории</option>
+              </select>
+            </label>
+            <label class="panel-field">
+              <span>Язык</span>
+              <select data-language-filter>
+                <option value="">Любой</option>
+              </select>
+            </label>
+          </div>
+          <p class="panel-hint" data-filter-status>Загружаем каталог...</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section__head section__head--tight">
+        <h3 class="section__title">Категории</h3>
+        <p class="section__subtitle">Щёлкните по категории, чтобы сузить выдачу.</p>
+      </div>
+      <div class="sqlite-category-grid" data-category-list>
+        <p class="muted">Загружаем список направлений...</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section__head section__head--tight">
+        <h3 class="section__title">Книги</h3>
+        <p class="section__subtitle">Показываем совпадения по выбранным фильтрам.</p>
+      </div>
+      <div class="sqlite-book-grid" data-book-grid>
+        <div class="sqlite-placeholder">Ожидаем данные из базы...</div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div>
+      <strong>© 2025 MedLibrary</strong>
+      <p>Медицинская электронная библиотека. Все права защищены.</p>
+    </div>
+    <div class="site-footer__links">
+      <a href="index.html">Главная</a>
+      <a href="book.html">Каталог JSON</a>
+    </div>
+  </footer>
+
+  <script defer src="db-catalog.js"></script>
+  <script defer src="pwa.js"></script>
+</body>
+</html>
