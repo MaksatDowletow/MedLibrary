@@ -92,6 +92,51 @@ const UI_TEXTS = {
     en: "Pages",
     tm: "Sahypalar",
   },
+  installHintDefault: {
+    ru: "Установка доступна в поддерживаемых браузерах.",
+    en: "Installation is available in supported browsers.",
+    tm: "Gurmak diňe goldanylýan brauzerlerde elýeterlidir.",
+  },
+  installHintReady: {
+    ru: "Нажмите, чтобы установить приложение.",
+    en: "Tap to install the application.",
+    tm: "Programmany gurmak üçin basyň.",
+  },
+  installHintInstalled: {
+    ru: "Приложение установлено на устройство.",
+    en: "The application is installed on your device.",
+    tm: "Programma enjamyňyzda gurnaldy.",
+  },
+  offlineIdle: {
+    ru: "Сформируйте офлайн-архив одним нажатием.",
+    en: "Create the offline archive in one tap.",
+    tm: "Oflaýn arhiwi bir basmada dörediň.",
+  },
+  offlinePreparing: {
+    ru: "Подготавливаем установочный архив...",
+    en: "Preparing the installer archive...",
+    tm: "Gurnama arhiwini taýýarlap durus...",
+  },
+  offlineProgress: {
+    ru: "Добавлено {current} из {total} файлов...",
+    en: "Added {current} of {total} files...",
+    tm: "{total} faýldan {current} sany goşuldy...",
+  },
+  offlineReady: {
+    ru: "Архив готов. Файл medlibrary-offline.zip сохранён.",
+    en: "Archive ready. The medlibrary-offline.zip file was saved.",
+    tm: "Arhiw taýýar. medlibrary-offline.zip faýly saklandy.",
+  },
+  offlineError: {
+    ru: "Не удалось создать архив. Попробуйте ещё раз.",
+    en: "Could not create the archive. Please try again.",
+    tm: "Arhiw döretmek başartmady. Gaýtadan synanyşyň.",
+  },
+  offlineMissingAssets: {
+    ru: "Список файлов пуст. Обновите страницу и попробуйте снова.",
+    en: "The file list is empty. Refresh the page and try again.",
+    tm: "Faýl sanawy boş. Sahypany täzeläp täzeden synanyşyň.",
+  },
 };
 
 const bookSearchState = {
@@ -100,6 +145,8 @@ const bookSearchState = {
   cardContainer: null,
   isTableReady: false,
   totalRows: 0,
+  rowsData: [],
+  rowElements: [],
   filters: {
     global: "",
     columns: BOOK_TABLE_COLUMNS.map(() => ""),
@@ -749,6 +796,10 @@ function initBookTable() {
         return;
       }
 
+      bookSearchState.rowsData = rows;
+      bookSearchState.rowElements = Array(rows.length).fill(null);
+      bookSearchState.totalRows = rows.length;
+
       bookTableBody.innerHTML = "";
       let startIndex = 0;
       const totalRows = rows.length;
@@ -763,6 +814,7 @@ function initBookTable() {
             td.textContent = cellValue;
             tr.appendChild(td);
           });
+          bookSearchState.rowElements[i] = tr;
           fragment.appendChild(tr);
         }
         bookTableBody.appendChild(fragment);
@@ -774,7 +826,6 @@ function initBookTable() {
           tablePanel?.classList.add("is-ready");
           setTableStatus("tableShown", "success", { count: totalRows });
           bookSearchState.isTableReady = true;
-          bookSearchState.totalRows = totalRows;
           applyBookFilters();
           dispatchReady(totalRows);
         }
@@ -849,14 +900,10 @@ function searchByLanguage(value) {
 }
 
 function applyBookFilters() {
-  const tableBody = bookSearchState.tableBody;
-  if (!tableBody || !bookSearchState.isTableReady) {
+  if (!bookSearchState.isTableReady || !bookSearchState.rowsData.length) {
     return;
   }
 
-  const rows = Array.from(tableBody.rows).filter(
-    (row) => !row.classList.contains("skeleton-row")
-  );
   const globalFilter = bookSearchState.filters.global.trim().toUpperCase();
   const columnFilters = bookSearchState.filters.columns.map((filter) =>
     (filter || "").trim().toUpperCase()
@@ -865,17 +912,17 @@ function applyBookFilters() {
   const hasActiveFilter = Boolean(globalFilter || hasActiveColumnFilter);
   let visibleCount = 0;
   const cardEntries = [];
+  const { rowsData, rowElements } = bookSearchState;
 
-  rows.forEach((row) => {
-    const cells = row.getElementsByTagName("td");
-    if (!cells.length) {
+  rowsData.forEach((cells, index) => {
+    if (!cells || !cells.length) {
       return;
     }
 
     let matches = true;
     if (globalFilter) {
-      const bookTitle = cells[0].textContent || "";
-      const author = cells[1].textContent || "";
+      const bookTitle = cells[0] || "";
+      const author = cells[1] || "";
       const composite = `${bookTitle} ${author}`.toUpperCase();
       matches = composite.includes(globalFilter);
     }
@@ -883,31 +930,26 @@ function applyBookFilters() {
     if (matches) {
       for (let i = 0; i < columnFilters.length; i += 1) {
         const filter = columnFilters[i];
-        if (filter && !(cells[i]?.textContent || "").toUpperCase().includes(filter)) {
+        if (filter && !(cells[i] || "").toUpperCase().includes(filter)) {
           matches = false;
           break;
         }
       }
     }
 
-    row.style.display = matches ? "" : "none";
+    const rowElement = rowElements[index];
+    if (rowElement) {
+      rowElement.style.display = matches ? "" : "none";
+    }
     if (matches) {
       visibleCount += 1;
       if (hasActiveFilter) {
-        cardEntries.push({
-          title: cells[0]?.textContent || "",
-          author: cells[1]?.textContent || "",
-          publisher: cells[2]?.textContent || "",
-          city: cells[3]?.textContent || "",
-          year: cells[4]?.textContent || "",
-          pages: cells[5]?.textContent || "",
-          language: cells[6]?.textContent || "",
-        });
+        cardEntries.push(cells);
       }
     }
   });
 
-  bookSearchState.totalRows = rows.length;
+  bookSearchState.totalRows = rowsData.length;
   updateBookStatus(visibleCount);
   renderBookCards(cardEntries, hasActiveFilter);
 }
@@ -960,15 +1002,17 @@ function renderBookCards(entries, hasActiveFilter) {
   }
 
   const fragment = document.createDocumentFragment();
-  entries.forEach((entry) => {
+  const MAX_CARDS = 24;
+  entries.slice(0, MAX_CARDS).forEach((entry) => {
+    const [title, author, publisher, city, year, pages, language] = entry;
     const article = document.createElement("article");
     article.className = "book-card";
     const details = [
-      { key: "cardAuthor", value: entry.author },
-      { key: "cardPublisher", value: entry.publisher },
-      { key: "cardCity", value: entry.city },
-      { key: "cardYear", value: entry.year },
-      { key: "cardPages", value: entry.pages },
+      { key: "cardAuthor", value: author },
+      { key: "cardPublisher", value: publisher },
+      { key: "cardCity", value: city },
+      { key: "cardYear", value: year },
+      { key: "cardPages", value: pages },
     ]
       .map(
         ({ key, value }) =>
@@ -977,8 +1021,8 @@ function renderBookCards(entries, hasActiveFilter) {
       .join("");
     article.innerHTML = `
       <div class="book-card__header">
-        <h3>${entry.title || translate("cardUntitled")}</h3>
-        <span class="book-card__badge">${entry.language || "—"}</span>
+        <h3>${title || translate("cardUntitled")}</h3>
+        <span class="book-card__badge">${language || "—"}</span>
       </div>
       <dl class="book-card__details">${details}</dl>`;
     fragment.appendChild(article);

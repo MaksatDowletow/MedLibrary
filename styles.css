@@ -360,6 +360,173 @@ nav a:hover {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+.hero {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: clamp(1.5rem, 4vw, 3rem);
+    padding: clamp(1.5rem, 4vw, 3rem);
+    border-radius: 32px;
+    margin-bottom: clamp(1.5rem, 4vw, 3rem);
+    color: #fff;
+    background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.15), transparent 55%),
+        linear-gradient(135deg, #0d324d, #1d4f91);
+    overflow: hidden;
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1), transparent 40%);
+    pointer-events: none;
+}
+
+.hero__content,
+.hero__metrics {
+    position: relative;
+    z-index: 1;
+}
+
+.hero__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.hero__eyebrow {
+    font-size: 0.9rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+}
+
+.hero__title {
+    margin: 0;
+    font-size: clamp(2rem, 4vw, 2.75rem);
+}
+
+.hero__text {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.hero__features {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.5rem;
+}
+
+.hero__features li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    font-weight: 600;
+}
+
+.hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.cta-button {
+    border: none;
+    border-radius: 999px;
+    padding: 0.85rem 1.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform var(--transition), box-shadow var(--transition), background-color var(--transition);
+    background: #ffb703;
+    color: #0d324d;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+}
+
+.cta-button:hover,
+.cta-button:focus-visible {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.cta-button[hidden] {
+    display: none;
+}
+
+.cta-button--ghost {
+    background: transparent;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.cta-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.install-hint {
+    margin: 0;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.install-hint.pending {
+    color: #ffecb3;
+}
+
+.install-hint.success {
+    color: #c8e6c9;
+}
+
+.install-hint.error {
+    color: #ffcdd2;
+}
+
+.hero__status-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-top: 1rem;
+}
+
+.hero__metrics {
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+.metric-card {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 24px;
+    padding: 1rem;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.metric-card__value {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.metric-card__label {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.95rem;
+}
+
 .page-container {
     padding: clamp(1rem, 4vw, 2.5rem);
     max-width: 1200px;

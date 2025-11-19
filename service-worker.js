@@ -1,22 +1,10 @@
+importScripts("/MedLibrary/offline-assets.js");
+
 const CACHE_NAME = "medlibrary-v1";
 
-const URLS_TO_CACHE = [
-  "/MedLibrary/",
-  "/MedLibrary/index.html",
-  "/MedLibrary/book.html",
-  "/MedLibrary/books.html",
-  "/MedLibrary/books2.html",
-  "/MedLibrary/BookCategory.html",
-  "/MedLibrary/auth.html",
-  "/MedLibrary/auth.js",
-  "/MedLibrary/styles.css",
-  "/MedLibrary/scripts.js",
-  "/MedLibrary/lang.js",
-  "/MedLibrary/pwa.js",
-  "/MedLibrary/manifest.webmanifest",
-  "/MedLibrary/icons/icon-192.svg",
-  "/MedLibrary/icons/icon-512.svg"
-];
+const URLS_TO_CACHE = Array.isArray(self.MEDLIBRARY_OFFLINE_ASSETS)
+  ? Array.from(new Set(self.MEDLIBRARY_OFFLINE_ASSETS))
+  : [];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
