@@ -23,6 +23,7 @@ const GOOGLE_ALLOWED_HD = process.env.GOOGLE_ALLOWED_HD?.trim();
 const SALT_ROUNDS = 12;
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "data");
 const USERS_FILE = process.env.USERS_FILE || path.join(DATA_DIR, "users.json");
+const BOOKS_FILE = process.env.BOOKS_FILE || path.join(DATA_DIR, "books.json");
 const GOOGLE_TOKEN_INFO_URL = "https://oauth2.googleapis.com/tokeninfo";
 const GOOGLE_FETCH_TIMEOUT = 10000;
 const isFetchAvailable = typeof fetch === "function";
@@ -51,6 +52,39 @@ userSchema.methods.toSafeObject = function toSafeObject() {
 };
 
 const User = mongoose.model("User", userSchema);
+
+const bookSchema = new mongoose.Schema(
+  {
+    title: { type: String, trim: true },
+    author: { type: String, trim: true },
+    publisher: { type: String, trim: true },
+    city: { type: String, trim: true },
+    year: { type: String, trim: true },
+    pages: { type: String, trim: true },
+    language: { type: String, trim: true },
+    specialty: { type: String, trim: true },
+    link: { type: String, trim: true },
+    cover: { type: String, trim: true },
+    hasExternalLink: { type: Boolean, default: false },
+  },
+  { timestamps: true }
+);
+
+const Book = mongoose.model("Book", bookSchema);
+
+const normalizeBookRecord = (record = {}) => ({
+  title: record.title?.toString().trim() || "",
+  author: record.author?.toString().trim() || "",
+  publisher: record.publisher?.toString().trim() || "",
+  city: record.city?.toString().trim() || "",
+  year: record.year?.toString().trim() || "",
+  pages: record.pages?.toString().trim() || "",
+  language: record.language?.toString().trim() || "",
+  specialty: record.specialty?.toString().trim() || "",
+  link: record.link?.toString().trim() || "",
+  cover: record.cover?.toString().trim() || "",
+  hasExternalLink: Boolean(record.hasExternalLink),
+});
 
 const createFileUserStore = (filePath = USERS_FILE) => {
   const usersByEmail = new Map();
@@ -144,6 +178,43 @@ const createFileUserStore = (filePath = USERS_FILE) => {
   };
 };
 
+const createFileBookStore = (filePath = BOOKS_FILE) => ({
+  type: "file",
+  async listBooks() {
+    try {
+      const raw = await fs.readFile(filePath, "utf8");
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        return parsed.map((book) => normalizeBookRecord(book));
+      }
+    } catch (error) {
+      if (error.code !== "ENOENT") {
+        console.warn("Не удалось прочитать каталог книг", error.message);
+      }
+    }
+    return [];
+  },
+});
+
+const createMongoBookStore = () => ({
+  type: "mongo",
+  async listBooks() {
+    const docs = await Book.find({}).lean();
+    return docs.map((book) => normalizeBookRecord(book));
+  },
+  async seedFromFileIfEmpty() {
+    const existingCount = await Book.estimatedDocumentCount();
+    if (existingCount > 0) {
+      return;
+    }
+    const fallbackBooks = await createFileBookStore().listBooks();
+    if (fallbackBooks.length === 0) {
+      return;
+    }
+    await Book.insertMany(fallbackBooks, { ordered: false });
+  },
+});
+
 const createMongoUserStore = () => ({
   type: "mongo",
   async findByEmail(email) {
@@ -161,6 +232,7 @@ const createMongoUserStore = () => ({
 });
 
 let userStore = createFileUserStore();
+let bookStore = createFileBookStore();
 
 async function initializeUserStore() {
   await userStore.ready.catch((error) => {
@@ -179,6 +251,10 @@ async function initializeUserStore() {
     });
     console.log("MongoDB connected");
     userStore = createMongoUserStore();
+    bookStore = createMongoBookStore();
+    await bookStore.seedFromFileIfEmpty().catch((error) => {
+      console.warn("Не удалось импортировать каталог в MongoDB", error.message);
+    });
   } catch (error) {
     console.warn(
       "Не удалось подключиться к MongoDB. Используем файловое хранилище.",
@@ -326,6 +402,22 @@ const authenticate = asyncHandler(async (req, res, next) => {
 app.get("/health", (req, res) => {
   res.json({ status: "ok", store: userStore.type });
 });
+
+const loadBooksFromStore = async () => {
+  const books = await bookStore.listBooks();
+  if (books.length > 0) {
+    return books;
+  }
+  return createFileBookStore().listBooks();
+};
+
+app.get(
+  "/books",
+  asyncHandler(async (req, res) => {
+    const books = await loadBooksFromStore();
+    res.json({ books });
+  })
+);
 
 app.post(
   "/register",
