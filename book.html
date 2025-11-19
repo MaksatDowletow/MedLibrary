@@ -632,6 +632,97 @@
     const fallbackCoverImages = ['1.webp', '2.webp', '3.webp', '4.webp', '5.webp', '6.webp', '1.png', '2.png', '3.png', '4.png', '5.png', '6.png'];
     const fallbackCoverCache = new Map();
     const accentPattern = /[\u0300-\u036f]/g;
+    const CATEGORY_TRANSLATIONS = [
+      { ru: 'Акушерство и Гинекология', tm: 'Akuşerçilik we Ginekologiýa' },
+      { ru: 'Анатомия', tm: 'Anatomiýa' },
+      { ru: 'Ангиография', tm: 'Angiografiýa' },
+      { ru: 'Английский язык', tm: 'Iňlis dili' },
+      { ru: 'Анестезиология', tm: 'Anesteziologiýa' },
+      { ru: 'Биохимия', tm: 'Biohimiýa' },
+      { ru: 'Внутренние болезни', tm: 'Iç keseller' },
+      { ru: 'Военно-полевая терапия', tm: 'Harby-meýdan terapiýasy' },
+      { ru: 'Военно-полевая хирургия', tm: 'Harby-meýdan hirurgiýasy' },
+      { ru: 'Гастроэнтерология', tm: 'Gastroenterologiýa' },
+      { ru: 'Гематология', tm: 'Gematologiýa' },
+      { ru: 'Гигиена', tm: 'Gigiýena' },
+      { ru: 'Гистология, цитология', tm: 'Gistologiýa, sitologiýa' },
+      { ru: 'Детская хирургия', tm: 'Çaga hirurgiýasy' },
+      { ru: 'Диетология', tm: 'Dietologiýa' },
+      { ru: 'Инфекционные болезни', tm: 'Ýokanç keseller' },
+      { ru: 'Инфекционные болезни детей', tm: 'Çaga ýokanç keselleri' },
+      { ru: 'История медицины', tm: 'Lukmançylyk taryhy' },
+      { ru: 'Кардиология', tm: 'Kardiologiýa' },
+      { ru: 'Кардиохирургия', tm: 'Kardiohirurgiýa' },
+      { ru: 'Клиническая лабораторная диагностика.', tm: 'Клиническая лабораторная диагностика.' },
+      { ru: 'Клиническая лаборатория', tm: 'Kliniki laboratoriýa' },
+      { ru: 'Кожные и венерические болезни', tm: 'Deri we weneriki keseller' },
+      { ru: 'Компьютерная томография', tm: 'Kompýuter tomografiýasy' },
+      { ru: 'Компютерная томография-КТ', tm: 'Компютерная томография-КТ' },
+      { ru: 'Латинский язык и медицинская терминология', tm: 'Latin dili we lukmançylyk terminologiýasy' },
+      { ru: 'Латинский язык и основы медицинской терминологии.', tm: 'Латинский язык и основы медицинской терминологии.' },
+      { ru: 'Лечебная физкультура', tm: 'Bejeriş beden terbiyesi' },
+      { ru: 'Лечебная физическая культура', tm: 'Лечебная физическая культура' },
+      { ru: 'Магнитно-резонансная томография', tm: 'Magnit rezonans tomografiýasy' },
+      { ru: 'Магнитно-резонансная томография-МРТ', tm: 'Магнитно-резонансная томография-МРТ' },
+      { ru: 'Медицинская биология', tm: 'Lukmançylyk biologiýasy' },
+      { ru: 'Медицинская генетика', tm: 'Lukmançylyk genetikasy' },
+      { ru: 'Медицинская и биологическая физика', tm: 'Lukmançylyk we biologik fizika' },
+      { ru: 'Медицинская иммунология', tm: 'Lukmançylyk immunologiýasy' },
+      { ru: 'Микробиология', tm: 'Mikrobiologiýa' },
+      { ru: 'Наркология', tm: 'Narkologiýa' },
+      { ru: 'Неврология', tm: 'Newrologiýa' },
+      { ru: 'Нейрохирургия', tm: 'Neýrohirurgiýa' },
+      { ru: 'Неонатология', tm: 'Neonatologiýa' },
+      { ru: 'Общая и медицинская химия', tm: 'Umumy we lukmançylyk himiýasy' },
+      { ru: 'Общая и медисинская экология.', tm: 'Общая и медисинская экология.' },
+      { ru: 'Общая и неорганическая химия', tm: 'Umumy we organiki däl himiýa' },
+      { ru: 'Общая и неорганическая химия.', tm: 'Общая и неорганическая химия.' },
+      { ru: 'Онкология', tm: 'Onkologiýa' },
+      { ru: 'Ортопедия', tm: 'Ортопедия' },
+      { ru: 'Ортопедия и травматология', tm: 'Ortopediýa we trawmatologiýa' },
+      { ru: 'Отоларингология', tm: 'Otolaringologiýa' },
+      { ru: 'Оториноларингология-ЛОР', tm: 'Оториноларингология-ЛОР' },
+      { ru: 'Офтальмология', tm: 'Oftalmologiýa' },
+      { ru: 'Офтальмоло́гия', tm: 'Oftalmologiýa' },
+      { ru: 'Патологическая анатомия', tm: 'Patologik anatomiýa' },
+      { ru: 'Патологическая физиология', tm: 'Патологическая физиология' },
+      { ru: 'Педиатрия', tm: 'Pediatriýa' },
+      { ru: 'Пластическая хирургия', tm: 'Plastiki hirurgiýa' },
+      { ru: 'Пропедевтика внутренних болезней', tm: 'Пропедевтика внутренних болезней' },
+      { ru: 'Пропедевтика детских болезней', tm: 'Пропедевтика детских болезней' },
+      { ru: 'Психиатрия', tm: 'Psihiatriýa' },
+      { ru: 'Психология', tm: 'Psihologiýa' },
+      { ru: 'Психология и психиатрия', tm: 'Психология и психиатрия' },
+      { ru: 'Пульмонология', tm: 'Pulmonologiýa' },
+      { ru: 'Радиология', tm: 'Radiologiýa' },
+      { ru: 'Реанимация и интенсивная терапия', tm: 'Реанимация и интенсивная терапия' },
+      { ru: 'Ревматология', tm: 'Ревматология' },
+      { ru: 'Рентгенология и радиология', tm: 'Рентгенология и радиология' },
+      { ru: 'Сердечно-сосудистая хирургия', tm: 'Ýürek-damar hirurgiýasy' },
+      { ru: 'Сестринское дело', tm: 'Şepagat uýasy işi' },
+      { ru: 'Социальная гигиена и организация здравоохранения', tm: 'Социальная гигиена и организация здравоохранения' },
+      { ru: 'Спортивная медицина', tm: 'Спортивная медицина' },
+      { ru: 'Стоматология', tm: 'Stomatologiýa' },
+      { ru: 'Судебная медицина', tm: 'Kazyýet lukmançylygy' },
+      { ru: 'Судебно-медицинская экспертиза', tm: 'Судебно-медицинская экспертиза' },
+      { ru: 'Терапия', tm: 'Terapia' },
+      { ru: 'Топографическая анатомия и оперативная хирургия', tm: 'Топографическая анатомия и оперативная хирургия' },
+      { ru: 'Травматология', tm: 'Trawmatologiýa' },
+      { ru: 'Ультразвуковая диагностика', tm: 'Ultrases barlagy' },
+      { ru: 'Урология', tm: 'Урология' },
+      { ru: 'Фармакология', tm: 'Farmakologiýa' },
+      { ru: 'Физиология', tm: 'Fiziologiýa' },
+      { ru: 'Физиотерапия', tm: 'Физиотерапия' },
+      { ru: 'Фтизиатрия', tm: 'Ftiziatriýa' },
+      { ru: 'Хирургия', tm: 'Hirurgiýa' },
+      { ru: 'Электрокардиография', tm: 'Elektrokardiografiýa' },
+      { ru: 'Электрокардиография-ЭКГ', tm: 'Электрокардиография-ЭКГ' },
+      { ru: 'Эндокринология', tm: 'Endokrinologiýa' },
+      { ru: 'Эпидемиология', tm: 'Epidemiologiýa' }
+    ];
+    const categoryTranslationMap = new Map(
+      CATEGORY_TRANSLATIONS.map((entry) => [normalizeText(entry.ru), entry.tm])
+    );
     const REMOTE_COVER_CACHE_KEY = 'medlibrary.remoteCovers';
     const REMOTE_COVER_CACHE_VERSION = '1';
     const remoteCoverCache = new Map();
@@ -673,6 +764,11 @@
         value = value == null ? '' : String(value);
       }
       return value.trim().toLowerCase().normalize('NFD').replace(accentPattern, '');
+    }
+
+    function translateSpecialty(value) {
+      if (!value) return '';
+      return categoryTranslationMap.get(normalizeText(value)) || value;
     }
 
     function resolveApiBase(attributeBase = '') {
@@ -1418,7 +1514,12 @@
           return false;
         }
         const normalizedSpecialty = normalizeText(book.specialty);
-        if (state.filters.specialty && !normalizedSpecialty.includes(state.filters.specialty)) {
+        const normalizedSpecialtyTm = normalizeText(translateSpecialty(book.specialty));
+        if (
+          state.filters.specialty &&
+          !normalizedSpecialty.includes(state.filters.specialty) &&
+          !normalizedSpecialtyTm.includes(state.filters.specialty)
+        ) {
           return false;
         }
         const normalizedLanguage = normalizeText(book.language);
