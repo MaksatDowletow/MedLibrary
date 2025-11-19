@@ -1148,7 +1148,9 @@ function initCategoryFilter() {
       const tmCell = document.createElement("td");
       tmCell.textContent = item.tm;
       const countCell = document.createElement("td");
-      countCell.textContent = item.count ? String(item.count) : "—";
+      const countValue =
+        Number.isFinite(item.count) && item.count >= 0 ? item.count : "—";
+      countCell.textContent = String(countValue);
 
       row.appendChild(ruCell);
       row.appendChild(tmCell);
