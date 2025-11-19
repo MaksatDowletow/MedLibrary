@@ -6,6 +6,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const morgan = require("morgan");
+const { execFile } = require("child_process");
 const crypto = require("crypto");
 const fs = require("fs/promises");
 const path = require("path");
@@ -24,6 +25,7 @@ const SALT_ROUNDS = 12;
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "data");
 const USERS_FILE = process.env.USERS_FILE || path.join(DATA_DIR, "users.json");
 const BOOKS_FILE = process.env.BOOKS_FILE || path.join(DATA_DIR, "books.json");
+const SQLITE_DB_PATH = process.env.SQLITE_DB_PATH || path.join(__dirname, "dbMedicalLib.sqlite");
 const GOOGLE_TOKEN_INFO_URL = "https://oauth2.googleapis.com/tokeninfo";
 const GOOGLE_FETCH_TIMEOUT = 10000;
 const isFetchAvailable = typeof fetch === "function";
@@ -233,6 +235,145 @@ const createMongoUserStore = () => ({
 
 let userStore = createFileUserStore();
 let bookStore = createFileBookStore();
+let sqliteCatalogCache = { data: null, loadedAt: 0 };
+const SQLITE_CACHE_TTL = 5 * 60 * 1000;
+
+const normalizeSqliteText = (value) => {
+  if (value == null) {
+    return "";
+  }
+  return value.toString().replace(/\s+/g, " ").trim();
+};
+
+const runSqliteQuery = async (query) =>
+  new Promise((resolve, reject) => {
+    execFile(
+      "sqlite3",
+      ["-json", SQLITE_DB_PATH, query],
+      { maxBuffer: 20 * 1024 * 1024 },
+      (error, stdout) => {
+        if (error) {
+          return reject(error);
+        }
+        try {
+          const parsed = JSON.parse(stdout || "[]");
+          resolve(parsed);
+        } catch (parseError) {
+          reject(parseError);
+        }
+      }
+    );
+  });
+
+const loadSqliteCatalog = async () => {
+  const now = Date.now();
+  if (
+    sqliteCatalogCache.data &&
+    now - sqliteCatalogCache.loadedAt < SQLITE_CACHE_TTL
+  ) {
+    return sqliteCatalogCache.data;
+  }
+
+  try {
+    await fs.access(SQLITE_DB_PATH);
+  } catch (error) {
+    console.warn("SQLite файл недоступен", error.message);
+    return null;
+  }
+
+  try {
+    const [categories, languages, books, links] = await Promise.all([
+      runSqliteQuery(
+        "SELECT Oid AS id, BookCategoryNameRu AS nameRu, BookCategoryNameTM AS nameTm FROM BookCategory WHERE IFNULL(GCRecord, 0) = 0"
+      ),
+      runSqliteQuery(
+        "SELECT Oid AS id, LanguageName AS name FROM Language WHERE IFNULL(GCRecord, 0) = 0"
+      ),
+      runSqliteQuery(
+        "SELECT Oid AS id, BookNameRu AS titleRu, AuthorsNameRu AS authorRu, BookNameTm AS titleTm, AuthorsNameTm AS authorTm, PublisherName AS publisher, PublicationCity AS city, PublicationYear AS year, PageCount AS pages, UDK, BBK, ISBN, BookImage AS bookImageId, File AS fileId, BookLanguage AS languageId FROM Book WHERE IFNULL(GCRecord, 0) = 0"
+      ),
+      runSqliteQuery(
+        "SELECT Books AS bookId, Categories AS categoryId FROM BookCategoryCategories_BookBooks WHERE Books IS NOT NULL AND Categories IS NOT NULL"
+      ),
+    ]);
+
+    const languageMap = new Map(
+      languages.map((language) => [
+        language.id,
+        normalizeSqliteText(language.name),
+      ])
+    );
+
+    const categoryMap = new Map(
+      categories.map((category) => [
+        category.id,
+        {
+          id: category.id,
+          nameRu: normalizeSqliteText(category.nameRu),
+          nameTm: normalizeSqliteText(category.nameTm),
+          count: 0,
+        },
+      ])
+    );
+
+    const bookCategoryLookup = new Map();
+    links.forEach((link) => {
+      const list = bookCategoryLookup.get(link.bookId) || [];
+      list.push(link.categoryId);
+      bookCategoryLookup.set(link.bookId, list);
+    });
+
+    const normalizedBooks = books.map((book) => {
+      const categoriesForBook = (bookCategoryLookup.get(book.id) || [])
+        .map((categoryId) => categoryMap.get(categoryId))
+        .filter(Boolean);
+
+      categoriesForBook.forEach((category) => {
+        category.count += 1;
+      });
+
+      return {
+        id: book.id,
+        titleRu: normalizeSqliteText(book.titleRu),
+        titleTm: normalizeSqliteText(book.titleTm),
+        authorRu: normalizeSqliteText(book.authorRu),
+        authorTm: normalizeSqliteText(book.authorTm),
+        publisher: normalizeSqliteText(book.publisher),
+        city: normalizeSqliteText(book.city),
+        year: normalizeSqliteText(book.year),
+        pages: typeof book.pages === "number" ? book.pages : null,
+        language: normalizeSqliteText(languageMap.get(book.languageId)),
+        isbn: normalizeSqliteText(book.ISBN),
+        udk: normalizeSqliteText(book.UDK),
+        bbk: normalizeSqliteText(book.BBK),
+        categories: categoriesForBook.map((category) => ({
+          id: category.id,
+          nameRu: category.nameRu,
+          nameTm: category.nameTm,
+        })),
+      };
+    });
+
+    const categoriesWithCounts = Array.from(categoryMap.values()).sort((a, b) =>
+      a.nameRu.localeCompare(b.nameRu, "ru", { sensitivity: "accent" })
+    );
+
+    const catalog = {
+      categories: categoriesWithCounts,
+      books: normalizedBooks,
+      stats: {
+        books: normalizedBooks.length,
+        categories: categoriesWithCounts.length,
+      },
+    };
+
+    sqliteCatalogCache = { data: catalog, loadedAt: now };
+    return catalog;
+  } catch (error) {
+    console.warn("Не удалось загрузить каталог из SQLite", error.message);
+    return null;
+  }
+};
 
 async function initializeUserStore() {
   await userStore.ready.catch((error) => {
@@ -444,6 +585,17 @@ app.get(
     const books = await loadBooksFromStore();
     const specialties = buildSpecialtyIndex(books);
     res.json({ specialties });
+  })
+);
+
+app.get(
+  "/db/catalog",
+  asyncHandler(async (req, res) => {
+    const catalog = await loadSqliteCatalog();
+    if (!catalog) {
+      return res.status(503).json({ message: "Каталог SQLite недоступен" });
+    }
+    res.json(catalog);
   })
 );
 
