@@ -411,11 +411,39 @@ const loadBooksFromStore = async () => {
   return createFileBookStore().listBooks();
 };
 
+const buildSpecialtyIndex = (books = []) => {
+  const specialties = new Map();
+
+  books.forEach((book) => {
+    const specialty = book?.specialty?.toString().trim();
+    if (!specialty) {
+      return;
+    }
+    const key = specialty.toLowerCase();
+    const entry = specialties.get(key) || { name: specialty, count: 0 };
+    entry.count += 1;
+    specialties.set(key, entry);
+  });
+
+  return Array.from(specialties.values()).sort((a, b) =>
+    a.name.localeCompare(b.name, "ru", { sensitivity: "accent" })
+  );
+};
+
 app.get(
   "/books",
   asyncHandler(async (req, res) => {
     const books = await loadBooksFromStore();
     res.json({ books });
+  })
+);
+
+app.get(
+  "/specialties",
+  asyncHandler(async (req, res) => {
+    const books = await loadBooksFromStore();
+    const specialties = buildSpecialtyIndex(books);
+    res.json({ specialties });
   })
 );
 
