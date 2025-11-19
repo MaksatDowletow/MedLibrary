@@ -1411,6 +1411,10 @@ function resolveApiBase(attributeBase = "") {
   const overrideBase = params.get("apiBase");
   let base = (overrideBase || attributeBase || "").trim();
 
+  if (window.location.hostname.endsWith("github.io")) {
+    return "";
+  }
+
   if (!base) {
     base = window.location.origin;
   }
