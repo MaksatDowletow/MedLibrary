@@ -1,346 +1,159 @@
 <!DOCTYPE html>
 <html lang="ru" data-lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Lukmançylyk kitaphanasy - 1000-den gowrak kitaplara oflayn elýeterlik. Kitaplary gözlemek we kategoriýalar boýunça seretmek mümkinçiligi.">
-    <meta name="keywords" content="lukmançylyk, kitaplar, kategoriýalar, oflayn, bilim, Медицинская электронная библиотека">
-    <meta name="author" content="Maksat Döwletow" >
-    <meta name="theme-color" content="#0d47a1">
-    <title>Медицинская электронная библиотека</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="manifest" href="/MedLibrary/manifest.webmanifest">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#050b1d">
+  <meta name="description" content="Категории медицинской библиотеки MedLibrary: 69 направлений и быстрый поиск.">
+  <title>Категории — MedLibrary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="manifest.webmanifest">
 </head>
 <body>
-  <header>
-    <select id="language-select">
-      <option value="tm">Türkmençe</option>
-      <option value="ru">Русский</option>
-      <option value="en">English</option>
-    </select>
-    <h1 data-lang="ru" class="lang">Категории книг</h1>
-    <h1 data-lang="en" class="lang">Book Categories</h1>
-    <h1 data-lang="tm" class="lang">Kitap kategoriýalary</h1>
-  </header>
-  <nav>
-    <a href="index.html" data-lang="ru" class="lang">Главная</a>
-    <a href="index.html" data-lang="en" class="lang">Home</a>
-    <a href="index.html" data-lang="tm" class="lang">Baş sahypa</a>
-    <a href="BookCategory.html" data-lang="ru" class="lang">Категории книг</a>
-    <a href="BookCategory.html" data-lang="en" class="lang">Book Categories</a>
-    <a href="BookCategory.html" data-lang="tm" class="lang">Kitap kategoriýalary</a>
-      <!-- Новая ссылка на страницу с книгами -->
-  <a href="book.html" data-lang="ru" class="lang">Список книг</a>
-  <a href="book.html" data-lang="en" class="lang">Book List</a>
-  <a href="book.html" data-lang="tm" class="lang">Kitaplar</a>
-    <a href="https://sites.google.com/view/lukmanylyksanlykitaphanasy/ba%C5%9F-sahypa" target="_blank" class="external-link" style="color: blue; font-weight: bold;">Другой сайт библиотеки</a>
-  </nav>
-    <nav>
-  <input type="text" id="searchInput" placeholder="Gözleg...">
+  <header class="site-header">
+    <div class="site-header__brand">
+      <p class="eyebrow lang" data-lang="ru">Категории библиотеки</p>
+      <p class="eyebrow lang" data-lang="en">Library categories</p>
+      <p class="eyebrow lang" data-lang="tm">Kategoriýalar</p>
+      <h1 class="site-header__title lang" data-lang="ru">Медицинские направления</h1>
+      <h1 class="site-header__title lang" data-lang="en">Medical specialties</h1>
+      <h1 class="site-header__title lang" data-lang="tm">Lukmançylyk ugurlary</h1>
+    </div>
+    <div class="site-header__actions">
+      <select id="language-select" aria-label="Сменить язык">
+        <option value="tm">Türkmençe</option>
+        <option value="ru" selected>Русский</option>
+        <option value="en">English</option>
+      </select>
+      <button id="install-button" class="button button--ghost" type="button" hidden data-install-trigger>
+        <span class="lang" data-lang="ru">Скачать приложение</span>
+        <span class="lang" data-lang="en">Download app</span>
+        <span class="lang" data-lang="tm">Programmany ýükläň</span>
+      </button>
+      <a class="button button--outline" href="book.html">
+        <span class="lang" data-lang="ru">Каталог книг</span>
+        <span class="lang" data-lang="en">Book catalog</span>
+        <span class="lang" data-lang="tm">Kitap katalogy</span>
+      </a>
+    </div>
+    <nav class="site-nav" aria-label="Основная навигация">
+      <a href="index.html"><span class="lang" data-lang="ru">Главная</span><span class="lang" data-lang="en">Home</span><span class="lang" data-lang="tm">Baş sahypa</span></a>
+      <a href="BookCategory.html" aria-current="page"><span class="lang" data-lang="ru">Категории</span><span class="lang" data-lang="en">Categories</span><span class="lang" data-lang="tm">Kategoriýalar</span></a>
+      <a href="book.html"><span class="lang" data-lang="ru">Каталог</span><span class="lang" data-lang="en">Catalog</span><span class="lang" data-lang="tm">Katalog</span></a>
     </nav>
-  <div class="container">
-    <table>
-      <thead>
-        <tr>
-          <th>Название категории (RU)</th>
-          <th>Название категории (TM)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Акушерство и Гинекология</td>
-          <td>Akuşerçilik we Ginekologiýa</td>
-        </tr>
-        <tr>
-          <td>Анатомия</td>
-          <td>Anatomiýa</td>
-        </tr>
-        <tr>
-          <td>Ангиография</td>
-          <td>Angiografiýa</td>
-        </tr>
-        <tr>
-          <td>Английский язык</td>
-          <td>Iňlis dili</td>
-        </tr>
-        <tr>
-          <td>Анестезиология</td>
-          <td>Anesteziologiýa</td>
-        </tr>
-        <tr>
-          <td>Биохимия</td>
-          <td>Biohimiýa</td>
-        </tr>
-        <tr>
-          <td>Внутренние болезни</td>
-          <td>Iç keseller</td>
-        </tr>
-        <tr>
-          <td>Военно-полевая терапия</td>
-          <td>Harby-meýdan tera</td>
-        </tr>
-        <tr>
-          <td>Военно-полевая хирургия</td>
-          <td>Harby-meýdan hiru</td>
-        </tr>
-        <tr>
-          <td>Гастроэнтерология</td>
-          <td>Gastroenterologiýa</td>
-        </tr>
-        <tr>
-          <td>Гематология</td>
-          <td>Gematologiýa</td>
-        </tr>
-        <tr>
-          <td>Гигиена</td>
-          <td>Gigiýena</td>
-        </tr>
-        <tr>
-          <td>Гистология, цитология</td>
-          <td>Gistologiýa, sitologi</td>
-        </tr>
-        <tr>
-          <td>Детская хирургия</td>
-          <td>Çaga hirurgiýasy</td>
-        </tr>
-        <tr>
-          <td>Диетология</td>
-          <td>Dietologiýa</td>
-        </tr>
-        <tr>
-          <td>Инфекционные болезни</td>
-          <td>Ýokanç keseller</td>
-        </tr>
-        <tr>
-          <td>Инфекционные болезни детей</td>
-          <td>Çaga ýokanç keseller</td>
-        </tr>
-        <tr>
-          <td>История медицины</td>
-          <td>Lukmançylyk taryhy</td>
-        </tr>
-        <tr>
-          <td>Кардиология</td>
-          <td>Kardiologiýa</td>
-        </tr>
-        <tr>
-          <td>Кардиохирургия</td>
-          <td>Kardiohirurgiýa</td>
-        </tr>
-        <tr>
-          <td>Клиническая лаборатория</td>
-          <td>Kliniki laborator dia</td>
-        </tr>
-        <tr>
-          <td>Кожные и венерические болезни</td>
-          <td>Deri we weneriki keseller</td>
-        </tr>
-        <tr>
-          <td>Компьютерная томография</td>
-          <td>Kompýuter tomografiýa</td>
-        </tr>
-        <tr>
-          <td>Латинский язык и медицинская терминология</td>
-          <td>Latin dili we lukmançylyk terminologiýasy</td>
-        </tr>
-        <tr>
-          <td>Лечебная физкультура</td>
-          <td>Bejeriş beden terbiyesi</td>
-        </tr>
-        <tr>
-          <td>Магнитно-резонансная томография</td>
-          <td>Magnit rezonans tomografiýasy</td>
-        </tr>
-        <tr>
-          <td>Медицинская биология</td>
-          <td>Lukmançylyk biologiýasy</td>
-        </tr>
-        <tr>
-          <td>Медицинская генетика</td>
-          <td>Lukmançylyk genetikasy</td>
-        </tr>
-        <tr>
-          <td>Медицинская и биологическая физика</td>
-          <td>Lukmançylyk we biologik fizika</td>
-        </tr>
-        <tr>
-          <td>Медицинская иммунология</td>
-          <td>Lukmançylyk immunologiýasy</td>
-        </tr>
-        <tr>
-          <td>Микробиология</td>
-          <td>Mikrobiologiýa</td>
-        </tr>
-        <tr>
-          <td>Наркология</td>
-          <td>Narkologiýa</td>
-        </tr>
-        <tr>
-          <td>Неврология</td>
-          <td>Newrologiýa</td>
-        </tr>
-        <tr>
-          <td>Нейрохирургия</td>
-          <td>Neýrohirurgiýa</td>
-        </tr>
-        <tr>
-          <td>Неонатология</td>
-          <td>Neonatologiýa</td>
-        </tr>
-        <tr>
-          <td>Общая и медицинская химия</td>
-          <td>Umumy we lukmançylyk himiýasy</td>
-        </tr>
-        <tr>
-          <td>Общая и неорганическая химия</td>
-          <td>Umumy we organiki däl himiýa</td>
-        </tr>
-        <tr>
-          <td>Онкология</td>
-          <td>Onkologiýa</td>
-        </tr>
-        <tr>
-          <td>Ортопедия</td>
-          <td>Ortopediýa</td>
-        </tr>
-        <tr>
-          <td>Оториноларингология</td>
-          <td>Gulak burun bokurdak keselleri</td>
-        </tr>
-        <tr>
-          <td>Офтальмология</td>
-          <td>Göz keselleri</td>
-        </tr>
-        <tr>
-          <td>Патологическая анатомия</td>
-          <td>Patalogik anatomiýa</td>
-        </tr>
-        <tr>
-          <td>Патологическая физиология</td>
-          <td>Patalogik fiziologiýa</td>
-        </tr>
-        <tr>
-          <td>Педиатрия</td>
-          <td>Pediatriýa</td>
-        </tr>
-        <tr>
-          <td>Пластическая хирургия</td>
-          <td>Plastiki hirurgiýa</td>
-        </tr>
-        <tr>
-          <td>Пропедевтика внутренних болезней</td>
-          <td>Iç keselleriň propedeftikasy</td>
-        </tr>
-        <tr>
-          <td>Пропедевтика детских болезней</td>
-          <td>Çaga keselleriniň propedeftikasy</td>
-        </tr>
-        <tr>
-          <td>Психология и психиатрия</td>
-          <td>Psihologiýa we psihiatriýa</td>
-        </tr>
-        <tr>
-          <td>Пульмонология</td>
-          <td>Pulmonologiýa</td>
-        </tr>
-        <tr>
-          <td>Реанимация и интенсивная терапия</td>
-          <td>Reanimasiýa we intensiw terapiýa</td>
-        </tr>
-        <tr>
-          <td>Ревматология</td>
-          <td>Rewmatologiýa</td>
-        </tr>
-        <tr>
-          <td>Рентгенология и радиология</td>
-          <td>Rentgenologiýa we radiologiýa</td>
-        </tr>
-        <tr>
-          <td>Сестринское дело</td>
-          <td>Şepagat uýasynyň işi</td>
-        </tr>
-        <tr>
-          <td>Социальная гигиена</td>
-          <td>Durmuş gigienasy</td>
-        </tr>
-        <tr>
-          <td>Спортивная медицина</td>
-          <td>Sport lukmançylygy</td>
-        </tr>
-        <tr>
-          <td>Стоматология</td>
-          <td>Stomatologiýa</td>
-        </tr>
-        <tr>
-          <td>Судебно-медицинская экспертиза</td>
-          <td>Kazyýet lukmançylygy</td>
-        </tr>
-        <tr>
-          <td>Топографическая анатомия</td>
-          <td>Topografiki anatomiýa</td>
-        </tr>
-        <tr>
-          <td>Травматология</td>
-          <td>Trawmatologiýa</td>
-        </tr>
-        <tr>
-          <td>Ультразвуковая диагностика</td>
-          <td>Ultrases barlagy</td>
-        </tr>
-        <tr>
-          <td>Урология</td>
-          <td>Urologiýa</td>
-        </tr>
-        <tr>
-          <td>Фармакология</td>
-          <td>Farmakologiýa</td>
-        </tr>
-        <tr>
-          <td>Физиология</td>
-          <td>Fiziologiýa</td>
-        </tr>
-        <tr>
-          <td>Физиотерапия</td>
-          <td>Fiziobejergi</td>
-        </tr>
-        <tr>
-          <td>Фтизиатрия</td>
-          <td>Ftiziatriýa</td>
-        </tr>
-        <tr>
-          <td>Хирургия</td>
-          <td>Hirurgiýa</td>
-        </tr>
-        <tr>
-          <td>Электрокардиография</td>
-          <td>Elektrokardiografiýa</td>
-        </tr>
-        <tr>
-          <td>Эндокринология</td>
-          <td>Endokrinologiýa</td>
-        </tr>
-        <tr>
-          <td>Эпидемиология</td>
-          <td>Epidemiologiýa</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <footer>
-    <div class="footer-container">
-      <div class="contact-info">
-        <p>Контактный телефон: <a href="tel:+99362234094">+99362234094</a></p>
-        <p>Email: <a href="mailto:example@example.com">tdlipf@gmail.com</a></p>
+  </header>
+
+  <main class="category-shell">
+    <section class="section">
+      <div class="section__head">
+        <h2 class="section__title lang" data-lang="ru">Быстрая навигация по 69 направлениям</h2>
+        <h2 class="section__title lang" data-lang="en">Navigate 69 specialties</h2>
+        <h2 class="section__title lang" data-lang="tm">69 lukmançylyk ugry</h2>
+        <p class="section__subtitle lang" data-lang="ru">Используйте поисковую строку ниже — результаты обновляются мгновенно.</p>
+        <p class="section__subtitle lang" data-lang="en">Use the search box below — results update instantly.</p>
+        <p class="section__subtitle lang" data-lang="tm">Aşakdaky gözleg gutusyny ulanyň — netijeler bada-bat täzeleýär.</p>
       </div>
-      <div class="footer-nav">
-        <a href="index.html">Главная</a>
+      <div class="category-search">
+        <label for="category-search">
+          <span class="lang" data-lang="ru">Поиск по категориям</span>
+          <span class="lang" data-lang="en">Search categories</span>
+          <span class="lang" data-lang="tm">Kategoriýalar boýunça gözleg</span>
+        </label>
+        <input id="category-search" type="search" placeholder="Анатомия, Kardiologiýa..." autocomplete="off">
+        <p id="category-count" class="category-count">69 категорий</p>
       </div>
-      <div class="copyright">
-        <p>&copy; 2025 Медицинская электронная библиотека. Все права защищены.</p>
+      <div class="table-wrapper">
+        <table class="category-table" aria-live="polite">
+          <thead>
+            <tr>
+              <th>RU</th>
+              <th>TM</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-category-row><td>Акушерство и Гинекология</td><td>Akuşerçilik we Ginekologiýa</td></tr>
+            <tr data-category-row><td>Анатомия</td><td>Anatomiýa</td></tr>
+            <tr data-category-row><td>Ангиография</td><td>Angiografiýa</td></tr>
+            <tr data-category-row><td>Английский язык</td><td>Iňlis dili</td></tr>
+            <tr data-category-row><td>Анестезиология</td><td>Anesteziologiýa</td></tr>
+            <tr data-category-row><td>Биохимия</td><td>Biohimiýa</td></tr>
+            <tr data-category-row><td>Внутренние болезни</td><td>Iç keseller</td></tr>
+            <tr data-category-row><td>Военно-полевая терапия</td><td>Harby-meýdan terapiýasy</td></tr>
+            <tr data-category-row><td>Военно-полевая хирургия</td><td>Harby-meýdan hirurgiýasy</td></tr>
+            <tr data-category-row><td>Гастроэнтерология</td><td>Gastroenterologiýa</td></tr>
+            <tr data-category-row><td>Гематология</td><td>Gematologiýa</td></tr>
+            <tr data-category-row><td>Гигиена</td><td>Gigiýena</td></tr>
+            <tr data-category-row><td>Гистология, цитология</td><td>Gistologiýa, sitologiýa</td></tr>
+            <tr data-category-row><td>Детская хирургия</td><td>Çaga hirurgiýasy</td></tr>
+            <tr data-category-row><td>Диетология</td><td>Dietologiýa</td></tr>
+            <tr data-category-row><td>Инфекционные болезни</td><td>Ýokanç keseller</td></tr>
+            <tr data-category-row><td>Инфекционные болезни детей</td><td>Çaga ýokanç keselleri</td></tr>
+            <tr data-category-row><td>История медицины</td><td>Lukmançylyk taryhy</td></tr>
+            <tr data-category-row><td>Кардиология</td><td>Kardiologiýa</td></tr>
+            <tr data-category-row><td>Кардиохирургия</td><td>Kardiohirurgiýa</td></tr>
+            <tr data-category-row><td>Клиническая лаборатория</td><td>Kliniki laboratoriýa</td></tr>
+            <tr data-category-row><td>Кожные и венерические болезни</td><td>Deri we weneriki keseller</td></tr>
+            <tr data-category-row><td>Компьютерная томография</td><td>Kompýuter tomografiýasy</td></tr>
+            <tr data-category-row><td>Латинский язык и медицинская терминология</td><td>Latin dili we lukmançylyk terminologiýasy</td></tr>
+            <tr data-category-row><td>Лечебная физкультура</td><td>Bejeriş beden terbiyesi</td></tr>
+            <tr data-category-row><td>Магнитно-резонансная томография</td><td>Magnit rezonans tomografiýasy</td></tr>
+            <tr data-category-row><td>Медицинская биология</td><td>Lukmançylyk biologiýasy</td></tr>
+            <tr data-category-row><td>Медицинская генетика</td><td>Lukmançylyk genetikasy</td></tr>
+            <tr data-category-row><td>Медицинская и биологическая физика</td><td>Lukmançylyk we biologik fizika</td></tr>
+            <tr data-category-row><td>Медицинская иммунология</td><td>Lukmançylyk immunologiýasy</td></tr>
+            <tr data-category-row><td>Микробиология</td><td>Mikrobiologiýa</td></tr>
+            <tr data-category-row><td>Наркология</td><td>Narkologiýa</td></tr>
+            <tr data-category-row><td>Неврология</td><td>Newrologiýa</td></tr>
+            <tr data-category-row><td>Нейрохирургия</td><td>Neýrohirurgiýa</td></tr>
+            <tr data-category-row><td>Неонатология</td><td>Neonatologiýa</td></tr>
+            <tr data-category-row><td>Общая и медицинская химия</td><td>Umumy we lukmançylyk himiýasy</td></tr>
+            <tr data-category-row><td>Общая и неорганическая химия</td><td>Umumy we organiki däl himiýa</td></tr>
+            <tr data-category-row><td>Онкология</td><td>Onkologiýa</td></tr>
+            <tr data-category-row><td>Ортопедия и травматология</td><td>Ortopediýa we trawmatologiýa</td></tr>
+            <tr data-category-row><td>Отоларингология</td><td>Otolaringologiýa</td></tr>
+            <tr data-category-row><td>Офтальмология</td><td>Oftalmologiýa</td></tr>
+            <tr data-category-row><td>Патологическая анатомия</td><td>Patologik anatomiýa</td></tr>
+            <tr data-category-row><td>Педиатрия</td><td>Pediatriýa</td></tr>
+            <tr data-category-row><td>Пластическая хирургия</td><td>Plastiki hirurgiýa</td></tr>
+            <tr data-category-row><td>Психиатрия</td><td>Psihiatriýa</td></tr>
+            <tr data-category-row><td>Психология</td><td>Psihologiýa</td></tr>
+            <tr data-category-row><td>Пульмонология</td><td>Pulmonologiýa</td></tr>
+            <tr data-category-row><td>Радиология</td><td>Radiologiýa</td></tr>
+            <tr data-category-row><td>Сердечно-сосудистая хирургия</td><td>Ýürek-damar hirurgiýasy</td></tr>
+            <tr data-category-row><td>Сестринское дело</td><td>Şepagat uýasy işi</td></tr>
+            <tr data-category-row><td>Судебная медицина</td><td>Kazyýet lukmançylygy</td></tr>
+            <tr data-category-row><td>Стоматология</td><td>Stomatologiýa</td></tr>
+            <tr data-category-row><td>Терапия</td><td>Terapia</td></tr>
+            <tr data-category-row><td>Травматология</td><td>Trawmatologiýa</td></tr>
+            <tr data-category-row><td>Ультразвуковая диагностика</td><td>Ultrases barlagy</td></tr>
+            <tr data-category-row><td>Фармакология</td><td>Farmakologiýa</td></tr>
+            <tr data-category-row><td>Физиология</td><td>Fiziologiýa</td></tr>
+            <tr data-category-row><td>Фтизиатрия</td><td>Ftiziatriýa</td></tr>
+            <tr data-category-row><td>Хирургия</td><td>Hirurgiýa</td></tr>
+            <tr data-category-row><td>Электрокардиография</td><td>Elektrokardiografiýa</td></tr>
+            <tr data-category-row><td>Эндокринология</td><td>Endokrinologiýa</td></tr>
+            <tr data-category-row><td>Эпидемиология</td><td>Epidemiologiýa</td></tr>
+          </tbody>
+        </table>
       </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div>
+      <strong>© 2025 MedLibrary</strong>
+      <p>Медицинская электронная библиотека. Все права защищены.</p>
+    </div>
+    <div class="site-footer__links">
+      <a href="index.html">Главная</a>
+      <a href="book.html">Каталог</a>
     </div>
   </footer>
+
   <script defer src="scripts.js"></script>
-  <script src="pwa.js"></script>
+  <script defer src="pwa.js"></script>
 </body>
 </html>

@@ -94,6 +94,8 @@ const UI_TEXTS = {
   },
 };
 
+const accentPattern = /[\u0300-\u036f]/g;
+
 const bookSearchState = {
   tableBody: null,
   statusElement: null,
@@ -123,7 +125,19 @@ document.addEventListener("DOMContentLoaded", () => {
   initSearchFilter();
   initColumnSearchFilters();
   initBookTable();
+  initCategoryFilter();
 });
+
+function normalizeSearchValue(value) {
+  if (typeof value !== "string") {
+    value = value == null ? "" : String(value);
+  }
+  return value
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(accentPattern, "");
+}
 
 function initAuthModal() {
   const modal = document.getElementById("auth-modal");
@@ -660,7 +674,7 @@ function initSearchFilter() {
   bookSearchState.cardContainer = document.getElementById("card-results");
 
   const debouncedFilter = debounce(() => {
-    bookSearchState.filters.global = searchInput.value;
+    bookSearchState.filters.global = normalizeSearchValue(searchInput.value);
     clearButton?.classList.toggle("is-visible", Boolean(searchInput.value));
     applyBookFilters();
   }, 160);
@@ -816,7 +830,7 @@ function updateColumnFilter(columnIndex, value) {
   if (!bookSearchState.filters.columns?.length) {
     bookSearchState.filters.columns = BOOK_TABLE_COLUMNS.map(() => "");
   }
-  bookSearchState.filters.columns[columnIndex] = value || "";
+  bookSearchState.filters.columns[columnIndex] = normalizeSearchValue(value || "");
   applyBookFilters();
 }
 
@@ -857,9 +871,9 @@ function applyBookFilters() {
   const rows = Array.from(tableBody.rows).filter(
     (row) => !row.classList.contains("skeleton-row")
   );
-  const globalFilter = bookSearchState.filters.global.trim().toUpperCase();
+  const globalFilter = normalizeSearchValue(bookSearchState.filters.global || "");
   const columnFilters = bookSearchState.filters.columns.map((filter) =>
-    (filter || "").trim().toUpperCase()
+    normalizeSearchValue(filter || "")
   );
   const hasActiveColumnFilter = columnFilters.some(Boolean);
   const hasActiveFilter = Boolean(globalFilter || hasActiveColumnFilter);
@@ -873,17 +887,20 @@ function applyBookFilters() {
     }
 
     let matches = true;
+    const normalizedCells = Array.from(cells, (cell) =>
+      normalizeSearchValue(cell?.textContent || "")
+    );
     if (globalFilter) {
-      const bookTitle = cells[0].textContent || "";
-      const author = cells[1].textContent || "";
-      const composite = `${bookTitle} ${author}`.toUpperCase();
+      const bookTitle = cells[0]?.textContent || "";
+      const author = cells[1]?.textContent || "";
+      const composite = normalizeSearchValue(`${bookTitle} ${author}`);
       matches = composite.includes(globalFilter);
     }
 
     if (matches) {
       for (let i = 0; i < columnFilters.length; i += 1) {
         const filter = columnFilters[i];
-        if (filter && !(cells[i]?.textContent || "").toUpperCase().includes(filter)) {
+        if (filter && !normalizedCells[i]?.includes(filter)) {
           matches = false;
           break;
         }
@@ -910,6 +927,43 @@ function applyBookFilters() {
   bookSearchState.totalRows = rows.length;
   updateBookStatus(visibleCount);
   renderBookCards(cardEntries, hasActiveFilter);
+}
+
+function initCategoryFilter() {
+  const searchInput = document.getElementById("category-search");
+  const rows = Array.from(document.querySelectorAll("[data-category-row]"));
+  if (!searchInput || !rows.length) {
+    return;
+  }
+  const counter = document.getElementById("category-count");
+  const total = rows.length;
+
+  const updateCount = (visible) => {
+    if (!counter) {
+      return;
+    }
+    counter.textContent = `${visible} / ${total}`;
+  };
+
+  const filterRows = () => {
+    const query = normalizeSearchValue(searchInput.value);
+    let visible = 0;
+    rows.forEach((row) => {
+      if (!row.dataset.searchValue) {
+        row.dataset.searchValue = normalizeSearchValue(row.textContent || "");
+      }
+      const matches = !query || row.dataset.searchValue.includes(query);
+      row.hidden = !matches;
+      if (matches) {
+        visible += 1;
+      }
+    });
+    updateCount(visible);
+  };
+
+  const debouncedFilter = debounce(filterRows, 120);
+  searchInput.addEventListener("input", debouncedFilter);
+  filterRows();
 }
 
 function updateBookStatus(visibleRows) {
