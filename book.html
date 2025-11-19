@@ -387,7 +387,7 @@
     }
   </style>
 </head>
-<body>
+<body data-api-base="http://localhost:5000">
   <header class="site-header">
     <div class="logo-area">
       <span class="logo-area__eyebrow" data-i18n="tagline">Медицинская электронная библиотека</span>
@@ -621,6 +621,8 @@
       cover: ['Обложка', 'Изображение', 'Фото', 'Cover', 'Image', 'Book image', 'H', '__COL_H', 'cover']
     };
 
+    const API_BASE = resolveApiBase(document.body?.dataset.apiBase);
+    const API_SOURCE = API_BASE ? `${API_BASE}/books` : '';
     const JSON_SOURCE = 'data/books.json';
 
     const BOOK_CACHE_KEY = 'medlibrary.bookCache';
@@ -673,7 +675,22 @@
       return value.trim().toLowerCase().normalize('NFD').replace(accentPattern, '');
     }
 
+    function resolveApiBase(attributeBase = '') {
+      const params = new URLSearchParams(window.location.search);
+      const overrideBase = params.get('apiBase');
+      let base = (overrideBase || attributeBase || '').trim();
+
+      if (!base) {
+        base = window.location.origin;
+      }
+
+      return base.replace(/\/$/, '');
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+      if (document.body) {
+        document.body.dataset.apiBase = API_BASE;
+      }
       initLanguageSwitcher();
       initFilters();
       loadBooks();
@@ -737,7 +754,12 @@
         state.cacheChecksum = cached.checksum || '';
         renderBooks();
       }
-      const loaders = [loadFromJsonSource, loadFromExcelSource, loadFromTsvSource];
+      const loaders = [
+        API_SOURCE ? loadFromApiSource : null,
+        loadFromJsonSource,
+        loadFromExcelSource,
+        loadFromTsvSource
+      ].filter(Boolean);
       for (const loader of loaders) {
         try {
           const result = await loader();
@@ -758,6 +780,25 @@
           grid.innerHTML = `<div class="empty-state">${translations[state.lang].statusEmpty}</div>`;
         }
       }
+    }
+
+    async function loadFromApiSource() {
+      if (!API_SOURCE) {
+        throw new Error('Catalog API is not configured');
+      }
+      const response = await fetch(API_SOURCE, { cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error(`Network error while requesting ${API_SOURCE}`);
+      }
+      const payload = await response.json();
+      const rows = Array.isArray(payload?.books) ? payload.books : payload;
+      if (!Array.isArray(rows) || rows.length === 0) {
+        throw new Error('Catalog API returned no data');
+      }
+      const books = rows
+        .map((row) => normalizeRow(row))
+        .filter((book) => book.title || book.author);
+      return { books, cachePayload: JSON.stringify(rows) };
     }
 
     async function loadFromJsonSource() {
