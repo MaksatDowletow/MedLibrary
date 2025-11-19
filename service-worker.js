@@ -1,4 +1,4 @@
-const CACHE_NAME = 'medlibrary-v3';
+const CACHE_NAME = 'medlibrary-v5';
 const APP_SHELL = [
   './',
   './index.html',
@@ -8,6 +8,7 @@ const APP_SHELL = [
   './scripts.js',
   './pwa.js',
   './manifest.webmanifest',
+  './data/books.json',
   './Book.xlsx',
   './icons/icon-192.svg',
   './icons/icon-512.svg'

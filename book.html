@@ -609,20 +609,22 @@
     };
 
     const columnAliases = {
-      title: ['Название книги', 'Book Name', 'Book Title', 'Kitaplar', 'Kitabyň ady', 'Name'],
-      author: ['Имя автора', 'Authors Name', 'Author', 'Awtoryň ady'],
-      publisher: ['Издатель', 'Publisher', 'Neşirçi'],
-      city: ['Город публикации', 'Publication City', 'City', 'Şäher'],
-      year: ['Год публикации', 'Publication Year', 'Год', 'Year', 'Ýyl'],
-      pages: ['Количество страниц', 'Page Count', 'Pages', 'Sahypalar'],
-      language: ['Язык книги', 'Book Language', 'Dil', 'Language'],
-      specialty: ['Специальность', 'Специальность / раздел', 'Раздел', 'Категория', 'Category', 'Specialty', 'Bölüm', 'Ugry'],
-      link: ['Ссылка', 'Link', 'URL', 'Download', 'Файл', 'File'],
-      cover: ['Обложка', 'Изображение', 'Фото', 'Cover', 'Image', 'Book image', 'H', '__COL_H']
+      title: ['Название книги', 'Book Name', 'Book Title', 'Kitaplar', 'Kitabyň ady', 'Name', 'title'],
+      author: ['Имя автора', 'Authors Name', 'Author', 'Awtoryň ady', 'author'],
+      publisher: ['Издатель', 'Publisher', 'Neşirçi', 'publisher'],
+      city: ['Город публикации', 'Publication City', 'City', 'Şäher', 'city'],
+      year: ['Год публикации', 'Publication Year', 'Год', 'Year', 'Ýyl', 'year'],
+      pages: ['Количество страниц', 'Page Count', 'Pages', 'Sahypalar', 'pages'],
+      language: ['Язык книги', 'Book Language', 'Dil', 'Language', 'language'],
+      specialty: ['Специальность', 'Специальность / раздел', 'Раздел', 'Категория', 'Category', 'Specialty', 'Bölüm', 'Ugry', 'specialty'],
+      link: ['Ссылка', 'Link', 'URL', 'Download', 'Файл', 'File', 'link'],
+      cover: ['Обложка', 'Изображение', 'Фото', 'Cover', 'Image', 'Book image', 'H', '__COL_H', 'cover']
     };
 
+    const JSON_SOURCE = 'data/books.json';
+
     const BOOK_CACHE_KEY = 'medlibrary.bookCache';
-    const BOOK_CACHE_VERSION = '2.0.0';
+    const BOOK_CACHE_VERSION = '4.0.0';
     const BOOK_CACHE_TTL = 1000 * 60 * 60 * 12; // 12 hours
     const excelSources = ['Book.xlsx'];
     const fallbackCoverImages = ['1.webp', '2.webp', '3.webp', '4.webp', '5.webp', '6.webp', '1.png', '2.png', '3.png', '4.png', '5.png', '6.png'];
@@ -735,7 +737,7 @@
         state.cacheChecksum = cached.checksum || '';
         renderBooks();
       }
-      const loaders = [loadFromExcelSource, loadFromTsvSource];
+      const loaders = [loadFromJsonSource, loadFromExcelSource, loadFromTsvSource];
       for (const loader of loaders) {
         try {
           const result = await loader();
@@ -756,6 +758,30 @@
           grid.innerHTML = `<div class="empty-state">${translations[state.lang].statusEmpty}</div>`;
         }
       }
+    }
+
+    async function loadFromJsonSource() {
+      if (!JSON_SOURCE) {
+        throw new Error('Catalog source is not configured');
+      }
+      const response = await fetch(JSON_SOURCE, { cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error(`Network error while requesting ${JSON_SOURCE}`);
+      }
+      const payload = await response.text();
+      let rows;
+      try {
+        rows = JSON.parse(payload);
+      } catch (error) {
+        throw new Error('Failed to parse catalog JSON');
+      }
+      if (!Array.isArray(rows) || !rows.length) {
+        throw new Error('Catalog JSON is empty');
+      }
+      const books = rows
+        .map((row) => normalizeRow(row))
+        .filter((book) => book.title || book.author);
+      return { books, cachePayload: payload };
     }
 
     async function loadFromExcelSource() {
