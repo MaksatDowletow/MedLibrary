@@ -1177,11 +1177,18 @@ function initCategoryFilter() {
   const debouncedFilter = debounce(filterRows, 120);
   searchInput.addEventListener("input", debouncedFilter);
 
-  loadCategoryList().then((items) => {
-    categories = items;
-    renderCategories(items);
-    filterRows();
-  });
+  loadCategoryList()
+    .then((items) => {
+      categories = items;
+      renderCategories(items);
+      filterRows();
+    })
+    .catch((error) => {
+      console.error("Не удалось загрузить направления", error);
+      categories = CATEGORY_FALLBACK.map((item) => ({ ...item, count: 0 }));
+      renderCategories(categories);
+      filterRows();
+    });
 }
 
 function updateBookStatus(visibleRows) {
@@ -1403,6 +1410,10 @@ function resolveApiBase(attributeBase = "") {
   const params = new URLSearchParams(window.location.search);
   const overrideBase = params.get("apiBase");
   let base = (overrideBase || attributeBase || "").trim();
+
+  if (window.location.hostname.endsWith("github.io")) {
+    return "";
+  }
 
   if (!base) {
     base = window.location.origin;
