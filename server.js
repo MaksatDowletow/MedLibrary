@@ -594,6 +594,29 @@ app.use(morgan("tiny"));
       })
     );
   });
+
+// Явные маршруты для основных файлов статики, чтобы они были доступны
+// даже если сборка не содержит их копий (например, при неполной сборке dist).
+const STATIC_ENTRY_FILES = [
+  "config.js",
+  "scripts.js",
+  "pwa.js",
+  path.join("src", "main.js"),
+];
+
+STATIC_ENTRY_FILES.forEach((relativePath) => {
+  const routePath = `/${relativePath.replace(/\\/g, "/")}`;
+  const absolutePath = path.join(__dirname, relativePath);
+
+  app.get(routePath, async (req, res, next) => {
+    try {
+      await fs.access(absolutePath);
+      return res.sendFile(absolutePath);
+    } catch (error) {
+      return next();
+    }
+  });
+});
 app.use(
   "/covers",
   express.static(COVER_CACHE_DIR, {
