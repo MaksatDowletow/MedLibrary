@@ -16,6 +16,7 @@ const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || "change-me-in-production";
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/medlibrary";
 const TOKEN_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "2h";
+const TOKEN_REFRESH_LEEWAY_MS = 30 * 1000;
 const GOOGLE_CLIENT_IDS = (process.env.GOOGLE_CLIENT_ID || "")
   .split(",")
   .map((id) => id.trim())
@@ -245,6 +246,32 @@ const normalizeSqliteText = (value) => {
   return value.toString().replace(/\s+/g, " ").trim();
 };
 
+const revokedTokens = new Map();
+
+const cleanupRevokedTokens = () => {
+  const nowSeconds = Math.floor(Date.now() / 1000);
+  for (const [jti, exp] of revokedTokens.entries()) {
+    if (exp && exp < nowSeconds) {
+      revokedTokens.delete(jti);
+    }
+  }
+};
+
+const revokeToken = (payload) => {
+  if (!payload?.jti) {
+    return;
+  }
+  revokedTokens.set(payload.jti, payload.exp || null);
+};
+
+const isTokenRevoked = (payload) => {
+  if (!payload?.jti) {
+    return false;
+  }
+  cleanupRevokedTokens();
+  return revokedTokens.has(payload.jti);
+};
+
 const runSqliteQuery = async (query) =>
   new Promise((resolve, reject) => {
     execFile(
@@ -452,10 +479,22 @@ const generateToken = (user) =>
     {
       userId: user.id,
       email: user.email,
+      jti: crypto.randomUUID(),
     },
     JWT_SECRET,
     { expiresIn: TOKEN_EXPIRES_IN }
   );
+
+const buildTokenResponse = (user) => {
+  const token = generateToken(user);
+  const decoded = jwt.decode(token) || {};
+  return {
+    token,
+    user,
+    expiresAt: decoded?.exp ? decoded.exp * 1000 : undefined,
+    issuedAt: decoded?.iat ? decoded.iat * 1000 : undefined,
+  };
+};
 
 const isGoogleAuthEnabled = () => isFetchAvailable && GOOGLE_CLIENT_IDS.length > 0;
 
@@ -528,12 +567,19 @@ const authenticate = asyncHandler(async (req, res, next) => {
     return res.status(401).json({ message: "Токен отсутствует" });
   }
   try {
-    const payload = jwt.verify(token, JWT_SECRET);
+    const payload = jwt.verify(token, JWT_SECRET, {
+      clockTolerance: Math.ceil(TOKEN_REFRESH_LEEWAY_MS / 1000),
+    });
+    if (isTokenRevoked(payload)) {
+      return res.status(401).json({ message: "Токен отозван" });
+    }
     const user = await userStore.findById(payload.userId);
     if (!user) {
       return res.status(401).json({ message: "Пользователь не найден" });
     }
     req.user = user;
+    req.auth = payload;
+    req.token = token;
     return next();
   } catch (error) {
     return res.status(401).json({ message: "Неверный или истекший токен" });
@@ -645,11 +691,10 @@ app.post(
       return res.status(400).json({ message: "Неверный email или пароль" });
     }
 
-    const token = generateToken(sanitizeUser(user));
+    const tokenResponse = buildTokenResponse(sanitizeUser(user));
     return res.json({
       message: "Вход выполнен",
-      token,
-      user: sanitizeUser(user),
+      ...tokenResponse,
     });
   })
 );
@@ -684,17 +729,16 @@ app.post(
       }
 
       const safeUser = sanitizeUser(user);
-      const token = generateToken(safeUser);
+      const tokenResponse = buildTokenResponse(safeUser);
       return res.json({
         message: "Вход выполнен через Google",
-        token,
-        user: safeUser,
         provider: "google",
         profile: {
           name: profile.name,
           picture: profile.picture,
           locale: profile.locale,
         },
+        ...tokenResponse,
       });
     } catch (error) {
       console.error("Ошибка входа через Google", error);
@@ -711,7 +755,11 @@ app.get(
   "/session",
   authenticate,
   asyncHandler(async (req, res) => {
-    res.json({ user: sanitizeUser(req.user) });
+    res.json({
+      user: sanitizeUser(req.user),
+      tokenIssuedAt: req.auth?.iat ? req.auth.iat * 1000 : undefined,
+      tokenExpiresAt: req.auth?.exp ? req.auth.exp * 1000 : undefined,
+    });
   })
 );
 
@@ -720,6 +768,34 @@ app.get(
   authenticate,
   asyncHandler(async (req, res) => {
     res.json({ message: "Доступ разрешен", user: sanitizeUser(req.user) });
+  })
+);
+
+app.post(
+  "/token/refresh",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const safeUser = sanitizeUser(req.user);
+    const tokenResponse = buildTokenResponse(safeUser);
+    if (req.auth) {
+      revokeToken(req.auth);
+    }
+
+    res.json({
+      message: "Токен обновлен",
+      ...tokenResponse,
+    });
+  })
+);
+
+app.post(
+  "/logout",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    if (req.auth) {
+      revokeToken(req.auth);
+    }
+    res.json({ message: "Выход выполнен, токен отозван" });
   })
 );
 

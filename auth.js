@@ -1,4 +1,10 @@
 const TOKEN_KEY = "medlibraryToken";
+const TOKEN_EXP_KEY = "medlibraryTokenExp";
+const SESSION_REFRESH_OFFSET = 5 * 60 * 1000;
+
+const tokenCleanupListeners = new Set();
+let logoutTimerId = null;
+let refreshTimerId = null;
 
 document.addEventListener("DOMContentLoaded", () => {
   const apiBase = resolveApiBase(document.body?.dataset.apiBase);
@@ -129,6 +135,77 @@ function initLoginForm(apiBase) {
   const passwordInput = document.getElementById("login-password");
   const loginEndpoint = buildEndpoint(apiBase, "/login");
   const sessionEndpoint = buildEndpoint(apiBase, "/session");
+  const refreshEndpoint = buildEndpoint(apiBase, "/token/refresh");
+  const logoutEndpoint = buildEndpoint(apiBase, "/logout");
+
+  const expireSession = (message) => {
+    safeRemoveToken();
+    setStatus(sessionStatus, message || "Срок действия сессии истек. Войдите снова.", "error");
+    if (logoutButton) {
+      logoutButton.hidden = true;
+    }
+  };
+
+  const scheduleSessionTimers = (token) => {
+    clearSessionTimers();
+    const expiresAt = getTokenExpiresAt(token);
+    if (!expiresAt) {
+      return;
+    }
+
+    const timeLeft = expiresAt - Date.now();
+    if (timeLeft <= 0) {
+      expireSession("Срок действия сессии истек. Войдите снова.");
+      return;
+    }
+
+    logoutTimerId = window.setTimeout(() => {
+      expireSession("Срок действия сессии истек. Войдите снова.");
+    }, timeLeft);
+
+    const refreshDelay = Math.max(
+      Math.min(timeLeft - SESSION_REFRESH_OFFSET, timeLeft - 5000),
+      0
+    );
+
+    refreshTimerId = window.setTimeout(() => {
+      refreshToken();
+    }, refreshDelay);
+  };
+
+  const refreshToken = async () => {
+    const token = safeGetToken();
+    if (!token) {
+      return;
+    }
+
+    setStatus(sessionStatus, "Обновляем сессию...", "pending");
+    try {
+      const data = await apiRequest(refreshEndpoint, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (data?.token) {
+        safeStoreToken(data.token, data.expiresAt);
+        scheduleSessionTimers(data.token);
+      }
+      setStatus(sessionStatus, "Сессия обновлена", "success");
+    } catch (error) {
+      expireSession(error?.message || "Не удалось обновить сессию");
+    }
+  };
+
+  registerTokenCleanup(() => {
+    clearSessionTimers();
+    if (sessionStatus) {
+      if (!sessionStatus.classList.contains("error")) {
+        setStatus(sessionStatus, "Вы не авторизованы");
+      }
+    }
+    if (logoutButton) {
+      logoutButton.hidden = true;
+    }
+  });
 
   const refreshSession = async (showLoading = true) => {
     const token = safeGetToken();
@@ -138,6 +215,16 @@ function initLoginForm(apiBase) {
         logoutButton.hidden = true;
       }
       return;
+    }
+
+    const expiresAt = getTokenExpiresAt(token);
+    if (expiresAt && expiresAt <= Date.now()) {
+      expireSession("Срок действия сессии истек. Войдите снова.");
+      return;
+    }
+
+    if (expiresAt) {
+      safeStoreToken(token, expiresAt);
     }
 
     if (showLoading) {
@@ -150,6 +237,9 @@ function initLoginForm(apiBase) {
         headers: { Authorization: `Bearer ${token}` },
       });
       const email = data?.user?.email;
+      if (data?.tokenExpiresAt) {
+        safeStoreToken(token, data.tokenExpiresAt);
+      }
       setStatus(
         sessionStatus,
         email ? `Вы вошли как ${email}` : "Вход выполнен",
@@ -158,6 +248,7 @@ function initLoginForm(apiBase) {
       if (logoutButton) {
         logoutButton.hidden = false;
       }
+      scheduleSessionTimers(token);
     } catch (error) {
       safeRemoveToken();
       setStatus(sessionStatus, error?.message || "Сессия недействительна", "error");
@@ -167,11 +258,23 @@ function initLoginForm(apiBase) {
     }
   };
 
-  logoutButton?.addEventListener("click", () => {
+  logoutButton?.addEventListener("click", async () => {
+    const token = safeGetToken();
     safeRemoveToken();
     setStatus(sessionStatus, "Вы вышли из аккаунта");
     if (logoutButton) {
       logoutButton.hidden = true;
+    }
+    if (!token) {
+      return;
+    }
+    try {
+      await apiRequest(logoutEndpoint, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } catch (error) {
+      console.warn("Не удалось отозвать токен на сервере", error);
     }
   });
 
@@ -193,7 +296,8 @@ function initLoginForm(apiBase) {
         body: JSON.stringify({ email, password }),
       });
       if (data?.token) {
-        safeStoreToken(data.token);
+        safeStoreToken(data.token, data.expiresAt);
+        scheduleSessionTimers(data.token);
       }
       setStatus(statusElement, data?.message || "Вход выполнен", "success");
       form.reset();
@@ -241,7 +345,8 @@ function initGoogleIdentity(apiBase, refreshSession = () => {}) {
         body: JSON.stringify({ credential }),
       });
       if (data?.token) {
-        safeStoreToken(data.token);
+        safeStoreToken(data.token, data.expiresAt);
+        scheduleSessionTimers(data.token);
       }
       setStatus(statusElement, data?.message || "Вход выполнен через Google", "success");
       if (typeof refreshSession === "function") {
@@ -401,6 +506,69 @@ function attachGoogleScriptHandlers(container, onReady) {
   }
 }
 
+function decodeTokenPayload(token = "") {
+  try {
+    const [, payload = ""] = token.split(".");
+    if (!payload) {
+      return null;
+    }
+    const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = normalized.padEnd(normalized.length + ((4 - (normalized.length % 4)) % 4), "=");
+    const decoded = atob(padded);
+    return JSON.parse(decoded);
+  } catch (error) {
+    console.warn("Не удалось декодировать токен", error);
+    return null;
+  }
+}
+
+function getTokenExpiresAt(token = "") {
+  const payload = decodeTokenPayload(token);
+  if (payload?.exp) {
+    return payload.exp * 1000;
+  }
+
+  try {
+    const stored = window.localStorage?.getItem(TOKEN_EXP_KEY);
+    if (stored) {
+      const parsed = Number(stored);
+      return Number.isNaN(parsed) ? null : parsed;
+    }
+  } catch (error) {
+    console.error("Не удалось получить срок действия токена", error);
+  }
+
+  return null;
+}
+
+function clearSessionTimers() {
+  if (logoutTimerId) {
+    window.clearTimeout(logoutTimerId);
+    logoutTimerId = null;
+  }
+  if (refreshTimerId) {
+    window.clearTimeout(refreshTimerId);
+    refreshTimerId = null;
+  }
+}
+
+function registerTokenCleanup(listener) {
+  if (typeof listener === "function") {
+    tokenCleanupListeners.add(listener);
+  }
+  return () => tokenCleanupListeners.delete(listener);
+}
+
+function notifyTokenCleanup() {
+  tokenCleanupListeners.forEach((listener) => {
+    try {
+      listener();
+    } catch (error) {
+      console.error("Ошибка в обработчике очистки токена", error);
+    }
+  });
+}
+
 function buildEndpoint(apiBase, path) {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
   return apiBase ? `${apiBase}${normalizedPath}` : normalizedPath;
@@ -426,6 +594,14 @@ function apiRequest(url, options = {}) {
           (payload && typeof payload === "object" && payload.message) ||
           (typeof payload === "string" && payload) ||
           "Запрос завершился ошибкой";
+        if (response.status === 401) {
+          safeRemoveToken();
+          const error = new Error(
+            `${message}. Пожалуйста, войдите снова для продолжения работы.`
+          );
+          error.status = 401;
+          throw error;
+        }
         throw new Error(message);
       }
 
@@ -436,9 +612,15 @@ function apiRequest(url, options = {}) {
     });
 }
 
-function safeStoreToken(token) {
+function safeStoreToken(token, expiresAt) {
   try {
     window.localStorage?.setItem(TOKEN_KEY, token);
+    const expiration = expiresAt || getTokenExpiresAt(token);
+    if (expiration) {
+      window.localStorage?.setItem(TOKEN_EXP_KEY, String(expiration));
+    } else {
+      window.localStorage?.removeItem(TOKEN_EXP_KEY);
+    }
   } catch (error) {
     console.error("Не удалось сохранить токен", error);
   }
@@ -454,9 +636,12 @@ function safeGetToken() {
 }
 
 function safeRemoveToken() {
+  clearSessionTimers();
   try {
     window.localStorage?.removeItem(TOKEN_KEY);
+    window.localStorage?.removeItem(TOKEN_EXP_KEY);
   } catch (error) {
     console.error("Не удалось удалить токен", error);
   }
+  notifyTokenCleanup();
 }
