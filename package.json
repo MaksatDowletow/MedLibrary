@@ -5,7 +5,10 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "vite",
+    "dev:server": "nodemon server.js",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "author": "Maksat Dowletow",
   "license": "MIT",
@@ -21,6 +24,8 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2"
+    "nodemon": "^3.0.2",
+    "vite": "^5.4.2",
+    "vite-plugin-static-copy": "^0.17.0"
   }
 }
