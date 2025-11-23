@@ -605,7 +605,7 @@ function initLoginForm(apiBase, modalControls = {}) {
       }
       clearLocalSession();
       setStatusMessage(statusElement, data?.message || "Вход выполнен", "success");
-      refreshSession(false);
+      await refreshSession(false);
       form.reset();
       closeModal();
     } catch (error) {
