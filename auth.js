@@ -225,13 +225,7 @@ function initGoogleIdentity(apiBase, refreshSession = () => {}) {
   if (!renderButton()) {
     container.textContent =
       container.dataset.loadingText || "Подключаем Google Identity...";
-    window.addEventListener(
-      "load",
-      () => {
-        renderButton();
-      },
-      { once: true }
-    );
+    attachGoogleScriptHandlers(container, renderButton);
   }
 }
 
@@ -282,6 +276,37 @@ function resolveGoogleClientId() {
   }
 
   return "";
+}
+
+function attachGoogleScriptHandlers(container, onReady) {
+  const script = document.querySelector(
+    'script[src*="accounts.google.com/gsi/client"]'
+  );
+  if (!script || !container) {
+    return;
+  }
+
+  const showError = () => {
+    container.textContent =
+      container.dataset.errorText ||
+      "Не удалось загрузить Google Identity. Проверьте соединение и разрешите accounts.google.com";
+    container.classList.add("google-signin-placeholder", "is-error");
+  };
+
+  const handleLoad = () => {
+    if (typeof onReady === "function" && window.google?.accounts?.id) {
+      onReady();
+      return;
+    }
+    showError();
+  };
+
+  script.addEventListener("load", handleLoad, { once: true });
+  script.addEventListener("error", showError, { once: true });
+
+  if (script.readyState === "complete") {
+    setTimeout(handleLoad, 0);
+  }
 }
 
 function buildEndpoint(apiBase, path) {
