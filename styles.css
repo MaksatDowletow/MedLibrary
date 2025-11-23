@@ -382,7 +382,7 @@ main {
 
 .section--split {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1.25rem;
   align-items: start;
 }
@@ -992,6 +992,45 @@ main {
 
 @media (max-width: 720px) {
   .book-card__details { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 720px) {
+  .site-nav__wrap {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0.4rem;
+  }
+
+  .site-nav__wrap::-webkit-scrollbar {
+    display: none;
+  }
+
+  .site-nav a {
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 540px) {
+  main {
+    padding-block: clamp(1.5rem, 6vw, 2rem);
+    gap: clamp(2rem, 5vw, 2.75rem);
+  }
+
+  .hero__content,
+  .accent-card,
+  .section,
+  .filter-panel {
+    padding: clamp(1rem, 5vw, 1.25rem);
+  }
+
+  .hero__layout,
+  .section--split,
+  .feature-grid,
+  .sqlite-hero {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* SQLite catalog layout */
