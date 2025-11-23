@@ -60,7 +60,8 @@
         </label>
         <label class="filter-field">
           <span data-i18n="labelSpecialty">Специальность / раздел</span>
-          <input type="text" data-filter="specialty" data-i18n-placeholder="placeholderSpecialty" placeholder="Например: нейрохирургия" autocomplete="off">
+          <input type="text" list="specialty-options" data-filter="specialty" data-i18n-placeholder="placeholderSpecialty" placeholder="Например: нейрохирургия" autocomplete="off">
+          <datalist id="specialty-options"></datalist>
         </label>
         <label class="filter-field">
           <span data-i18n="labelLanguage">Язык</span>
@@ -402,6 +403,40 @@
       return categoryTranslationMap.get(normalizeText(value)) || value;
     }
 
+    function collectSpecialtyOptions(books) {
+      const seen = new Set();
+      const options = [];
+      books.forEach(({ specialty }) => {
+        const original = (specialty || '').trim();
+        const translated = translateSpecialty(original).trim();
+        const originalKey = normalizeText(original);
+        const translatedKey = normalizeText(translated);
+        if (originalKey && !seen.has(originalKey)) {
+          seen.add(originalKey);
+          options.push(original);
+        }
+        if (translated && translatedKey && !seen.has(translatedKey)) {
+          seen.add(translatedKey);
+          options.push(translated);
+        }
+      });
+      return options.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+    }
+
+    function updateSpecialtyOptions(books = state.books) {
+      const datalist = document.getElementById('specialty-options');
+      if (!datalist) return;
+      const options = collectSpecialtyOptions(Array.isArray(books) ? books : []);
+      datalist.innerHTML = '';
+      const fragment = document.createDocumentFragment();
+      options.forEach((value) => {
+        const option = document.createElement('option');
+        option.value = value;
+        fragment.appendChild(option);
+      });
+      datalist.appendChild(fragment);
+    }
+
     function resolveApiBase(attributeBase = '') {
       const params = new URLSearchParams(window.location.search);
       const overrideBase = params.get('apiBase');
@@ -480,6 +515,7 @@
         state.books = cached.books;
         state.cacheChecksum = cached.checksum || '';
         renderBooks();
+        updateSpecialtyOptions(state.books);
       }
       const loaders = [
         API_SOURCE ? loadFromApiSource : null,
@@ -493,6 +529,7 @@
           if (result && Array.isArray(result.books) && result.books.length) {
             state.books = result.books;
             renderBooks();
+            updateSpecialtyOptions(state.books);
             persistBooks(state.books, result.cachePayload).catch(() => {});
             return;
           }
