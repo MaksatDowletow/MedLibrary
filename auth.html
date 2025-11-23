@@ -62,6 +62,45 @@
             opacity: 0.65;
             cursor: progress;
         }
+        .field-hint {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #475569;
+        }
+        .field-hint.error {
+            color: #b91c1c;
+        }
+        .hint-block {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 0.75rem 0.95rem;
+            margin-top: -0.35rem;
+        }
+        .hint-list {
+            list-style: none;
+            padding: 0;
+            margin: 0.35rem 0 0;
+            display: grid;
+            gap: 0.35rem;
+        }
+        .hint-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #c2410c;
+            font-size: 0.95rem;
+        }
+        .hint-list li::before {
+            content: "\2022";
+            color: currentColor;
+        }
+        .hint-list li.is-valid {
+            color: #15803d;
+        }
+        .hint-list li.is-valid::before {
+            content: "\2713";
+        }
         .message {
             min-height: 1.25rem;
             font-size: 0.95rem;
@@ -134,6 +173,17 @@
         <form id="registerForm">
             <input type="email" id="register-email" placeholder="Email" autocomplete="email" required>
             <input type="password" id="register-password" placeholder="Пароль (мин. 6 символов)" minlength="6" autocomplete="new-password" required>
+            <div class="hint-block" aria-live="polite">
+                <p class="field-hint">Пароль должен содержать:</p>
+                <ul class="hint-list" id="passwordRequirements">
+                    <li data-requirement="length">Не менее 6 символов</li>
+                    <li data-requirement="digit">Хотя бы одну цифру</li>
+                    <li data-requirement="letter">Хотя бы одну букву</li>
+                    <li data-requirement="special">Спецсимвол (например, !@#$%)</li>
+                </ul>
+            </div>
+            <input type="password" id="register-password-confirm" placeholder="Подтвердите пароль" autocomplete="new-password" required>
+            <p class="field-hint" id="confirmHint" aria-live="polite"></p>
             <button type="submit" id="register">Зарегистрироваться</button>
             <p id="registerMessage" class="message" aria-live="polite"></p>
         </form>

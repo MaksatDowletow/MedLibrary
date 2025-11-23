@@ -19,22 +19,82 @@ function initRegisterForm(apiBase) {
 
   const emailInput = document.getElementById("register-email");
   const passwordInput = document.getElementById("register-password");
+  const confirmInput = document.getElementById("register-password-confirm");
+  const passwordRequirementList = document.getElementById("passwordRequirements");
+  const confirmHint = document.getElementById("confirmHint");
+  const submitButton = document.getElementById("register");
   const statusElement = document.getElementById("registerMessage");
   const endpoint = buildEndpoint(apiBase, "/register");
+
+  const renderPasswordHints = () => {
+    const password = passwordInput.value;
+    const confirm = confirmInput?.value || "";
+    const requirements = validatePassword(password);
+
+    updateRequirementList(passwordRequirementList, requirements);
+
+    if (confirmHint) {
+      if (!confirm && password) {
+        confirmHint.textContent = "Повторите пароль для подтверждения";
+        confirmHint.classList.remove("error");
+      } else if (!confirm && !password) {
+        confirmHint.textContent = "";
+        confirmHint.classList.remove("error");
+      } else if (password === confirm) {
+        confirmHint.textContent = "Пароли совпадают";
+        confirmHint.classList.remove("error");
+      } else {
+        confirmHint.textContent = "Пароли не совпадают";
+        confirmHint.classList.add("error");
+      }
+    }
+
+    if (submitButton) {
+      const canSubmit =
+        isEmailValid(emailInput.value.trim()) &&
+        requirements.isValid &&
+        password === confirm &&
+        password.length > 0;
+      submitButton.disabled = !canSubmit;
+    }
+  };
+
+  passwordInput.addEventListener("input", () => {
+    renderPasswordHints();
+  });
+
+  confirmInput?.addEventListener("input", () => {
+    renderPasswordHints();
+  });
+
+  emailInput.addEventListener("input", () => {
+    renderPasswordHints();
+  });
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const email = emailInput.value.trim();
     const password = passwordInput.value.trim();
+    const confirm = confirmInput?.value.trim() || "";
+    const passwordResult = validatePassword(password);
 
     if (!isEmailValid(email)) {
       setStatus(statusElement, "Введите корректный email", "error");
       return;
     }
 
-    if (password.length < 6) {
-      setStatus(statusElement, "Пароль должен содержать минимум 6 символов", "error");
+    if (!passwordResult.isValid) {
+      setStatus(
+        statusElement,
+        "Пароль должен содержать минимум 6 символов, цифру, букву и спецсимвол",
+        "error"
+      );
+      return;
+    }
+
+    if (password !== confirm) {
+      setStatus(statusElement, "Пароли должны совпадать", "error");
       return;
     }
 
@@ -47,10 +107,13 @@ function initRegisterForm(apiBase) {
       });
       setStatus(statusElement, data?.message || "Регистрация завершена", "success");
       form.reset();
+      renderPasswordHints();
     } catch (error) {
       setStatus(statusElement, error?.message || "Не удалось зарегистрироваться", "error");
     }
   });
+
+  renderPasswordHints();
 }
 
 function initLoginForm(apiBase) {
@@ -238,6 +301,35 @@ function setStatus(element, message, state) {
   if (state) {
     element.classList.add(state);
   }
+}
+
+function validatePassword(password = "") {
+  const length = password.length >= 6;
+  const digit = /\d/.test(password);
+  const letter = /\p{L}/u.test(password);
+  const special = /[^\p{L}\d]/u.test(password);
+
+  return {
+    length,
+    digit,
+    letter,
+    special,
+    isValid: length && digit && letter && special,
+  };
+}
+
+function updateRequirementList(listElement, requirements) {
+  if (!listElement) {
+    return;
+  }
+
+  Array.from(listElement.querySelectorAll("[data-requirement]"))
+    .filter((item) => item.dataset.requirement)
+    .forEach((item) => {
+      const key = item.dataset.requirement;
+      const isValid = Boolean(requirements?.[key]);
+      item.classList.toggle("is-valid", isValid);
+    });
 }
 
 function resolveApiBase(attributeBase = "") {
