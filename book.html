@@ -261,7 +261,14 @@
     const BOOK_CACHE_VERSION = '4.0.0';
     const BOOK_CACHE_TTL = 1000 * 60 * 60 * 12; // 12 hours
     const excelSources = ['Book.xlsx'];
-    const fallbackCoverImages = ['1.webp', '2.webp', '3.webp', '4.webp', '5.webp', '6.webp', '1.png', '2.png', '3.png', '4.png', '5.png', '6.png'];
+    const fallbackCoverImages = [
+      'https://placehold.co/600x800/0d47a1/ffffff?text=Medical+Book',
+      'https://placehold.co/600x800/1364c8/ffffff?text=Health+Library',
+      'https://placehold.co/600x800/1a6cff/ffffff?text=Digital+Medicine',
+      'https://placehold.co/600x800/0f559c/ffffff?text=E-Library',
+      'https://placehold.co/600x800/0b3c70/ffffff?text=Clinical+Guide',
+      'https://placehold.co/600x800/1453a0/ffffff?text=Reference+Book'
+    ];
     const fallbackCoverCache = new Map();
     const accentPattern = /[\u0300-\u036f]/g;
     const CATEGORY_TRANSLATIONS = [
@@ -442,8 +449,19 @@
       const overrideBase = params.get('apiBase');
       let base = (overrideBase || attributeBase || '').trim();
 
-      if (!base) {
+      if (!base || /localhost/i.test(base)) {
         base = window.location.origin;
+      }
+
+      if (window.location.protocol === 'https:' && base.startsWith('http://')) {
+        try {
+          const parsed = new URL(base, window.location.href);
+          const isSameHost = parsed.hostname === window.location.hostname;
+          base = isSameHost ? `https://${parsed.host}${parsed.pathname}` : window.location.origin;
+        } catch (error) {
+          console.warn('Unable to normalize API base', error);
+          base = window.location.origin;
+        }
       }
 
       return base.replace(/\/$/, '');
@@ -927,7 +945,7 @@
       }
       const hash = hashString(normalized);
       const index = Math.abs(hash) % fallbackCoverImages.length;
-      const url = `./${fallbackCoverImages[index]}`;
+      const url = fallbackCoverImages[index];
       fallbackCoverCache.set(normalized, url);
       return url;
     }
