@@ -135,6 +135,40 @@ main {
   border-color: rgba(26, 108, 255, 0.25);
 }
 
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.15rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.lang-switch button {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 700;
+  padding: 0.45rem 0.9rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lang-switch button:hover,
+.lang-switch button:focus-visible {
+  color: var(--text);
+  background: rgba(26, 108, 255, 0.08);
+  outline: none;
+}
+
+.lang-switch button.is-active {
+  color: #fff;
+  background: linear-gradient(120deg, var(--primary), var(--primary-2));
+  box-shadow: 0 8px 20px rgba(26, 108, 255, 0.2);
+}
+
 #language-select {
   border-radius: 12px;
   border: 1px solid var(--border);

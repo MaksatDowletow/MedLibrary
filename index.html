@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tm" data-lang="tm">
+<html lang="ru" data-lang="ru">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -25,42 +25,37 @@
       <header class="site-header">
         <div class="container site-header__bar">
           <div class="site-header__brand">
-            <p class="eyebrow lang" data-lang="ru">медицинская библиотека</p>
-            <p class="eyebrow lang" data-lang="en">medical library</p>
-            <p class="eyebrow lang" data-lang="tm">lukmançylyk kitaphanasy</p>
-            <h1 class="site-header__title lang" data-lang="ru">MedLibrary</h1>
-            <h1 class="site-header__title lang" data-lang="en">MedLibrary</h1>
-            <h1 class="site-header__title lang" data-lang="tm">MedLibrary</h1>
+            <p class="eyebrow" data-i18n="header.tagline">медицинская библиотека</p>
+            <h1 class="site-header__title">MedLibrary</h1>
           </div>
           <div class="site-header__actions">
-            <select id="language-select" aria-label="Сменить язык">
-              <option value="tm">Türkmençe</option>
-              <option value="ru" selected>Русский</option>
-              <option value="en">English</option>
-            </select>
+            <nav class="lang-switch" aria-label="Выбор языка">
+              <button type="button" data-lang="tm">TM</button>
+              <button type="button" data-lang="ru">RU</button>
+              <button type="button" data-lang="en">EN</button>
+            </nav>
             <button
               id="install-button"
               class="button button--ghost"
               type="button"
               hidden
               data-install-trigger
+              data-i18n="header.install"
             >
-              <span class="lang" data-lang="ru">Скачать приложение</span>
-              <span class="lang" data-lang="en">Download app</span>
-              <span class="lang" data-lang="tm">Programmany ýükläň</span>
+              Скачать приложение
             </button>
           </div>
         </div>
         <nav class="site-nav" aria-label="Основная навигация">
           <div class="container site-nav__wrap">
-            <a href="#hero">Главная</a>
-            <a href="#features">Возможности</a>
-            <a href="#catalog">Каталог</a>
-            <a href="#platform">Платформа</a>
-            <a href="#gallery">Интерфейс</a>
-            <a href="#contact">Связь</a>
-            <a href="book.html">Каталог книг</a>
-            <a href="BookCategory.html">Категории</a>
+            <a href="#hero" data-i18n="nav.home">Главная</a>
+            <a href="#features" data-i18n="nav.features">Возможности</a>
+            <a href="#catalog" data-i18n="nav.catalog">Каталог</a>
+            <a href="#platform" data-i18n="nav.platform">Платформа</a>
+            <a href="#gallery" data-i18n="nav.gallery">Интерфейс</a>
+            <a href="#contact" data-i18n="nav.contact">Связь</a>
+            <a href="book.html" data-i18n="nav.bookCatalog">Каталог книг</a>
+            <a href="BookCategory.html" data-i18n="nav.categories">Категории</a>
           </div>
         </nav>
       </header>
@@ -69,80 +64,55 @@
         <section id="hero" class="hero">
           <div class="container hero__layout">
             <div class="hero__content">
-              <p class="hero__eyebrow lang" data-lang="ru">
+              <p class="hero__eyebrow" data-i18n="hero.eyebrow">
                 Современный сценарий
               </p>
-              <p class="hero__eyebrow lang" data-lang="en">Modern experience</p>
-              <p class="hero__eyebrow lang" data-lang="tm">
-                Täzeçillik tejribesi
-              </p>
-              <h2 class="hero__title lang" data-lang="ru">
+              <h2 class="hero__title" data-i18n="hero.title">
                 Каталог медицинских знаний
               </h2>
-              <h2 class="hero__title lang" data-lang="en">
-               Medical catalog
-              </h2>
-              <h2 class="hero__title lang" data-lang="tm">
-                Lukmançylyk katalogy
-              </h2>
-              <p class="hero__text lang" data-lang="ru">
+              <p class="hero__text" data-i18n="hero.text">
                 Поиск, категории, офлайн‑режим и установка PWA. Акценты и кнопки ведут
                 к основным действиям.
               </p>
-              <p class="hero__text lang" data-lang="en">
-                Search, curated
-                categories, offline mode, and a clear PWA install flow inspired
-                by BooksMed.
-              </p>
-              <p class="hero__text lang" data-lang="tm">
-               Gözleg, baý kategoriýalar,
-                oflaýn režimi we düşnükli PWA gurnama. BooksMed logikasyna
-                meňzeş arassa gurluş.
-              </p>
               <div class="hero__actions">
-                <a class="button button--primary" href="book.html">
-                  <span class="lang" data-lang="ru">Открыть каталог</span>
-                  <span class="lang" data-lang="en">Open catalog</span>
-                  <span class="lang" data-lang="tm">Katalogy aç</span>
+                <a class="button button--primary" href="book.html" data-i18n="hero.ctaCatalog">
+                  Открыть каталог
                 </a>
-                <a class="button button--ghost" href="#platform">
-                  <span class="lang" data-lang="ru">Как устроено</span>
-                  <span class="lang" data-lang="en">How it works</span>
-                  <span class="lang" data-lang="tm">Näme üçin amatly</span>
+                <a class="button button--ghost" href="#platform" data-i18n="hero.ctaPlatform">
+                  Как устроено
                 </a>
                 <button
                   class="button button--text"
                   type="button"
                   data-install-trigger
                   data-install-sticky
+                  data-i18n="hero.ctaInstall"
                 >
-                  <span class="lang" data-lang="ru">Установить PWA</span>
-                  <span class="lang" data-lang="en">Install PWA</span>
-                  <span class="lang" data-lang="tm">PWA gurnamak</span>
+                  Установить PWA
                 </button>
               </div>
               <div class="hero__meta">
-                <span class="pill">1000+ книг </span>
-                <span class="pill">62 направлений</span>
-                <span class="pill">Онлайн и офлайн доступ</span>
+                <span class="pill" data-i18n="hero.metaBooks">1000+ книг</span>
+                <span class="pill" data-i18n="hero.metaDirections">62 направлений</span>
+                <span class="pill" data-i18n="hero.metaAccess">Онлайн и офлайн доступ</span>
               </div>
             </div>
             <div class="hero__panel" aria-hidden="true">
               <div class="preview-card">
                 <div class="preview-card__header">
-                  <span class="pill">Быстрый доступ</span>
+                  <span class="pill" data-i18n="preview.badge">Быстрый доступ</span>
                                  </div>
-                <p class="preview-card__title">
+                <p class="preview-card__title" data-i18n="preview.title">
                   Каталог, категории и поиск в одном экране
                 </p>
-                <p class="preview-card__text">
+                <p class="preview-card__text" data-i18n="preview.text">
                   Чистые карточки, быстрый доступ.
                 </p>
                 <div class="preview-card__actions">
-                  <a class="button button--ghost" href="BookCategory.html"
+                  <a class="button button--ghost" href="BookCategory.html" data-i18n="preview.ctaCategories"
                     >Категории</a
                   >
-                  <a class="button button--text" href="book.html#table"
+                  <a class="button button--text" href="book.html#table" data-i18n="preview.ctaFilters"
                     >Фильтры каталога</a
                   >
                 </div>
@@ -165,37 +135,37 @@
         >
           <div>
             <div class="section__head">
-      
-              <p class="section__subtitle">
+
+              <p class="section__subtitle" data-i18n="audit.subtitle">
                 Фокус на поиске, чтении и установке PWA. Новости, баннеры и
                 второстепенные блоки скрыты, чтобы не мешать работе.
               </p>
             </div>
             <ul class="checklist">
-              <li>Минимальная навигация: каталог, категории, авторизация</li>
-              <li>
+              <li data-i18n="audit.pointNavigation">Минимальная навигация: каталог, категории, авторизация</li>
+              <li data-i18n="audit.pointCta">
                 Четкие CTA — открыть каталог, скачать JSON/Excel, установить PWA
               </li>
-              <li>Подсказки по горячим клавишам только там, где они полезны</li>
-              <li>Плотные карточки с ключевыми метаданными книги</li>
+              <li data-i18n="audit.pointHotkeys">Подсказки по горячим клавишам только там, где они полезны</li>
+              <li data-i18n="audit.pointCards">Плотные карточки с ключевыми метаданными книги</li>
             </ul>
           </div>
           <div class="info-hygiene__panel">
-            <p class="info-hygiene__eyebrow">Новые опорные точки</p>
-            <h3 class="info-hygiene__title">Быстрые переходы</h3>
+            <p class="info-hygiene__eyebrow" data-i18n="audit.panelEyebrow">Новые опорные точки</p>
+            <h3 class="info-hygiene__title" data-i18n="audit.panelTitle">Быстрые переходы</h3>
             <div class="pill-row">
-              <a class="pill pill--ghost" href="book.html">Таблица каталога</a>
-              <a class="pill pill--ghost" href="BookCategory.html"
+              <a class="pill pill--ghost" href="book.html" data-i18n="audit.jumpTable">Таблица каталога</a>
+              <a class="pill pill--ghost" href="BookCategory.html" data-i18n="audit.jumpDirections"
                 >62 направлений</a
               >
-              <a class="pill pill--ghost" href="Book.xlsx" download
+              <a class="pill pill--ghost" href="Book.xlsx" download data-i18n="audit.jumpExcel"
                 >Экспорт Excel</a
               >
-              <a class="pill pill--ghost" href="data/books.json" download
+              <a class="pill pill--ghost" href="data/books.json" download data-i18n="audit.jumpJson"
                 >JSON для интеграций</a
               >
             </div>
-            <p class="info-hygiene__note">
+            <p class="info-hygiene__note" data-i18n="audit.note">
               Весь лишний контент убран в пользу быстрых сценариев поиска и
               скачивания.
             </p>
@@ -204,41 +174,41 @@
 
         <section id="features" class="section container">
           <div class="section__head">
-            <p class="eyebrow">Возможности</p>
-            <h2 class="section__title">Главные</h2>
-            <p class="section__subtitle">
+            <p class="eyebrow" data-i18n="features.eyebrow">Возможности</p>
+            <h2 class="section__title" data-i18n="features.title">Главные</h2>
+            <p class="section__subtitle" data-i18n="features.subtitle">
               Только то, что помогает найти, открыть или сохранить книгу.
             </p>
           </div>
           <div class="feature-grid">
             <article class="feature-card">
               <div class="feature-icon" aria-hidden="true">📚</div>
-              <h3>Единый каталог</h3>
-              <p>
+              <h3 data-i18n="features.catalog.title">Единый каталог</h3>
+              <p data-i18n="features.catalog.text">
                 Таблица с 1000+ книгами, быстрыми фильтрами и карточками — без
                 новостных блоков и отвлекающих панелей.
               </p>
             </article>
             <article class="feature-card">
               <div class="feature-icon" aria-hidden="true">🧭</div>
-              <h3>Категории BooksMed</h3>
-              <p>
+              <h3 data-i18n="features.categories.title">Категории BooksMed</h3>
+              <p data-i18n="features.categories.text">
                 69 направлений в привычной логике. Один клик — и сразу к нужной
                 области знаний.
               </p>
             </article>
             <article class="feature-card">
               <div class="feature-icon" aria-hidden="true">🔍</div>
-              <h3>Поиск без шумов</h3>
-              <p>
+              <h3 data-i18n="features.search.title">Поиск без шумов</h3>
+              <p data-i18n="features.search.text">
                 Глобальный поиск по всем колонкам с нормализацией текста.
                 Минимум отвлекающих элементов и вспомогательных окон.
               </p>
             </article>
             <article class="feature-card">
               <div class="feature-icon" aria-hidden="true">⚡</div>
-              <h3>Быстрый старт</h3>
-              <p>
+              <h3 data-i18n="features.start.title">Быстрый старт</h3>
+              <p data-i18n="features.start.text">
                 Готовые кнопки: каталог, категории, Excel/JSON и PWA — никакой
                 лишней навигации.
               </p>
@@ -249,41 +219,41 @@
         <section id="catalog" class="section section--split container">
           <div>
             <div class="section__head">
-              <p class="eyebrow">Каталог</p>
-              <h2 class="section__title">Таблица, карточки и экспорт</h2>
-              <p class="section__subtitle">
+              <p class="eyebrow" data-i18n="catalog.eyebrow">Каталог</p>
+              <h2 class="section__title" data-i18n="catalog.title">Таблица, карточки и экспорт</h2>
+              <p class="section__subtitle" data-i18n="catalog.subtitle">
                 Бережно обновленная структура: сортировки, фильтры по колонкам и
                 чистые карточки.
               </p>
             </div>
             <ul class="checklist">
-              <li>Поиск по названию, авторам, ISBN, УДК, ББК</li>
-              <li>Карточки найденных книг без перегруза информации</li>
-              <li>Экспорт в Excel/JSON и офлайн-доступ</li>
+              <li data-i18n="catalog.pointSearch">Поиск по названию, авторам, ISBN, УДК, ББК</li>
+              <li data-i18n="catalog.pointCards">Карточки найденных книг без перегруза информации</li>
+              <li data-i18n="catalog.pointExport">Экспорт в Excel/JSON и офлайн-доступ</li>
             </ul>
             <div class="cta-inline">
-              <a class="button button--primary" href="book.html"
+              <a class="button button--primary" href="book.html" data-i18n="catalog.ctaCatalog"
                 >Каталог книг</a
               >
-              <a class="button button--ghost" href="Book.xlsx" download
+              <a class="button button--ghost" href="Book.xlsx" download data-i18n="catalog.ctaExcel"
                 >Excel</a
               >
-              <a class="button button--text" href="data/books.json" download
+              <a class="button button--text" href="data/books.json" download data-i18n="catalog.ctaJson"
                 >JSON</a
               >
             </div>
           </div>
           <div class="accent-card">
-            <p class="accent-card__eyebrow">Подборка за секунды</p>
-            <h3 class="accent-card__title">Готовые маршруты</h3>
+            <p class="accent-card__eyebrow" data-i18n="catalog.accentEyebrow">Подборка за секунды</p>
+            <h3 class="accent-card__title" data-i18n="catalog.accentTitle">Готовые маршруты</h3>
             <div class="accent-card__tags">
-              <span class="pill">Кардиология</span>
-              <span class="pill">Педиатрия</span>
-              <span class="pill">Хирургия</span>
-              <span class="pill">Анатомия</span>
-              <span class="pill">Диагностика</span>
+              <span class="pill" data-i18n="catalog.tagCardiology">Кардиология</span>
+              <span class="pill" data-i18n="catalog.tagPediatrics">Педиатрия</span>
+              <span class="pill" data-i18n="catalog.tagSurgery">Хирургия</span>
+              <span class="pill" data-i18n="catalog.tagAnatomy">Анатомия</span>
+              <span class="pill" data-i18n="catalog.tagDiagnostics">Диагностика</span>
             </div>
-            <p class="accent-card__text">
+            <p class="accent-card__text" data-i18n="catalog.accentText">
               Категории и фильтры открываются в соседних вкладках, чтобы быстрее
               найти нужный материал.
             </p>
@@ -292,17 +262,17 @@
 
         <section id="platform" class="section container">
           <div class="section__head">
-            <p class="eyebrow">Платформа</p>
-            <h2 class="section__title">Современная логика без лишнего шума</h2>
-            <p class="section__subtitle">
+            <p class="eyebrow" data-i18n="platform.eyebrow">Платформа</p>
+            <h2 class="section__title" data-i18n="platform.title">Современная логика без лишнего шума</h2>
+            <p class="section__subtitle" data-i18n="platform.subtitle">
               Легкий интерфейс, PWA, офлайн-режим и плавные сценарии
               авторизации.
             </p>
           </div>
           <div class="platform__grid">
             <article class="platform__card">
-              <h3>PWA и офлайн</h3>
-              <p>
+              <h3 data-i18n="platform.pwa.title">PWA и офлайн</h3>
+              <p data-i18n="platform.pwa.text">
                 Сервис-воркер кэширует каталог, поэтому поиск и чтение
                 продолжаются даже без сети.
               </p>
@@ -311,24 +281,25 @@
                 type="button"
                 data-install-trigger
                 data-install-sticky
+                data-i18n="platform.pwa.cta"
               >
                 Установить
               </button>
             </article>
             <article class="platform__card">
-              <h3>Авторизация</h3>
-              <p>
+              <h3 data-i18n="platform.auth.title">Авторизация</h3>
+              <p data-i18n="platform.auth.text">
                 Регистрация, вход, Google Identity и понятные статусы. Нет
                 лишних форм — только essentials.
               </p>
             </article>
             <article class="platform__card">
-              <h3>Структура BooksMed</h3>
-              <p>
+              <h3 data-i18n="platform.structure.title">Структура BooksMed</h3>
+              <p data-i18n="platform.structure.text">
                 Навигация, категории и фильтры повторяют логику BooksMed, но с
                 более чистым визуалом.
               </p>
-              <a class="button button--text" href="BookCategory.html"
+              <a class="button button--text" href="BookCategory.html" data-i18n="platform.structure.cta"
                 >Перейти к категориям</a
               >
             </article>
@@ -337,9 +308,9 @@
 
         <section id="gallery" class="gallery-slider section container">
           <div class="section__head">
-            <p class="eyebrow">Интерфейс</p>
-            <h2>Как выглядит обновление</h2>
-            <p class="section__subtitle">
+            <p class="eyebrow" data-i18n="gallery.eyebrow">Интерфейс</p>
+            <h2 data-i18n="gallery.title">Как выглядит обновление</h2>
+            <p class="section__subtitle" data-i18n="gallery.subtitle">
               Светлые карточки, четкие акценты и быстрые кнопки.
             </p>
           </div>
@@ -411,41 +382,25 @@
 
         <section id="contact" class="contact section container">
           <div class="section__head">
-            <p class="eyebrow lang" data-lang="ru">Связь</p>
-            <p class="eyebrow lang" data-lang="en">Contact</p>
-            <p class="eyebrow lang" data-lang="tm">Habarlaşyň</p>
-            <h2 class="section__title lang" data-lang="ru">
+            <p class="eyebrow" data-i18n="contact.eyebrow">Связь</p>
+            <h2 class="section__title" data-i18n="contact.title">
               Напишите разработчику
             </h2>
-            <h2 class="section__title lang" data-lang="en">Get in touch</h2>
-            <h2 class="section__title lang" data-lang="tm">Habarlaşyň</h2>
-            <p class="section__subtitle lang" data-lang="ru">
+            <p class="section__subtitle" data-i18n="contact.subtitle">
               Предложите книги, интеграции или улучшения интерфейса.
-            </p>
-            <p class="section__subtitle lang" data-lang="en">
-              Share books to add, integrations, or UX ideas.
-            </p>
-            <p class="section__subtitle lang" data-lang="tm">
-              Goşmaly kitaplary, integrasiýalary ýa-da UX teklipleriňizi iberiň.
             </p>
           </div>
           <form class="contact__form" onsubmit="sendMail(); return false;">
             <label class="form-group">
-              <span class="lang" data-lang="ru">Ваше имя</span>
-              <span class="lang" data-lang="en">Name</span>
-              <span class="lang" data-lang="tm">Adyňyz</span>
+              <span data-i18n="contact.name">Ваше имя</span>
               <input type="text" id="name" name="name" required />
             </label>
             <label class="form-group">
-              <span class="lang" data-lang="ru">Ваш email</span>
-              <span class="lang" data-lang="en">Email</span>
-              <span class="lang" data-lang="tm">Email</span>
+              <span data-i18n="contact.email">Ваш email</span>
               <input type="email" id="email" name="email" required />
             </label>
             <label class="form-group">
-              <span class="lang" data-lang="ru">Сообщение</span>
-              <span class="lang" data-lang="en">Message</span>
-              <span class="lang" data-lang="tm">Habar</span>
+              <span data-i18n="contact.message">Сообщение</span>
               <textarea id="message" name="message" required></textarea>
             </label>
             <button
@@ -453,10 +408,8 @@
               type="submit"
               accesskey="s"
               aria-describedby="contact-hotkey"
+              data-i18n="contact.submit"
             >
-              <span class="lang" data-lang="ru">Отправить</span>
-              <span class="lang" data-lang="en">Send</span>
-              <span class="lang" data-lang="tm">Ugrat</span>
               <span id="contact-hotkey" class="hotkey-hint" aria-hidden="true"
                 >Alt+Shift+S</span
               >
@@ -478,13 +431,13 @@
       <footer class="site-footer">
         <div class="container site-footer__content">
           <div>
-            <strong>© 2025 MedLibrary</strong>
-            <p>Медицинская электронная библиотека.</p>
+            <strong data-i18n="footer.copyright">© 2025 MedLibrary</strong>
+            <p data-i18n="footer.tagline">Медицинская электронная библиотека.</p>
           </div>
           <div class="site-footer__links">
-            <a href="index.html">Главная</a>
-            <a href="BookCategory.html">Категории</a>
-            <a href="book.html">Каталог</a>
+            <a href="index.html" data-i18n="nav.home">Главная</a>
+            <a href="BookCategory.html" data-i18n="nav.categories">Категории</a>
+            <a href="book.html" data-i18n="nav.bookCatalog">Каталог</a>
           </div>
         </div>
       </footer>
