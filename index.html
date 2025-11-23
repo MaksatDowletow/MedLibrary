@@ -21,176 +21,204 @@
   data-api-base="http://localhost:5000"
   data-google-client-id="815759578613-pf7pkrfsc0u70edgykqvku3m0p1wq3p2.apps.googleusercontent.com"
 >
-  <header class="site-header">
-    <div class="site-header__brand">
-      <p class="eyebrow lang" data-lang="ru">Цифровая платформа знаний</p>
-      <p class="eyebrow lang" data-lang="en">Digital knowledge platform</p>
-      <p class="eyebrow lang" data-lang="tm">Sanly bilim platformasy</p>
-      <h1 class="site-header__title lang" data-lang="ru">Медицинская электронная библиотека</h1>
-      <h1 class="site-header__title lang" data-lang="en">Medical e-Library</h1>
-      <h1 class="site-header__title lang" data-lang="tm">Elektron lukmançylyk kitaphanasy</h1>
-    </div>
-    <div class="site-header__actions">
-      <select id="language-select" aria-label="Сменить язык">
-        <option value="tm">Türkmençe</option>
-        <option value="ru" selected>Русский</option>
-        <option value="en">English</option>
-      </select>
-      <button
-        id="install-button"
-        class="button button--ghost"
-        type="button"
-        hidden
-        data-install-trigger
-      >
-        <span class="lang" data-lang="ru">Скачать приложение</span>
-        <span class="lang" data-lang="en">Download app</span>
-        <span class="lang" data-lang="tm">Programmany ýükläň</span>
-      </button>
-      <button id="auth-open-button" class="button button--outline auth-open-button" type="button" accesskey="a" aria-describedby="auth-hotkey">
-        <span class="lang" data-lang="ru">Регистрация / вход</span>
-        <span class="lang" data-lang="en">Sign up / Sign in</span>
-        <span class="lang" data-lang="tm">Hasaba al / Içeri gir</span>
-        <span id="auth-hotkey" class="hotkey-hint" aria-hidden="true">Alt+Shift+A</span>
-      </button>
-    </div>
-    <nav class="site-nav" aria-label="Основная навигация">
-      <a href="#hero">
-        <span class="lang" data-lang="ru">Главная</span>
-        <span class="lang" data-lang="en">Home</span>
-        <span class="lang" data-lang="tm">Baş sahypa</span>
-      </a>
-      <a href="#solutions">
-        <span class="lang" data-lang="ru">Решения</span>
-        <span class="lang" data-lang="en">Solutions</span>
-        <span class="lang" data-lang="tm">Mümkinçilikler</span>
-      </a>
-      <a href="#catalog">
-        <span class="lang" data-lang="ru">Каталог</span>
-        <span class="lang" data-lang="en">Catalog</span>
-        <span class="lang" data-lang="tm">Katalog</span>
-      </a>
-      <a href="#platform">
-        <span class="lang" data-lang="ru">Платформа</span>
-        <span class="lang" data-lang="en">Platform</span>
-        <span class="lang" data-lang="tm">Platforma</span>
-      </a>
-      <a href="#gallery">
-        <span class="lang" data-lang="ru">Галерея</span>
-        <span class="lang" data-lang="en">Gallery</span>
-        <span class="lang" data-lang="tm">Suratlar</span>
-      </a>
-      <a href="#contact">
-        <span class="lang" data-lang="ru">Контакты</span>
-        <span class="lang" data-lang="en">Contacts</span>
-        <span class="lang" data-lang="tm">Habarlaşyň</span>
-      </a>
-      <a href="BookCategory.html">
-        <span class="lang" data-lang="ru">Категории</span>
-        <span class="lang" data-lang="en">Categories</span>
-        <span class="lang" data-lang="tm">Kategoriýalar</span>
-      </a>
-      <a href="book.html">
-        <span class="lang" data-lang="ru">Каталог книг</span>
-        <span class="lang" data-lang="en">Book list</span>
-        <span class="lang" data-lang="tm">Kitap sanawy</span>
-      </a>
-      <a
-        href="https://sites.google.com/view/lukmanylyksanlykitaphanasy/ba%C5%9F-sahypa"
-        target="_blank"
-        rel="noopener"
-        class="site-nav__external"
-      >
-        <span class="lang" data-lang="ru">Другой сайт</span>
-        <span class="lang" data-lang="en">Alt site</span>
-        <span class="lang" data-lang="tm">Goşmaça sahypa</span>
-      </a>
-    </nav>
-  </header>
+  <div class="page">
+    <header class="site-header">
+      <div class="container site-header__bar">
+        <div class="site-header__brand">
+          <p class="eyebrow lang" data-lang="ru">Цифровая платформа знаний</p>
+          <p class="eyebrow lang" data-lang="en">Digital knowledge platform</p>
+          <p class="eyebrow lang" data-lang="tm">Sanly bilim platformasy</p>
+          <h1 class="site-header__title lang" data-lang="ru">Медицинская электронная библиотека</h1>
+          <h1 class="site-header__title lang" data-lang="en">Medical e-Library</h1>
+          <h1 class="site-header__title lang" data-lang="tm">Elektron lukmançylyk kitaphanasy</h1>
+          <p class="site-header__lead">Интерфейс, построенный по логике booksmed.info: знакомые блоки, четкие акценты, ясная навигация.</p>
+        </div>
+        <div class="site-header__actions">
+          <select id="language-select" aria-label="Сменить язык">
+            <option value="tm">Türkmençe</option>
+            <option value="ru" selected>Русский</option>
+            <option value="en">English</option>
+          </select>
+          <button
+            id="install-button"
+            class="button button--ghost"
+            type="button"
+            hidden
+            data-install-trigger
+          >
+            <span class="lang" data-lang="ru">Скачать приложение</span>
+            <span class="lang" data-lang="en">Download app</span>
+            <span class="lang" data-lang="tm">Programmany ýükläň</span>
+          </button>
+          <button id="auth-open-button" class="button button--outline auth-open-button" type="button" accesskey="a" aria-describedby="auth-hotkey">
+            <span class="lang" data-lang="ru">Регистрация / вход</span>
+            <span class="lang" data-lang="en">Sign up / Sign in</span>
+            <span class="lang" data-lang="tm">Hasaba al / Içeri gir</span>
+            <span id="auth-hotkey" class="hotkey-hint" aria-hidden="true">Alt+Shift+A</span>
+          </button>
+        </div>
+      </div>
+      <nav class="site-nav" aria-label="Основная навигация">
+        <div class="container site-nav__wrap">
+          <a href="#hero">
+            <span class="lang" data-lang="ru">Главная</span>
+            <span class="lang" data-lang="en">Home</span>
+            <span class="lang" data-lang="tm">Baş sahypa</span>
+          </a>
+          <a href="#solutions">
+            <span class="lang" data-lang="ru">Решения</span>
+            <span class="lang" data-lang="en">Solutions</span>
+            <span class="lang" data-lang="tm">Mümkinçilikler</span>
+          </a>
+          <a href="#catalog">
+            <span class="lang" data-lang="ru">Каталог</span>
+            <span class="lang" data-lang="en">Catalog</span>
+            <span class="lang" data-lang="tm">Katalog</span>
+          </a>
+          <a href="#platform">
+            <span class="lang" data-lang="ru">Платформа</span>
+            <span class="lang" data-lang="en">Platform</span>
+            <span class="lang" data-lang="tm">Platforma</span>
+          </a>
+          <a href="#gallery">
+            <span class="lang" data-lang="ru">Галерея</span>
+            <span class="lang" data-lang="en">Gallery</span>
+            <span class="lang" data-lang="tm">Suratlar</span>
+          </a>
+          <a href="#contact">
+            <span class="lang" data-lang="ru">Контакты</span>
+            <span class="lang" data-lang="en">Contacts</span>
+            <span class="lang" data-lang="tm">Habarlaşyň</span>
+          </a>
+          <a href="BookCategory.html">
+            <span class="lang" data-lang="ru">Категории</span>
+            <span class="lang" data-lang="en">Categories</span>
+            <span class="lang" data-lang="tm">Kategoriýalar</span>
+          </a>
+          <a href="book.html">
+            <span class="lang" data-lang="ru">Каталог книг</span>
+            <span class="lang" data-lang="en">Book list</span>
+            <span class="lang" data-lang="tm">Kitap sanawy</span>
+          </a>
+          <a
+            href="https://sites.google.com/view/lukmanylyksanlykitaphanasy/ba%C5%9F-sahypa"
+            target="_blank"
+            rel="noopener"
+            class="site-nav__external"
+          >
+            <span class="lang" data-lang="ru">Другой сайт</span>
+            <span class="lang" data-lang="en">Alt site</span>
+            <span class="lang" data-lang="tm">Goşmaça sahypa</span>
+          </a>
+        </div>
+      </nav>
+    </header>
 
   <main>
     <section id="hero" class="hero">
-      <div class="hero__content">
-        <p class="hero__eyebrow lang" data-lang="ru">Структура и логика BooksMed теперь в MedLibrary</p>
-        <p class="hero__eyebrow lang" data-lang="en">BooksMed-inspired structure now inside MedLibrary</p>
-        <p class="hero__eyebrow lang" data-lang="tm">BooksMed logikasy bilen täzelenen MedLibrary</p>
-        <h2 class="hero__title lang" data-lang="ru">Единая медицинская библиотека для обучения и практики</h2>
-        <h2 class="hero__title lang" data-lang="en">A single medical library for learning and practice</h2>
-        <h2 class="hero__title lang" data-lang="tm">Okuw we amaly işler üçin bir platforma</h2>
-        <p class="hero__text lang" data-lang="ru">
-          Быстрый поиск по 1000+ книгам, готовые категории и офлайн‑режим собраны в одном окне. Архитектура повторяет
-          привычную навигацию BooksMed, но дополнена PWA, авторизацией и мгновенными фильтрами.
-        </p>
-        <p class="hero__text lang" data-lang="en">
-          Search across 1K+ books with curated categories and offline access. The layout mirrors the familiar BooksMed logic and
-          adds PWA, authentication, and instant filters.
-        </p>
-        <p class="hero__text lang" data-lang="tm">
-          1000+ kitap boýunça çalt gözleg, taýýar kategoriýalar we oflaýn elýeterlik — hemmesi bir penjirede. BooksMed
-          ulgamyna meňzeş gurluşa PWA, awtorizasiýa we derrew filtrler goşuldy.
-        </p>
-        <div class="pill-group">
-          <span class="pill">69 направлений</span>
-          <span class="pill">Каталог, категории, поиск</span>
-          <span class="pill">Офлайн и PWA</span>
+      <div class="container hero__layout">
+        <div class="hero__content">
+          <p class="hero__eyebrow lang" data-lang="ru">Структура и логика BooksMed теперь в MedLibrary</p>
+          <p class="hero__eyebrow lang" data-lang="en">BooksMed-inspired structure now inside MedLibrary</p>
+          <p class="hero__eyebrow lang" data-lang="tm">BooksMed logikasy bilen täzelenen MedLibrary</p>
+          <h2 class="hero__title lang" data-lang="ru">Единая медицинская библиотека для обучения и практики</h2>
+          <h2 class="hero__title lang" data-lang="en">A single medical library for learning and practice</h2>
+          <h2 class="hero__title lang" data-lang="tm">Okuw we amaly işler üçin bir platforma</h2>
+          <p class="hero__text lang" data-lang="ru">
+            Быстрый поиск по 1000+ книгам, готовые категории и офлайн‑режим собраны в одном окне. Архитектура повторяет
+            привычную навигацию BooksMed, но дополнена PWA, авторизацией и мгновенными фильтрами.
+          </p>
+          <p class="hero__text lang" data-lang="en">
+            Search across 1K+ books with curated categories and offline access. The layout mirrors the familiar BooksMed logic and
+            adds PWA, authentication, and instant filters.
+          </p>
+          <p class="hero__text lang" data-lang="tm">
+            1000+ kitap boýunça çalt gözleg, taýýar kategoriýalar we oflaýn elýeterlik — hemmesi bir penjirede. BooksMed
+            ulgamyna meňzeş gurluşa PWA, awtorizasiýa we derrew filtrler goşuldy.
+          </p>
+          <div class="pill-group">
+            <span class="pill">69 направлений</span>
+            <span class="pill">Каталог, категории, поиск</span>
+            <span class="pill">Офлайн и PWA</span>
+          </div>
+          <div class="hero__actions">
+            <a class="button button--primary" href="book.html">
+              <span class="lang" data-lang="ru">Открыть каталог</span>
+              <span class="lang" data-lang="en">Open catalog</span>
+              <span class="lang" data-lang="tm">Katalogy aç</span>
+            </a>
+            <a class="button button--ghost" href="BookCategory.html">
+              <span class="lang" data-lang="ru">Категории BooksMed</span>
+              <span class="lang" data-lang="en">BooksMed-style categories</span>
+              <span class="lang" data-lang="tm">BooksMed kategoriýalary</span>
+            </a>
+            <button class="button button--text" type="button" data-install-trigger data-install-sticky>
+              <span class="lang" data-lang="ru">Установить PWA</span>
+              <span class="lang" data-lang="en">Install PWA</span>
+              <span class="lang" data-lang="tm">PWA gurnamak</span>
+            </button>
+            <a class="button button--text" href="Book.xlsx" download>
+              <span class="lang" data-lang="ru">Каталог в Excel</span>
+              <span class="lang" data-lang="en">Catalog in Excel</span>
+              <span class="lang" data-lang="tm">Excel katalogy</span>
+            </a>
+          </div>
+          <div class="hero__metrics">
+            <article class="metric-card">
+              <p class="metric-card__value">1000+</p>
+              <p class="metric-card__label lang" data-lang="ru">Книг и учебников</p>
+              <p class="metric-card__label lang" data-lang="en">Books & textbooks</p>
+              <p class="metric-card__label lang" data-lang="tm">Kitaplar</p>
+            </article>
+            <article class="metric-card">
+              <p class="metric-card__value">69</p>
+              <p class="metric-card__label lang" data-lang="ru">Медицинских направлений</p>
+              <p class="metric-card__label lang" data-lang="en">Medical specialties</p>
+              <p class="metric-card__label lang" data-lang="tm">Lukmançylyk ugurlary</p>
+            </article>
+            <article class="metric-card">
+              <p class="metric-card__value">24/7</p>
+              <p class="metric-card__label lang" data-lang="ru">Онлайн и офлайн доступ</p>
+              <p class="metric-card__label lang" data-lang="en">Online + offline access</p>
+              <p class="metric-card__label lang" data-lang="tm">Onlaýn + oflaýn</p>
+            </article>
+          </div>
+          <ul class="hero-shortcuts" role="list">
+            <li>
+              <a href="book.html">Каталог книг</a>
+              <span>Полная таблица с фильтрами как на booksmed.info</span>
+            </li>
+            <li>
+              <a href="BookCategory.html">Категории</a>
+              <span>69 направлений в знакомом порядке</span>
+            </li>
+            <li>
+              <a href="#contact">Связь</a>
+              <span>Вопросы, интеграции, заявки на книги</span>
+            </li>
+          </ul>
         </div>
-        <div class="hero__actions">
-          <a class="button button--primary" href="book.html">
-            <span class="lang" data-lang="ru">Открыть каталог</span>
-            <span class="lang" data-lang="en">Open catalog</span>
-            <span class="lang" data-lang="tm">Katalogy aç</span>
-          </a>
-          <a class="button button--ghost" href="BookCategory.html">
-            <span class="lang" data-lang="ru">Категории BooksMed</span>
-            <span class="lang" data-lang="en">BooksMed-style categories</span>
-            <span class="lang" data-lang="tm">BooksMed kategoriýalary</span>
-          </a>
-          <button class="button button--text" type="button" data-install-trigger data-install-sticky>
-            <span class="lang" data-lang="ru">Установить PWA</span>
-            <span class="lang" data-lang="en">Install PWA</span>
-            <span class="lang" data-lang="tm">PWA gurnamak</span>
-          </button>
-          <a class="button button--text" href="Book.xlsx" download>
-            <span class="lang" data-lang="ru">Каталог в Excel</span>
-            <span class="lang" data-lang="en">Catalog in Excel</span>
-            <span class="lang" data-lang="tm">Excel katalogy</span>
-          </a>
-        </div>
-        <div class="hero__metrics">
-          <article class="metric-card">
-            <p class="metric-card__value">1000+</p>
-            <p class="metric-card__label lang" data-lang="ru">Книг и учебников</p>
-            <p class="metric-card__label lang" data-lang="en">Books & textbooks</p>
-            <p class="metric-card__label lang" data-lang="tm">Kitaplar</p>
-          </article>
-          <article class="metric-card">
-            <p class="metric-card__value">69</p>
-            <p class="metric-card__label lang" data-lang="ru">Медицинских направлений</p>
-            <p class="metric-card__label lang" data-lang="en">Medical specialties</p>
-            <p class="metric-card__label lang" data-lang="tm">Lukmançylyk ugurlary</p>
-          </article>
-          <article class="metric-card">
-            <p class="metric-card__value">24/7</p>
-            <p class="metric-card__label lang" data-lang="ru">Онлайн и офлайн доступ</p>
-            <p class="metric-card__label lang" data-lang="en">Online + offline access</p>
-            <p class="metric-card__label lang" data-lang="tm">Onlaýn + oflaýn</p>
-          </article>
-        </div>
-      </div>
-      <div class="hero__preview" aria-hidden="true">
-        <div class="preview-card">
-          <p>BooksMed logic</p>
-          <strong>Категории, каталог, поиск</strong>
-          <span>Навигация, как на booksmed.info</span>
-        </div>
-        <div class="preview-card preview-card--image">
-          <img src="1.webp" alt="Каталог MedLibrary" loading="lazy" decoding="async">
-          <div class="preview-card__hint">Открывайте, фильтруйте и скачивайте книги</div>
+        <div class="hero__panel" aria-hidden="true">
+          <div class="hero-card">
+            <div class="hero-card__label">BooksMed logic</div>
+            <h3>Категории, каталог и поиск — в одном экране</h3>
+            <p>Стартовый экран повторяет структуру booksmed.info: слева — навигация, справа — быстрый доступ к разделам.</p>
+            <div class="hero-card__grid">
+              <span class="pill">Каталог</span>
+              <span class="pill">Категории</span>
+              <span class="pill">Поиск</span>
+              <span class="pill">Контакты</span>
+            </div>
+          </div>
+          <div class="hero-card hero-card--image">
+            <img src="1.webp" alt="Каталог MedLibrary" loading="lazy" decoding="async">
+            <div class="hero-card__hint">Открывайте, фильтруйте и скачивайте книги</div>
+          </div>
         </div>
       </div>
     </section>
 
-    <section id="solutions" class="section">
+    <section id="solutions" class="section container">
       <div class="section__head">
         <p class="eyebrow lang" data-lang="ru">Структура как в BooksMed</p>
         <p class="eyebrow lang" data-lang="en">BooksMed-inspired sections</p>
@@ -234,7 +262,7 @@
       </div>
     </section>
 
-    <section id="catalog" class="section section--split">
+    <section id="catalog" class="section section--split container">
       <div>
         <h2 class="section__title lang" data-lang="ru">Каталог и категории в знакомой логике</h2>
         <h2 class="section__title lang" data-lang="en">Catalog and categories with familiar flow</h2>
@@ -265,7 +293,7 @@
       </div>
     </section>
 
-    <section id="platform" class="section platform">
+    <section id="platform" class="section platform container">
       <div class="section__head">
         <p class="eyebrow">Platforma</p>
         <h2>MedLibrary как полнофункциональный сервис</h2>
@@ -295,7 +323,7 @@
       </div>
     </section>
 
-    <section class="section steps">
+    <section class="section steps container">
       <div class="section__head">
         <p class="eyebrow">Путь пользователя</p>
         <h2>Простой маршрут, как на BooksMed</h2>
@@ -326,7 +354,7 @@
       </ol>
     </section>
 
-    <section id="gallery" class="gallery-slider">
+    <section id="gallery" class="gallery-slider section container">
       <div class="section__head">
         <p class="eyebrow">Gallery</p>
         <h2>Интерфейс MedLibrary</h2>
@@ -343,7 +371,7 @@
       <button class="gallery-slider__control next" type="button" aria-label="Следующее изображение">&#10095;</button>
     </section>
 
-    <section id="download" class="download">
+    <section id="download" class="download section container">
       <div class="section__head">
         <p class="eyebrow">Install</p>
         <h2>Скачайте MedLibrary или работайте офлайн</h2>
@@ -364,7 +392,7 @@
       </ul>
     </section>
 
-    <section id="contact" class="contact">
+    <section id="contact" class="contact section container">
       <div class="section__head">
         <p class="eyebrow lang" data-lang="ru">Всегда на связи</p>
         <p class="eyebrow lang" data-lang="en">Stay in touch</p>
@@ -411,16 +439,20 @@
   </main>
 
   <footer class="site-footer">
-    <div>
-      <strong>© 2025 MedLibrary</strong>
-      <p>Медицинская электронная библиотека. Все права защищены.</p>
-    </div>
-    <div class="site-footer__links">
-      <a href="index.html">Главная</a>
-      <a href="BookCategory.html">Категории</a>
-      <a href="book.html">Каталог</a>
+    <div class="container site-footer__content">
+      <div>
+        <strong>© 2025 MedLibrary</strong>
+        <p>Медицинская электронная библиотека. Все права защищены.</p>
+      </div>
+      <div class="site-footer__links">
+        <a href="index.html">Главная</a>
+        <a href="BookCategory.html">Категории</a>
+        <a href="book.html">Каталог</a>
+      </div>
     </div>
   </footer>
+
+  </div>
 
   <div id="auth-modal" class="auth-modal" hidden aria-hidden="true">
     <div class="auth-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="auth-heading">
