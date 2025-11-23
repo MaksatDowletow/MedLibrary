@@ -9,6 +9,7 @@ const morgan = require("morgan");
 const { execFile } = require("child_process");
 const crypto = require("crypto");
 const fs = require("fs/promises");
+const fsSync = require("fs");
 const path = require("path");
 require("dotenv").config();
 
@@ -29,6 +30,8 @@ const USERS_FILE = process.env.USERS_FILE || path.join(DATA_DIR, "users.json");
 const BOOKS_FILE = process.env.BOOKS_FILE || path.join(DATA_DIR, "books.json");
 const SQLITE_DB_PATH = process.env.SQLITE_DB_PATH || path.join(__dirname, "dbMedicalLib.sqlite");
 const COVER_CACHE_DIR = process.env.COVER_CACHE_DIR || path.join(DATA_DIR, "covers");
+const STATIC_BUILD_DIR = process.env.CLIENT_DIST_DIR || path.join(__dirname, "dist");
+const PUBLIC_ASSETS_DIR = path.join(__dirname, "public");
 const ALLOWED_COVER_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp"];
 const MAX_COVER_SIZE_BYTES = Number(process.env.MAX_COVER_SIZE_BYTES) || 2 * 1024 * 1024;
 const GOOGLE_TOKEN_INFO_URL = "https://oauth2.googleapis.com/tokeninfo";
@@ -577,6 +580,20 @@ app.use(cors());
 app.options("*", cors());
 app.use(express.json({ limit: MAX_JSON_BODY_SIZE }));
 app.use(morgan("tiny"));
+[
+  STATIC_BUILD_DIR,
+  PUBLIC_ASSETS_DIR,
+  __dirname,
+]
+  .filter((dir) => fsSync.existsSync(dir))
+  .forEach((dir) => {
+    app.use(
+      express.static(dir, {
+        maxAge: dir === STATIC_BUILD_DIR ? "7d" : 0,
+        redirect: false,
+      })
+    );
+  });
 app.use(
   "/covers",
   express.static(COVER_CACHE_DIR, {
