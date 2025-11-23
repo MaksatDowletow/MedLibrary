@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-client-id" content="">
+    <meta name="google-client-id" content="815759578613-pf7pkrfsc0u70edgykqvku3m0p1wq3p2.apps.googleusercontent.com">
     <meta name="theme-color" content="#0d47a1">
     <title>Регистрация и вход</title>
     <link rel="manifest" href="/MedLibrary/manifest.webmanifest">
@@ -128,7 +128,7 @@
         }
     </style>
 </head>
-<body data-google-client-id="">
+<body data-google-client-id="815759578613-pf7pkrfsc0u70edgykqvku3m0p1wq3p2.apps.googleusercontent.com">
     <div class="auth-wrapper">
         <h1>Регистрация и вход</h1>
         <form id="registerForm">
@@ -156,7 +156,19 @@
             <button id="logout" type="button" hidden>Выйти</button>
         </div>
     </div>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script
+      src="https://accounts.google.com/gsi/client"
+      async
+      defer
+      onerror="
+        (function () {
+          var el = document.getElementById('google-signin-button');
+          if (!el) return;
+          el.textContent = 'Не удалось загрузить Google Identity. Проверьте соединение и разрешите accounts.google.com';
+          el.classList.add('google-signin-placeholder', 'is-error');
+        })();
+      "
+    ></script>
     <script src="auth.js" defer></script>
     <script defer src="pwa.js"></script>
 </body>

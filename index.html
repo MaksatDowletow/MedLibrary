@@ -14,8 +14,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <link rel="manifest" href="manifest.webmanifest">
+  <meta name="google-client-id" content="815759578613-pf7pkrfsc0u70edgykqvku3m0p1wq3p2.apps.googleusercontent.com">
 </head>
-<body class="home" data-api-base="http://localhost:5000" data-google-client-id="">
+<body
+  class="home"
+  data-api-base="http://localhost:5000"
+  data-google-client-id="815759578613-pf7pkrfsc0u70edgykqvku3m0p1wq3p2.apps.googleusercontent.com"
+>
   <header class="site-header">
     <div class="site-header__brand">
       <p class="eyebrow lang" data-lang="ru">Цифровая платформа знаний</p>
@@ -405,7 +410,19 @@
     </div>
   </div>
 
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script
+    src="https://accounts.google.com/gsi/client"
+    async
+    defer
+    onerror="
+      (function () {
+        var el = document.getElementById('google-signin-button');
+        if (!el) return;
+        el.textContent = 'Не удалось загрузить Google Identity. Проверьте соединение и разрешите accounts.google.com';
+        el.classList.add('google-signin-placeholder', 'is-error');
+      })();
+    "
+  ></script>
   <script defer src="scripts.js"></script>
   <script defer src="pwa.js"></script>
 </body>
