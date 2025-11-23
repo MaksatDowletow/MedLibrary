@@ -57,8 +57,8 @@ npm run dev
 
 1. Получите OAuth 2.0 Client ID в [Google Cloud Console](https://console.cloud.google.com/apis/credentials). Для тестов можно использовать тип `Web` и добавить `http://localhost:5000` в список разрешённых источников.
 2. Укажите Client ID в `.env` (переменная `GOOGLE_CLIENT_ID`). Можно перечислить несколько идентификаторов через запятую. При необходимости ограничьте доменом `GOOGLE_ALLOWED_HD=example.com`.
-3. На фронтенде задайте тот же Client ID через атрибут `data-google-client-id` тега `<body>` или мета-тег `<meta name="google-client-id" ...>`. В репозитории уже прописан рабочий идентификатор для стенда.
-4. При необходимости переопределите идентификатор прямо в ссылке: добавьте `?googleClientId=XXX` к `index.html` или `auth.html` (например, `auth.html?apiBase=http://localhost:5000&googleClientId=YYY`). Параметр перекрывает мета-тег и `data-*` атрибут.
+3. На фронтенде задайте тот же Client ID через `config.js`, передав значение в `window.__APP_CONFIG__`. Не храните рабочие ключи в HTML: скрипт настраивает атрибуты `data-google-client-id` и мета-тег уже в браузере.
+4. При необходимости переопределите идентификатор прямо в ссылке: добавьте `?googleClientId=XXX` к `index.html` или `auth.html` (например, `auth.html?apiBase=http://localhost:5000&googleClientId=YYY`). Параметр перекрывает мета-тег и значения из `config.js`.
 5. После этого в блоке авторизации появится кнопка «Войти через Google». Пользователь получает обычный JWT, а сервер создаёт локальную учётную запись автоматически, используя адрес электронной почты из Google.
 
 Отдельная страница `auth.html` использует те же настройки, поэтому достаточно поделиться ссылкой вроде `auth.html?apiBase=https://api.example.com&googleClientId=XXX`.
