@@ -1,6 +1,7 @@
 const TOKEN_KEY = "medlibraryToken";
 const LOCAL_USERS_KEY = "medlibraryLocalUsers";
 const LOCAL_SESSION_KEY = "medlibraryLocalSession";
+const LANG_STORAGE_KEY = "preferredLanguage";
 const BOOK_TABLE_COLUMNS = [
   "Название книги",
   "Имя автора",
@@ -93,6 +94,230 @@ const UI_TEXTS = {
     tm: "Sahypalar",
   },
 };
+
+const PAGE_TRANSLATIONS = {
+  "header.tagline": {
+    ru: "медицинская библиотека",
+    en: "medical library",
+    tm: "lukmançylyk kitaphanasy",
+  },
+  "header.install": {
+    ru: "Скачать приложение",
+    en: "Download app",
+    tm: "Programmany ýükläň",
+  },
+  "nav.home": { ru: "Главная", en: "Home", tm: "Baş sahypa" },
+  "nav.features": { ru: "Возможности", en: "Features", tm: "Mümkinçilikler" },
+  "nav.catalog": { ru: "Каталог", en: "Catalog", tm: "Katalog" },
+  "nav.platform": { ru: "Платформа", en: "Platform", tm: "Platforma" },
+  "nav.gallery": { ru: "Интерфейс", en: "Interface", tm: "Interfeys" },
+  "nav.contact": { ru: "Связь", en: "Contact", tm: "Habarlaşyň" },
+  "nav.bookCatalog": { ru: "Каталог книг", en: "Book catalog", tm: "Kitap katalogy" },
+  "nav.categories": { ru: "Категории", en: "Categories", tm: "Kategoriýalar" },
+  "hero.eyebrow": { ru: "Современный сценарий", en: "Modern experience", tm: "Täzeçillik tejribesi" },
+  "hero.title": { ru: "Каталог медицинских знаний", en: "Medical knowledge catalog", tm: "Lukmançylyk katalogy" },
+  "hero.text": {
+    ru: "Поиск, категории, офлайн‑режим и установка PWA. Акценты и кнопки ведут к основным действиям.",
+    en: "Search, curated categories, offline mode, and a clear PWA install flow focused on primary actions.",
+    tm: "Gözleg, baý kategoriýalar, oflaýn režimi we esasy hereketlere gönükdirilen düşnükli PWA gurnama.",
+  },
+  "hero.ctaCatalog": { ru: "Открыть каталог", en: "Open catalog", tm: "Katalogy aç" },
+  "hero.ctaPlatform": { ru: "Как устроено", en: "How it works", tm: "Näme üçin amatly" },
+  "hero.ctaInstall": { ru: "Установить PWA", en: "Install PWA", tm: "PWA gurnamak" },
+  "hero.metaBooks": { ru: "1000+ книг", en: "1000+ books", tm: "1000+ kitap" },
+  "hero.metaDirections": { ru: "62 направлений", en: "62 specialties", tm: "62 ugur" },
+  "hero.metaAccess": { ru: "Онлайн и офлайн доступ", en: "Online and offline access", tm: "Onlaýn we oflaýn elýeterlilik" },
+  "preview.badge": { ru: "Быстрый доступ", en: "Quick access", tm: "Çalt giriş" },
+  "preview.title": {
+    ru: "Каталог, категории и поиск в одном экране",
+    en: "Catalog, categories, and search on one screen",
+    tm: "Katalog, kategoriýalar we gözleg bir ekranda",
+  },
+  "preview.text": {
+    ru: "Чистые карточки, быстрый доступ.",
+    en: "Clean cards and instant access.",
+    tm: "Arassa kartlar, çalt giriş.",
+  },
+  "preview.ctaCategories": { ru: "Категории", en: "Categories", tm: "Kategoriýalar" },
+  "preview.ctaFilters": { ru: "Фильтры каталога", en: "Catalog filters", tm: "Katalog filtrleri" },
+  "audit.subtitle": {
+    ru: "Фокус на поиске, чтении и установке PWA. Новости, баннеры и второстепенные блоки скрыты, чтобы не мешать работе.",
+    en: "Focus on search, reading, and installing the PWA. News and secondary blocks stay out of the way.",
+    tm: "Gözleg, okamak we PWA gurnama öň planda. Täzelikler we başga bloklar päsgel bermeýär.",
+  },
+  "audit.pointNavigation": {
+    ru: "Минимальная навигация: каталог, категории, авторизация",
+    en: "Minimal navigation: catalog, categories, sign-in",
+    tm: "Minimal nawigasiýa: katalog, kategoriýalar, hasaba giriş",
+  },
+  "audit.pointCta": {
+    ru: "Четкие CTA — открыть каталог, скачать JSON/Excel, установить PWA",
+    en: "Clear CTAs — open the catalog, download JSON/Excel, install the PWA",
+    tm: "Düşnükli düwmeler — katalogy açmak, JSON/Excel ýüklemek, PWA gurmak",
+  },
+  "audit.pointHotkeys": {
+    ru: "Подсказки по горячим клавишам только там, где они полезны",
+    en: "Hotkey hints only where they help",
+    tm: "Gyssagly klawiş görkezmeleri diňe peýdaly ýerlerinde",
+  },
+  "audit.pointCards": {
+    ru: "Плотные карточки с ключевыми метаданными книги",
+    en: "Compact cards with key book metadata",
+    tm: "Kitabyň möhüm metadatalary bilen gysga kartlar",
+  },
+  "audit.panelEyebrow": { ru: "Новые опорные точки", en: "New anchors", tm: "Täze baglanyşyklar" },
+  "audit.panelTitle": { ru: "Быстрые переходы", en: "Quick jumps", tm: "Çalt geçişler" },
+  "audit.jumpTable": { ru: "Таблица каталога", en: "Catalog table", tm: "Katalog tablisası" },
+  "audit.jumpDirections": { ru: "62 направлений", en: "62 specialties", tm: "62 ugur" },
+  "audit.jumpExcel": { ru: "Экспорт Excel", en: "Excel export", tm: "Excel eksporty" },
+  "audit.jumpJson": { ru: "JSON для интеграций", en: "JSON for integrations", tm: "Integrasiýalar üçin JSON" },
+  "audit.note": {
+    ru: "Весь лишний контент убран в пользу быстрых сценариев поиска и скачивания.",
+    en: "All extra content is removed in favor of quick search and download flows.",
+    tm: "Gözleg we ýükleme üçin tiz ssenariler peýdasyna goşmaça mazmun aýryldy.",
+  },
+  "features.eyebrow": { ru: "Возможности", en: "Features", tm: "Mümkinçilikler" },
+  "features.title": { ru: "Главные", en: "Core", tm: "Esasy" },
+  "features.subtitle": {
+    ru: "Только то, что помогает найти, открыть или сохранить книгу.",
+    en: "Only what helps you find, open, or save a book.",
+    tm: "Kitaby tapmaga, açmaga ýa-da saklamaga kömek edýän zatlar.",
+  },
+  "features.catalog.title": { ru: "Единый каталог", en: "Unified catalog", tm: "Biri-bir katalog" },
+  "features.catalog.text": {
+    ru: "Таблица с 1000+ книгами, быстрыми фильтрами и карточками — без новостных блоков и отвлекающих панелей.",
+    en: "Table with 1000+ books, fast filters, and cards — no news blocks or distractions.",
+    tm: "1000+ kitaply tablisa, çalt filtrler we kartlar — habar bloklary we üns üjeýleri ýok.",
+  },
+  "features.categories.title": { ru: "Категории BooksMed", en: "BooksMed categories", tm: "BooksMed kategoriýalary" },
+  "features.categories.text": {
+    ru: "69 направлений в привычной логике. Один клик — и сразу к нужной области знаний.",
+    en: "69 specialties in a familiar logic. One click takes you to the right field.",
+    tm: "69 ugur öwrenişi — tanyş logika. Bir basyş bilen gerek ugry tapyň.",
+  },
+  "features.search.title": { ru: "Поиск без шумов", en: "Noise-free search", tm: "Şowunsyz gözleg" },
+  "features.search.text": {
+    ru: "Глобальный поиск по всем колонкам с нормализацией текста. Минимум отвлекающих элементов и вспомогательных окон.",
+    en: "Global search across all columns with normalized text. Minimal distractions and popups.",
+    tm: "Ähli sütünlerde adatylaşdyrylan global gözleg. Üns çekiji elementler minimum derejede.",
+  },
+  "features.start.title": { ru: "Быстрый старт", en: "Quick start", tm: "Tiz başlangyç" },
+  "features.start.text": {
+    ru: "Готовые кнопки: каталог, категории, Excel/JSON и PWA — никакой лишней навигации.",
+    en: "Ready shortcuts: catalog, categories, Excel/JSON, and PWA — no extra navigation.",
+    tm: "Taýýar düwmeler: katalog, kategoriýalar, Excel/JSON we PWA — goşmaça nawigasiýa ýok.",
+  },
+  "catalog.eyebrow": { ru: "Каталог", en: "Catalog", tm: "Katalog" },
+  "catalog.title": { ru: "Таблица, карточки и экспорт", en: "Table, cards, and export", tm: "Tablisa, kartlar we eksport" },
+  "catalog.subtitle": {
+    ru: "Бережно обновленная структура: сортировки, фильтры по колонкам и чистые карточки.",
+    en: "Carefully refreshed structure: sorting, column filters, and clean cards.",
+    tm: "Üns bilen täzelenen gurluş: tertiplemeler, sütün filtrleri we arassa kartlar.",
+  },
+  "catalog.pointSearch": {
+    ru: "Поиск по названию, авторам, ISBN, УДК, ББК",
+    en: "Search by title, authors, ISBN, UDC, BBK",
+    tm: "Ady, awtorlary, ISBN, UDK, BBK boýunça gözleg",
+  },
+  "catalog.pointCards": {
+    ru: "Карточки найденных книг без перегруза информации",
+    en: "Book cards without information overload",
+    tm: "Maglumat artykmaçsyz kitap kartlary",
+  },
+  "catalog.pointExport": {
+    ru: "Экспорт в Excel/JSON и офлайн-доступ",
+    en: "Export to Excel/JSON and offline access",
+    tm: "Excel/JSON eksporty we oflaýn elýeterlilik",
+  },
+  "catalog.ctaCatalog": { ru: "Каталог книг", en: "Book catalog", tm: "Kitap katalogy" },
+  "catalog.ctaExcel": { ru: "Excel", en: "Excel", tm: "Excel" },
+  "catalog.ctaJson": { ru: "JSON", en: "JSON", tm: "JSON" },
+  "catalog.accentEyebrow": { ru: "Подборка за секунды", en: "Picks in seconds", tm: "Sekuntda saýlama" },
+  "catalog.accentTitle": { ru: "Готовые маршруты", en: "Ready routes", tm: "Taýýar ugrukdyryşlar" },
+  "catalog.tagCardiology": { ru: "Кардиология", en: "Cardiology", tm: "Kardiologiýa" },
+  "catalog.tagPediatrics": { ru: "Педиатрия", en: "Pediatrics", tm: "Pediatriýa" },
+  "catalog.tagSurgery": { ru: "Хирургия", en: "Surgery", tm: "Hirurgiýa" },
+  "catalog.tagAnatomy": { ru: "Анатомия", en: "Anatomy", tm: "Anatomiýa" },
+  "catalog.tagDiagnostics": { ru: "Диагностика", en: "Diagnostics", tm: "Diagnostika" },
+  "catalog.accentText": {
+    ru: "Категории и фильтры открываются в соседних вкладках, чтобы быстрее найти нужный материал.",
+    en: "Categories and filters open in nearby tabs so you can find material faster.",
+    tm: "Kategoriýalar we filtrler goňşy goýmalarda açylýar, şonuň üçin maglumatlary çalt tapyň.",
+  },
+  "platform.eyebrow": { ru: "Платформа", en: "Platform", tm: "Platforma" },
+  "platform.title": { ru: "Современная логика без лишнего шума", en: "Modern logic without noise", tm: "Şowsuz häzirki zaman logikasy" },
+  "platform.subtitle": {
+    ru: "Легкий интерфейс, PWA, офлайн-режим и плавные сценарии авторизации.",
+    en: "Lightweight UI, PWA, offline mode, and smooth auth flows.",
+    tm: "Ýeňil interfeýs, PWA, oflaýn režim we ýumşak awtorizasiýa ssenarileri.",
+  },
+  "platform.pwa.title": { ru: "PWA и офлайн", en: "PWA and offline", tm: "PWA we oflaýn" },
+  "platform.pwa.text": {
+    ru: "Сервис-воркер кэширует каталог, поэтому поиск и чтение продолжаются даже без сети.",
+    en: "The service worker caches the catalog so search and reading continue offline.",
+    tm: "Hyzmatçy işçisi katalogy keşleýär, şonuň üçin gözleg we okamak tor ýok wagty hem dowam edýär.",
+  },
+  "platform.pwa.cta": { ru: "Установить", en: "Install", tm: "Gurmak" },
+  "platform.auth.title": { ru: "Авторизация", en: "Authentication", tm: "Awtentifikasiýa" },
+  "platform.auth.text": {
+    ru: "Регистрация, вход, Google Identity и понятные статусы. Нет лишних форм — только essentials.",
+    en: "Sign-up, login, Google Identity, and clear states. No extra forms — only essentials.",
+    tm: "Hasaba alyş, giriş, Google Identity we düşnükli statuslar. Goşmaça blankalar ýok — diňe zerur zatlar.",
+  },
+  "platform.structure.title": { ru: "Структура BooksMed", en: "BooksMed structure", tm: "BooksMed gurluşy" },
+  "platform.structure.text": {
+    ru: "Навигация, категории и фильтры повторяют логику BooksMed, но с более чистым визуалом.",
+    en: "Navigation, categories, and filters mirror BooksMed logic with a cleaner look.",
+    tm: "Nawigasiýa, kategoriýalar we filtrler BooksMed logikasyna meňzeýär, has arassa görnüş bilen.",
+  },
+  "platform.structure.cta": { ru: "Перейти к категориям", en: "Go to categories", tm: "Kategoriýalara geç" },
+  "gallery.eyebrow": { ru: "Интерфейс", en: "Interface", tm: "Interfeys" },
+  "gallery.title": { ru: "Как выглядит обновление", en: "How the update looks", tm: "Täzelenme nähili görünýär" },
+  "gallery.subtitle": {
+    ru: "Светлые карточки, четкие акценты и быстрые кнопки.",
+    en: "Bright cards, clear accents, and quick actions.",
+    tm: "Ýagty kartlar, anyk aýratynlyklar we çalt hereketler.",
+  },
+  "contact.eyebrow": { ru: "Связь", en: "Contact", tm: "Habarlaşyň" },
+  "contact.title": { ru: "Напишите разработчику", en: "Message the developer", tm: "Programmist bilen habarlaşyň" },
+  "contact.subtitle": {
+    ru: "Предложите книги, интеграции или улучшения интерфейса.",
+    en: "Suggest books, integrations, or UX improvements.",
+    tm: "Kitaplar, integrasiýalar ýa-da UX gowulaşmalaryny teklip ediň.",
+  },
+  "contact.name": { ru: "Ваше имя", en: "Your name", tm: "Adyňyz" },
+  "contact.email": { ru: "Ваш email", en: "Email", tm: "Email" },
+  "contact.message": { ru: "Сообщение", en: "Message", tm: "Habar" },
+  "contact.submit": { ru: "Отправить", en: "Send", tm: "Ugrat" },
+  "footer.copyright": { ru: "© 2025 MedLibrary", en: "© 2025 MedLibrary", tm: "© 2025 MedLibrary" },
+  "footer.tagline": {
+    ru: "Медицинская электронная библиотека.",
+    en: "Medical digital library.",
+    tm: "Sanly lukmançylyk kitaphanasy.",
+  },
+  "footer.fullTagline": {
+    ru: "Медицинская электронная библиотека. Все права защищены.",
+    en: "Medical digital library. All rights reserved.",
+    tm: "Sanly lukmançylyk kitaphanasy. Ähli hukuklar goralandyr.",
+  },
+  "category.tagline": { ru: "Категории библиотеки", en: "Library categories", tm: "Kategoriýalar" },
+  "category.title": { ru: "Медицинские направления", en: "Medical specialties", tm: "Lukmançylyk ugurlary" },
+  "category.leadTitle": { ru: "Быстрая навигация по 69 направлениям", en: "Navigate 69 specialties", tm: "69 lukmançylyk ugryna çalt geçiş" },
+  "category.leadSubtitle": {
+    ru: "Используйте поисковую строку ниже — результаты обновляются мгновенно.",
+    en: "Use the search box below — results update instantly.",
+    tm: "Aşakdaky gözleg gutusyny ulanyň — netijeler bada-bat täzelenýär.",
+  },
+  "category.searchLabel": { ru: "Поиск по категориям", en: "Search categories", tm: "Kategoriýalar boýunça gözleg" },
+  "category.searchPlaceholder": { ru: "Анатомия, Kardiologiýa...", en: "Anatomy, Cardiology...", tm: "Anatomiýa, Kardiologiýa..." },
+  "category.countPlaceholder": { ru: "—", en: "—", tm: "—" },
+  "category.columnRu": { ru: "RU", en: "RU", tm: "RU" },
+  "category.columnTm": { ru: "TM", en: "TM", tm: "TM" },
+  "category.columnBooks": { ru: "Книг", en: "Books", tm: "Kitap" },
+  "category.loading": { ru: "Загружаем направления...", en: "Loading specialties...", tm: "Ugurlar ýüklenýär..." },
+};
+
+const I18N_STRINGS = { ...UI_TEXTS, ...PAGE_TRANSLATIONS };
 
 const CATEGORY_FALLBACK = [
   { ru: "Акушерство и Гинекология", tm: "Akuşerçilik we Ginekologiýa" },
@@ -258,43 +483,87 @@ function initAuthModal() {
   return { open: openModal, close: closeModal };
 }
 
-function initLanguageSwitcher() {
-  const languageSelect = document.getElementById("language-select");
-  if (!languageSelect) {
-    return;
-  }
+function applyDocumentLanguage(lang) {
+  document.documentElement.dataset.lang = lang;
+  document.documentElement.lang = lang;
 
-  const documentLang = document.documentElement.dataset.lang || document.documentElement.lang;
-  if (documentLang && languageSelect.value !== documentLang) {
-    const optionExists = Array.from(languageSelect.options).some((option) => option.value === documentLang);
-    if (optionExists) {
-      languageSelect.value = documentLang;
+  document.querySelectorAll("[data-i18n]").forEach((element) => {
+    const key = element.dataset.i18n;
+    if (!key) {
+      return;
     }
-  }
 
-  const changeLanguage = () => {
-    const lang = languageSelect.value || documentLang || "tm";
-    document.documentElement.dataset.lang = lang;
-    document.documentElement.lang = lang;
-    document.querySelectorAll(".lang").forEach((element) => {
-      const isVisible = element.getAttribute("data-lang") === lang;
-      element.hidden = !isVisible;
-      element.setAttribute("aria-hidden", isVisible ? "false" : "true");
-      if (isVisible) {
-        element.style.removeProperty("display");
+    let args = {};
+    if (element.dataset.i18nArgs) {
+      try {
+        args = JSON.parse(element.dataset.i18nArgs);
+      } catch (error) {
+        console.error("Failed to parse translation arguments", error);
       }
-    });
-    updatePlaceholders(lang);
-    document
-      .querySelectorAll("[data-i18n-key]")
-      .forEach((element) => translateElement(element));
-    if (bookSearchState.isTableReady) {
-      applyBookFilters();
     }
+
+    if (I18N_STRINGS[key]) {
+      element.textContent = translate(key, args);
+    }
+  });
+
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((input) => {
+    const key = input.dataset.i18nPlaceholder;
+    if (key && I18N_STRINGS[key]) {
+      input.placeholder = translate(key);
+    }
+  });
+
+  updatePlaceholders(lang);
+
+  if (bookSearchState.isTableReady) {
+    applyBookFilters();
+  }
+}
+
+function initLanguageSwitcher() {
+  const languageSwitcher = document.querySelector(".lang-switch");
+  const buttons = languageSwitcher?.querySelectorAll("[data-lang]");
+  const languageSelect = document.getElementById("language-select");
+  const savedLanguage = localStorage.getItem(LANG_STORAGE_KEY);
+  const fallbackLanguage = document.documentElement.dataset.lang || document.documentElement.lang || "ru";
+  const initialLanguage = savedLanguage || fallbackLanguage;
+
+  const setActiveButton = (lang) => {
+    buttons?.forEach((button) => {
+      const isActive = button.dataset.lang === lang;
+      button.classList.toggle("is-active", isActive);
+      button.setAttribute("aria-pressed", isActive ? "true" : "false");
+    });
   };
 
-  languageSelect.addEventListener("change", changeLanguage);
-  changeLanguage();
+  const changeLanguage = (lang) => {
+    const targetLang = lang || fallbackLanguage;
+    setActiveButton(targetLang);
+    if (languageSelect && languageSelect.value !== targetLang) {
+      languageSelect.value = targetLang;
+    }
+    localStorage.setItem(LANG_STORAGE_KEY, targetLang);
+    applyDocumentLanguage(targetLang);
+  };
+
+  buttons?.forEach((button) => {
+    button.type = "button";
+    button.addEventListener("click", () => changeLanguage(button.dataset.lang));
+  });
+
+  if (languageSelect) {
+    languageSelect.addEventListener("change", (event) => {
+      changeLanguage(event.target.value);
+    });
+  }
+
+  if (languageSelect && languageSelect.value !== initialLanguage) {
+    languageSelect.value = initialLanguage;
+  }
+
+  applyDocumentLanguage(initialLanguage);
+  setActiveButton(initialLanguage);
 }
 
 function initGallerySlider() {
@@ -1296,7 +1565,7 @@ function updatePlaceholders(lang) {
 
 function translate(key, replacements = {}) {
   const lang = document.documentElement.dataset.lang || "ru";
-  const template = UI_TEXTS[key]?.[lang] || UI_TEXTS[key]?.ru || "";
+  const template = I18N_STRINGS[key]?.[lang] || I18N_STRINGS[key]?.ru || key;
   return Object.keys(replacements).reduce((acc, currentKey) => {
     return acc.replace(new RegExp(`{${currentKey}}`, "g"), replacements[currentKey]);
   }, template);

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tm" data-lang="tm">
+<html lang="ru" data-lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,68 +15,54 @@
 <body>
   <header class="site-header">
     <div class="site-header__brand">
-      <p class="eyebrow lang" data-lang="ru">Категории библиотеки</p>
-      <p class="eyebrow lang" data-lang="en">Library categories</p>
-      <p class="eyebrow lang" data-lang="tm">Kategoriýalar</p>
-      <h1 class="site-header__title lang" data-lang="ru">Медицинские направления</h1>
-      <h1 class="site-header__title lang" data-lang="en">Medical specialties</h1>
-      <h1 class="site-header__title lang" data-lang="tm">Lukmançylyk ugurlary</h1>
+      <p class="eyebrow" data-i18n="category.tagline">Категории библиотеки</p>
+      <h1 class="site-header__title" data-i18n="category.title">Медицинские направления</h1>
     </div>
     <div class="site-header__actions">
-      <select id="language-select" aria-label="Сменить язык">
-        <option value="tm" selected>Türkmençe</option>
-        <option value="ru">Русский</option>
-        <option value="en">English</option>
-      </select>
-      <button id="install-button" class="button button--ghost" type="button" hidden data-install-trigger>
-        <span class="lang" data-lang="ru">Скачать приложение</span>
-        <span class="lang" data-lang="en">Download app</span>
-        <span class="lang" data-lang="tm">Programmany ýükläň</span>
+      <nav class="lang-switch" aria-label="Выбор языка">
+        <button type="button" data-lang="tm">TM</button>
+        <button type="button" data-lang="ru">RU</button>
+        <button type="button" data-lang="en">EN</button>
+      </nav>
+      <button id="install-button" class="button button--ghost" type="button" hidden data-install-trigger data-i18n="header.install">
+        Скачать приложение
       </button>
-      <a class="button button--outline" href="book.html">
-        <span class="lang" data-lang="ru">Каталог книг</span>
-        <span class="lang" data-lang="en">Book catalog</span>
-        <span class="lang" data-lang="tm">Kitap katalogy</span>
+      <a class="button button--outline" href="book.html" data-i18n="nav.bookCatalog">
+        Каталог книг
       </a>
     </div>
     <nav class="site-nav" aria-label="Основная навигация">
-      <a href="index.html"><span class="lang" data-lang="ru">Главная</span><span class="lang" data-lang="en">Home</span><span class="lang" data-lang="tm">Baş sahypa</span></a>
-      <a href="BookCategory.html" aria-current="page"><span class="lang" data-lang="ru">Категории</span><span class="lang" data-lang="en">Categories</span><span class="lang" data-lang="tm">Kategoriýalar</span></a>
-      <a href="book.html"><span class="lang" data-lang="ru">Каталог</span><span class="lang" data-lang="en">Catalog</span><span class="lang" data-lang="tm">Katalog</span></a>
+      <a href="index.html" data-i18n="nav.home">Главная</a>
+      <a href="BookCategory.html" aria-current="page" data-i18n="nav.categories">Категории</a>
+      <a href="book.html" data-i18n="nav.bookCatalog">Каталог</a>
     </nav>
   </header>
 
   <main class="category-shell">
     <section class="section">
       <div class="section__head">
-        <h2 class="section__title lang" data-lang="ru">Быстрая навигация по 69 направлениям</h2>
-        <h2 class="section__title lang" data-lang="en">Navigate 69 specialties</h2>
-        <h2 class="section__title lang" data-lang="tm">69 lukmançylyk ugry</h2>
-        <p class="section__subtitle lang" data-lang="ru">Используйте поисковую строку ниже — результаты обновляются мгновенно.</p>
-        <p class="section__subtitle lang" data-lang="en">Use the search box below — results update instantly.</p>
-        <p class="section__subtitle lang" data-lang="tm">Aşakdaky gözleg gutusyny ulanyň — netijeler bada-bat täzeleýär.</p>
+        <h2 class="section__title" data-i18n="category.leadTitle">Быстрая навигация по 69 направлениям</h2>
+        <p class="section__subtitle" data-i18n="category.leadSubtitle">Используйте поисковую строку ниже — результаты обновляются мгновенно.</p>
       </div>
       <div class="category-search">
         <label for="category-search">
-          <span class="lang" data-lang="ru">Поиск по категориям</span>
-          <span class="lang" data-lang="en">Search categories</span>
-          <span class="lang" data-lang="tm">Kategoriýalar boýunça gözleg</span>
+          <span data-i18n="category.searchLabel">Поиск по категориям</span>
         </label>
-        <input id="category-search" type="search" placeholder="Анатомия, Kardiologiýa..." autocomplete="off">
-        <p id="category-count" class="category-count">—</p>
+        <input id="category-search" type="search" placeholder="Анатомия, Kardiologiýa..." autocomplete="off" data-i18n-placeholder="category.searchPlaceholder">
+        <p id="category-count" class="category-count" data-i18n="category.countPlaceholder">—</p>
       </div>
       <div class="table-wrapper">
         <table class="category-table" aria-live="polite">
           <thead>
             <tr>
-              <th>RU</th>
-              <th>TM</th>
-              <th>Книг</th>
+              <th data-i18n="category.columnRu">RU</th>
+              <th data-i18n="category.columnTm">TM</th>
+              <th data-i18n="category.columnBooks">Книг</th>
             </tr>
           </thead>
           <tbody data-category-body>
             <tr>
-              <td colspan="3" style="text-align: center">Загружаем направления...</td>
+              <td colspan="3" style="text-align: center" data-i18n="category.loading">Загружаем направления...</td>
             </tr>
           </tbody>
         </table>
@@ -86,12 +72,12 @@
 
   <footer class="site-footer">
     <div>
-      <strong>© 2025 MedLibrary</strong>
-      <p>Медицинская электронная библиотека. Все права защищены.</p>
+      <strong data-i18n="footer.copyright">© 2025 MedLibrary</strong>
+      <p data-i18n="footer.fullTagline">Медицинская электронная библиотека. Все права защищены.</p>
     </div>
     <div class="site-footer__links">
-      <a href="index.html">Главная</a>
-      <a href="book.html">Каталог</a>
+      <a href="index.html" data-i18n="nav.home">Главная</a>
+      <a href="book.html" data-i18n="nav.bookCatalog">Каталог</a>
     </div>
   </footer>
 
