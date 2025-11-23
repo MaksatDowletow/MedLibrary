@@ -273,7 +273,7 @@ function initLanguageSwitcher() {
   }
 
   const changeLanguage = () => {
-    const lang = languageSelect.value || documentLang || "ru";
+    const lang = languageSelect.value || documentLang || "tm";
     document.documentElement.dataset.lang = lang;
     document.documentElement.lang = lang;
     document.querySelectorAll(".lang").forEach((element) => {

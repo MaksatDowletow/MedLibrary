@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="tm" data-lang="tm">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,98 +12,110 @@
   <link rel="stylesheet" href="styles.css">
   <link rel="manifest" href="manifest.webmanifest">
 </head>
-<body>
-  <header class="site-header">
-    <div class="site-header__brand">
-      <p class="eyebrow">MedLibrary</p>
-      <h1 class="site-header__title">Каталог из базы данных</h1>
-      <p class="site-header__subtitle">dbMedicalLib.sqlite → категории, книги и быстрый поиск</p>
-    </div>
-    <div class="site-header__actions">
-      <a class="button button--ghost" href="BookCategory.html">Категории</a>
-      <a class="button button--outline" href="book.html">Каталог JSON</a>
-    </div>
-    <nav class="site-nav" aria-label="Основная навигация">
-      <a href="index.html">Главная</a>
-      <a href="BookCategory.html">Категории</a>
-      <a href="book.html">Каталог</a>
-      <a href="db-catalog.html" aria-current="page">Каталог БД</a>
-    </nav>
-  </header>
+<body class="page">
+  <div class="page">
+    <header class="site-header">
+      <div class="container site-header__bar">
+        <div class="site-header__brand">
+          <p class="eyebrow" data-i18n="brandEyebrow">MedLibrary</p>
+          <h1 class="site-header__title" data-i18n="brandTitle">Каталог из базы данных</h1>
+          <p class="site-header__lead" data-i18n="brandLead">dbMedicalLib.sqlite → категории, книги и быстрый поиск</p>
+        </div>
+        <div class="site-header__actions language-switcher">
+          <label for="language-select" data-i18n="languageLabel">Язык</label>
+          <select id="language-select" aria-label="Сменить язык">
+            <option value="tm" selected>Türkmençe</option>
+            <option value="ru">Русский</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+      </div>
+      <nav class="site-nav" aria-label="Основная навигация">
+        <div class="container site-nav__wrap">
+          <a href="index.html" data-i18n="navHome">Главная</a>
+          <a href="BookCategory.html" data-i18n="navCategories">Категории</a>
+          <a href="book.html" data-i18n="navJson">Каталог JSON</a>
+          <a href="db-catalog.html" aria-current="page" data-i18n="navDb">Каталог БД</a>
+        </div>
+      </nav>
+    </header>
 
-  <main class="sqlite-shell">
+    <main class="container sqlite-shell">
     <section class="section">
       <div class="sqlite-hero">
         <div>
-          <h2 class="section__title">Интегрированные категории и книги</h2>
-          <p class="section__subtitle">Данные берутся напрямую из dbMedicalLib.sqlite. Фильтруйте по названию, авторам, категориям, языку и году.</p>
+          <h2 class="section__title" data-i18n="heroTitle">Integrirlenen kategoriýalar we kitaplar</h2>
+          <p class="section__subtitle" data-i18n="heroSubtitle">Maglumatlar gönüden-göni dbMedicalLib.sqlite bazasyndan alynýar: ady, awtory, kategoriýasy, dili we ýyly boýunça filtrleň.</p>
           <div class="sqlite-stats" aria-live="polite">
             <div class="stat-card">
-              <p class="stat-label">Книг</p>
-              <p class="stat-value" data-books-count>—</p>
+              <p class="stat-card__label" data-i18n="statsBooks">Kitaplar</p>
+              <p class="stat-card__value" data-books-count>—</p>
             </div>
             <div class="stat-card">
-              <p class="stat-label">Категорий</p>
-              <p class="stat-value" data-categories-count>—</p>
+              <p class="stat-card__label" data-i18n="statsCategories">Kategoriýalar</p>
+              <p class="stat-card__value" data-categories-count>—</p>
             </div>
           </div>
         </div>
         <div class="sqlite-panel">
-          <p class="panel-title">Поиск</p>
+          <p class="panel-title" data-i18n="panelTitle">Gözleg</p>
           <div class="panel-grid">
             <label class="panel-field">
-              <span>Свободный поиск</span>
-              <input type="search" placeholder="Название, автор, ISBN..." data-search-input>
+              <span data-i18n="freeSearchLabel">Erkin gözleg</span>
+              <input type="search" data-i18n-placeholder="freeSearchPlaceholder" placeholder="Ady, awtor, ISBN..." data-search-input>
             </label>
             <label class="panel-field">
-              <span>Категория</span>
+              <span data-i18n="categoryLabel">Kategoriýa</span>
               <select data-category-filter>
-                <option value="">Все категории</option>
+                <option value="" data-i18n="categoryAny">Ähli kategoriýalar</option>
               </select>
             </label>
             <label class="panel-field">
-              <span>Язык</span>
+              <span data-i18n="languageLabelShort">Dil</span>
               <select data-language-filter>
-                <option value="">Любой</option>
+                <option value="" data-i18n="languageAny">Islendik</option>
               </select>
             </label>
           </div>
-          <p class="panel-hint" data-filter-status>Загружаем каталог...</p>
+          <p class="panel-hint" data-filter-status data-i18n="statusLoading">Katalog ýüklenýär...</p>
         </div>
       </div>
     </section>
 
     <section class="section">
       <div class="section__head section__head--tight">
-        <h3 class="section__title">Категории</h3>
-        <p class="section__subtitle">Щёлкните по категории, чтобы сузить выдачу.</p>
+        <h3 class="section__title" data-i18n="categoriesTitle">Kategoriýalar</h3>
+        <p class="section__subtitle" data-i18n="categoriesSubtitle">Netijäni çalt gysgatmak üçin kategoriýa boýunça saýlaň.</p>
       </div>
       <div class="sqlite-category-grid" data-category-list>
-        <p class="muted">Загружаем список направлений...</p>
+        <p class="muted" data-i18n="categoriesLoading">Ugry sanawyny ýükleýäris...</p>
       </div>
     </section>
 
     <section class="section">
       <div class="section__head section__head--tight">
-        <h3 class="section__title">Книги</h3>
-        <p class="section__subtitle">Показываем совпадения по выбранным фильтрам.</p>
+        <h3 class="section__title" data-i18n="booksTitle">Kitaplar</h3>
+        <p class="section__subtitle" data-i18n="booksSubtitle">Saýlanan süzgüçlere görä görkezilýär.</p>
       </div>
       <div class="sqlite-book-grid" data-book-grid>
-        <div class="sqlite-placeholder">Ожидаем данные из базы...</div>
+        <div class="sqlite-placeholder" data-i18n="booksPlaceholder">Bazadan maglumatlary garaşýarys...</div>
       </div>
     </section>
   </main>
 
-  <footer class="site-footer">
-    <div>
-      <strong>© 2025 MedLibrary</strong>
-      <p>Медицинская электронная библиотека. Все права защищены.</p>
-    </div>
-    <div class="site-footer__links">
-      <a href="index.html">Главная</a>
-      <a href="book.html">Каталог JSON</a>
-    </div>
-  </footer>
+    <footer class="site-footer">
+      <div class="container site-footer__content">
+        <div>
+          <strong data-i18n="footerTitle">© 2025 MedLibrary</strong>
+          <p data-i18n="footerText">Lukmançylyk elektron kitaphanasy. Ähli hukuklar goralan.</p>
+        </div>
+        <div class="site-footer__links">
+          <a href="index.html" data-i18n="navHome">Главная</a>
+          <a href="book.html" data-i18n="navJson">Каталог JSON</a>
+        </div>
+      </div>
+    </footer>
+  </div>
 
   <script defer src="db-catalog.js"></script>
   <script defer src="pwa.js"></script>
