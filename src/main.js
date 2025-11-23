@@ -1,45 +1,61 @@
-import header from './components/header.html?raw';
-import hero from './components/hero.html?raw';
-import audit from './components/audit.html?raw';
-import features from './components/features.html?raw';
-import catalogPreview from './components/catalog-preview.html?raw';
-import platform from './components/platform.html?raw';
-import gallery from './components/gallery.html?raw';
-import contact from './components/contact.html?raw';
-import footer from './components/footer.html?raw';
-
-import en from './i18n/en.json';
-import ru from './i18n/ru.json';
-import tm from './i18n/tm.json';
-
-import '../styles.css';
-
 const LANG_STORAGE_KEY = 'preferredLanguage';
-const translations = { en, ru, tm };
+const COMPONENT_PATHS = {
+  header: './src/components/header.html',
+  hero: './src/components/hero.html',
+  audit: './src/components/audit.html',
+  features: './src/components/features.html',
+  catalogPreview: './src/components/catalog-preview.html',
+  platform: './src/components/platform.html',
+  gallery: './src/components/gallery.html',
+  contact: './src/components/contact.html',
+  footer: './src/components/footer.html',
+};
+const TRANSLATION_PATHS = {
+  en: './src/i18n/en.json',
+  ru: './src/i18n/ru.json',
+  tm: './src/i18n/tm.json',
+};
 
-function injectLayout() {
-  const app = document.getElementById('app');
-  if (!app) return;
+const translations = {};
 
-  app.innerHTML = `
-    <div class="page">
-      ${header}
-      <main>
-        ${hero}
-        ${audit}
-        ${features}
-        ${catalogPreview}
-        ${platform}
-        ${gallery}
-        ${contact}
-      </main>
-      ${footer}
-    </div>
-  `;
+async function loadText(url) {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Не удалось загрузить ${url}: ${response.status}`);
+  }
+  return response.text();
+}
+
+async function loadJson(url) {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Не удалось загрузить ${url}: ${response.status}`);
+  }
+  return response.json();
+}
+
+async function loadComponents() {
+  const entries = await Promise.all(
+    Object.entries(COMPONENT_PATHS).map(async ([key, path]) => {
+      const content = await loadText(path);
+      return [key, content];
+    })
+  );
+  return Object.fromEntries(entries);
+}
+
+async function loadTranslations() {
+  const entries = await Promise.all(
+    Object.entries(TRANSLATION_PATHS).map(async ([lang, path]) => {
+      const dictionary = await loadJson(path);
+      return [lang, dictionary];
+    })
+  );
+  Object.assign(translations, Object.fromEntries(entries));
 }
 
 function getTranslation(lang, key) {
-  const dictionary = translations[lang] || translations.ru;
+  const dictionary = translations[lang] || translations.ru || {};
   return key.split('.').reduce((value, part) => (value ? value[part] : undefined), dictionary);
 }
 
@@ -47,7 +63,7 @@ function applyTranslations(lang) {
   document.documentElement.lang = lang;
   document.documentElement.dataset.lang = lang;
 
-  const dictionary = translations[lang] || translations.ru;
+  const dictionary = translations[lang] || translations.ru || {};
 
   document.querySelectorAll('[data-i18n]').forEach(element => {
     const key = element.dataset.i18n;
@@ -104,10 +120,40 @@ function initLanguage() {
   applyTranslations(initialLanguage);
 }
 
-function init() {
-  injectLayout();
-  initLanguage();
-  bindLanguageSwitch();
+function injectLayout(components) {
+  const app = document.getElementById('app');
+  if (!app) return;
+
+  app.innerHTML = `
+    <div class="page">
+      ${components.header || ''}
+      <main>
+        ${components.hero || ''}
+        ${components.audit || ''}
+        ${components.features || ''}
+        ${components.catalogPreview || ''}
+        ${components.platform || ''}
+        ${components.gallery || ''}
+        ${components.contact || ''}
+      </main>
+      ${components.footer || ''}
+    </div>
+  `;
+}
+
+async function init() {
+  try {
+    const [components] = await Promise.all([loadComponents(), loadTranslations()]);
+    injectLayout(components);
+    initLanguage();
+    bindLanguageSwitch();
+  } catch (error) {
+    console.error(error);
+    const app = document.getElementById('app');
+    if (app) {
+      app.innerHTML = '<p class="text-center">Не удалось загрузить интерфейс. Попробуйте обновить страницу.</p>';
+    }
+  }
 }
 
 document.addEventListener('DOMContentLoaded', init);
