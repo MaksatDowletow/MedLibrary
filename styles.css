@@ -249,15 +249,22 @@ main {
 }
 
 .pill--ghost {
-  background: transparent;
-  color: #cbd5e1;
-  border-color: rgba(255, 255, 255, 0.25);
+  background: #0b12240a;
+  color: var(--text);
+  border-color: rgba(26, 108, 255, 0.25);
 }
 
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.65rem;
+}
+
+.hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 .hero__metrics {
@@ -379,6 +386,45 @@ main {
   gap: 1.25rem;
   align-items: start;
 }
+
+.pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.info-hygiene {
+  position: relative;
+  overflow: hidden;
+}
+
+.info-hygiene::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 80% 20%, rgba(26, 108, 255, 0.08), transparent 35%);
+  pointer-events: none;
+}
+
+.info-hygiene__panel {
+  position: relative;
+  padding: 1.25rem;
+  border-radius: 16px;
+  background: linear-gradient(150deg, #0b1224, #132743);
+  color: #e8eeff;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 18px 50px rgba(11, 18, 36, 0.25);
+}
+
+.info-hygiene__eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #8fb7ff;
+  margin: 0 0 0.25rem;
+}
+
+.info-hygiene__title { margin: 0 0 0.5rem; }
+.info-hygiene__note { margin: 0.75rem 0 0; color: #cdd9ff; }
 
 .checklist {
   list-style: none;
