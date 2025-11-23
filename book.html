@@ -449,8 +449,19 @@
       const overrideBase = params.get('apiBase');
       let base = (overrideBase || attributeBase || '').trim();
 
-      if (!base) {
+      if (!base || /localhost/i.test(base)) {
         base = window.location.origin;
+      }
+
+      if (window.location.protocol === 'https:' && base.startsWith('http://')) {
+        try {
+          const parsed = new URL(base, window.location.href);
+          const isSameHost = parsed.hostname === window.location.hostname;
+          base = isSameHost ? `https://${parsed.host}${parsed.pathname}` : window.location.origin;
+        } catch (error) {
+          console.warn('Unable to normalize API base', error);
+          base = window.location.origin;
+        }
       }
 
       return base.replace(/\/$/, '');
