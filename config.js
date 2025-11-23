@@ -3,6 +3,7 @@
 window.__APP_CONFIG__ = window.__APP_CONFIG__ || {
   apiBase: '',
   googleClientId: '',
+  contactEndpoint: '',
 };
 
 (function applyRuntimeConfig(config) {
@@ -20,6 +21,10 @@ window.__APP_CONFIG__ = window.__APP_CONFIG__ || {
       if (googleMeta) {
         googleMeta.content = config.googleClientId;
       }
+    }
+
+    if (config.contactEndpoint) {
+      body.dataset.contactEndpoint = config.contactEndpoint;
     }
   };
 
