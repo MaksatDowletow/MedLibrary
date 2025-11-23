@@ -46,6 +46,20 @@ function initRegisterForm(apiBase) {
 
     updateRequirementList(passwordRequirementList, requirements);
 
+    const email = emailInput.value.trim();
+    const shouldValidatePassword = password.length > 0;
+    const shouldValidateConfirm = confirm.length > 0 || password.length > 0;
+
+    setFieldValidity(emailInput, email ? isEmailValid(email) : true);
+    setFieldValidity(
+      passwordInput,
+      shouldValidatePassword ? requirements.isValid : true
+    );
+    setFieldValidity(
+      confirmInput,
+      shouldValidateConfirm ? password === confirm : true
+    );
+
     if (confirmHint) {
       if (!confirm && password) {
         confirmHint.textContent = "Повторите пароль для подтверждения";
@@ -94,6 +108,8 @@ function initRegisterForm(apiBase) {
 
     if (!isEmailValid(email)) {
       setStatus(statusElement, "Введите корректный email", "error");
+      setFieldValidity(emailInput, false, true);
+      emailInput?.focus();
       return;
     }
 
@@ -103,11 +119,15 @@ function initRegisterForm(apiBase) {
         "Пароль должен содержать минимум 6 символов, цифру, букву и спецсимвол",
         "error"
       );
+      setFieldValidity(passwordInput, false, true);
+      passwordInput?.focus();
       return;
     }
 
     if (password !== confirm) {
       setStatus(statusElement, "Пароли должны совпадать", "error");
+      setFieldValidity(confirmInput, false, true);
+      confirmInput?.focus();
       return;
     }
 
@@ -142,6 +162,7 @@ function initLoginForm(apiBase) {
   const statusElement = document.getElementById("loginMessage");
   const sessionStatus = document.getElementById("sessionStatus");
   const logoutButton = document.getElementById("logout");
+  const loginButton = document.getElementById("login");
   if (!form) {
     return () => {};
   }
@@ -157,6 +178,16 @@ function initLoginForm(apiBase) {
     document.querySelector(".password-toggle[data-target~='login-password']"),
     [passwordInput]
   );
+
+  const renderLoginValidity = () => {
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+    setFieldValidity(emailInput, email ? isEmailValid(email) : true);
+    setFieldValidity(passwordInput, password ? true : null);
+  };
+
+  emailInput?.addEventListener("input", renderLoginValidity);
+  passwordInput?.addEventListener("input", renderLoginValidity);
 
   const expireSession = (message) => {
     safeRemoveToken();
@@ -305,6 +336,15 @@ function initLoginForm(apiBase) {
 
     if (!isEmailValid(email)) {
       setStatus(statusElement, "Введите корректный email", "error");
+      setFieldValidity(emailInput, false, true);
+      emailInput?.focus();
+      return;
+    }
+
+    if (!password) {
+      setStatus(statusElement, "Введите пароль", "error");
+      setFieldValidity(passwordInput, false, true);
+      passwordInput?.focus();
       return;
     }
 
@@ -771,6 +811,29 @@ function setStatus(element, message, state, options = {}) {
     const timerId = window.setTimeout(() => clearStatus(element), 3500);
     statusClearTimers.set(element, timerId);
   }
+}
+
+function setFieldValidity(input, isValid, highlightOnly = false) {
+  if (!input) {
+    return;
+  }
+
+  if (isValid === undefined || isValid === null) {
+    input.removeAttribute("aria-invalid");
+    return;
+  }
+
+  if (isValid) {
+    input.removeAttribute("aria-invalid");
+    return;
+  }
+
+  if (!highlightOnly) {
+    input.setAttribute("aria-invalid", "true");
+    return;
+  }
+
+  input.setAttribute("aria-invalid", "true");
 }
 
 function setButtonLoading(button, isLoading, loadingText = "Идёт отправка…") {
