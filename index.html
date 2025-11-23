@@ -1,419 +1,701 @@
 <!DOCTYPE html>
 <html lang="tm" data-lang="tm">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0b1224">
-  <meta
-    name="description"
-    content="MedLibrary — современная медицинская электронная библиотека с офлайн‑доступом, PWA, быстрым поиском и более чем 1000 книгами."
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b1224" />
+    <meta
+      name="description"
+      content="MedLibrary — современная медицинская электронная библиотека с офлайн‑доступом, PWA, быстрым поиском и более чем 1000 книгами."
+    />
+    <title>MedLibrary — медицинская электронная библиотека</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta
+      name="google-client-id"
+      content="815759578613-pf7pkrfsc0u70edgykqvku3m0p1wq3p2.apps.googleusercontent.com"
+    />
+  </head>
+  <body
+    class="home"
+    data-api-base="http://localhost:5000"
+    data-google-client-id="815759578613-pf7pkrfsc0u70edgykqvku3m0p1wq3p2.apps.googleusercontent.com"
   >
-  <title>MedLibrary — медицинская электронная библиотека</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-  <link rel="manifest" href="manifest.webmanifest">
-  <meta name="google-client-id" content="815759578613-pf7pkrfsc0u70edgykqvku3m0p1wq3p2.apps.googleusercontent.com">
-</head>
-<body
-  class="home"
-  data-api-base="http://localhost:5000"
-  data-google-client-id="815759578613-pf7pkrfsc0u70edgykqvku3m0p1wq3p2.apps.googleusercontent.com"
->
-  <div class="page">
-    <header class="site-header">
-      <div class="container site-header__bar">
-        <div class="site-header__brand">
-          <p class="eyebrow lang" data-lang="ru">актуальная медицинская библиотека</p>
-          <p class="eyebrow lang" data-lang="en">focused medical library</p>
-          <p class="eyebrow lang" data-lang="tm">üstünlikli lukmançylyk kitaphanasy</p>
-          <h1 class="site-header__title lang" data-lang="ru">MedLibrary</h1>
-          <h1 class="site-header__title lang" data-lang="en">MedLibrary</h1>
-          <h1 class="site-header__title lang" data-lang="tm">MedLibrary</h1>
-          <p class="site-header__lead">
-            Чистая структура, меньше отвлекающих блоков и быстрые сценарии поиска по логике BooksMed.
-          </p>
-        </div>
-        <div class="site-header__actions">
-          <select id="language-select" aria-label="Сменить язык">
-            <option value="tm">Türkmençe</option>
-            <option value="ru" selected>Русский</option>
-            <option value="en">English</option>
-          </select>
-          <button
-            id="install-button"
-            class="button button--ghost"
-            type="button"
-            hidden
-            data-install-trigger
-          >
-            <span class="lang" data-lang="ru">Скачать приложение</span>
-            <span class="lang" data-lang="en">Download app</span>
-            <span class="lang" data-lang="tm">Programmany ýükläň</span>
-          </button>
-          <button id="auth-open-button" class="button button--outline auth-open-button" type="button" accesskey="a" aria-describedby="auth-hotkey">
-            <span class="lang" data-lang="ru">Регистрация / вход</span>
-            <span class="lang" data-lang="en">Sign up / Sign in</span>
-            <span class="lang" data-lang="tm">Hasaba al / Içeri gir</span>
-            <span id="auth-hotkey" class="hotkey-hint" aria-hidden="true">Alt+Shift+A</span>
-          </button>
-        </div>
-      </div>
-      <nav class="site-nav" aria-label="Основная навигация">
-        <div class="container site-nav__wrap">
-          <a href="#hero">Главная</a>
-          <a href="#features">Возможности</a>
-          <a href="#catalog">Каталог</a>
-          <a href="#platform">Платформа</a>
-          <a href="#gallery">Интерфейс</a>
-          <a href="#contact">Связь</a>
-          <a href="book.html">Каталог книг</a>
-          <a href="BookCategory.html">Категории</a>
-        </div>
-      </nav>
-    </header>
-
-  <main>
-    <section id="hero" class="hero">
-      <div class="container hero__layout">
-        <div class="hero__content">
-          <p class="hero__eyebrow lang" data-lang="ru">Современный сценарий</p>
-          <p class="hero__eyebrow lang" data-lang="en">Modern experience</p>
-          <p class="hero__eyebrow lang" data-lang="tm">Täzeçillik tejribesi</p>
-          <h2 class="hero__title lang" data-lang="ru">Каталог медицинских знаний без шума</h2>
-          <h2 class="hero__title lang" data-lang="en">A clean medical catalog</h2>
-          <h2 class="hero__title lang" data-lang="tm">Arassa lukmançylyk katalogy</h2>
-          <p class="hero__text lang" data-lang="ru">
-            Убрали лишние блоки, оставили базовые сценарии: поиск, категории, офлайн‑режим и установка PWA. Акценты и
-            кнопки ведут к основным действиям.
-          </p>
-          <p class="hero__text lang" data-lang="en">
-            We trimmed the noise and kept the essentials: search, curated categories, offline mode, and a clear PWA install
-            flow inspired by BooksMed.
-          </p>
-          <p class="hero__text lang" data-lang="tm">
-            Goýbolsun edildi artyk bloklar: gözleg, baý kategoriýalar, oflaýn režimi we düşnükli PWA gurnama.
-            BooksMed logikasyna meňzeş arassa gurluş.
-          </p>
-          <div class="hero__actions">
-            <a class="button button--primary" href="book.html">
-              <span class="lang" data-lang="ru">Открыть каталог</span>
-              <span class="lang" data-lang="en">Open catalog</span>
-              <span class="lang" data-lang="tm">Katalogy aç</span>
-            </a>
-            <a class="button button--ghost" href="#platform">
-              <span class="lang" data-lang="ru">Как устроено</span>
-              <span class="lang" data-lang="en">How it works</span>
-              <span class="lang" data-lang="tm">Näme üçin amatly</span>
-            </a>
-            <button class="button button--text" type="button" data-install-trigger data-install-sticky>
-              <span class="lang" data-lang="ru">Установить PWA</span>
-              <span class="lang" data-lang="en">Install PWA</span>
-              <span class="lang" data-lang="tm">PWA gurnamak</span>
-            </button>
+    <div class="page">
+      <header class="site-header">
+        <div class="container site-header__bar">
+          <div class="site-header__brand">
+            <p class="eyebrow lang" data-lang="ru">медицинская библиотека</p>
+            <p class="eyebrow lang" data-lang="en">medical library</p>
+            <p class="eyebrow lang" data-lang="tm">lukmançylyk kitaphanasy</p>
+            <h1 class="site-header__title lang" data-lang="ru">MedLibrary</h1>
+            <h1 class="site-header__title lang" data-lang="en">MedLibrary</h1>
+            <h1 class="site-header__title lang" data-lang="tm">MedLibrary</h1>
           </div>
-          <div class="hero__meta">
-            <span class="pill">1000+ книг в таблице</span>
-            <span class="pill">69 направлений</span>
-            <span class="pill">Онлайн и офлайн доступ</span>
-          </div>
-        </div>
-        <div class="hero__panel" aria-hidden="true">
-          <div class="preview-card">
-            <div class="preview-card__header">
-              <span class="pill">Быстрый доступ</span>
-              <span class="pill pill--ghost">BooksMed logic</span>
-            </div>
-            <p class="preview-card__title">Каталог, категории и поиск в одном экране</p>
-            <p class="preview-card__text">Чистые карточки, быстрый доступ к таблице и категориям — без лишних панелей.</p>
-            <div class="preview-card__actions">
-              <a class="button button--ghost" href="BookCategory.html">Категории</a>
-              <a class="button button--text" href="book.html#table">Фильтры каталога</a>
-            </div>
-            <div class="preview-card__image">
-              <img src="1.webp" alt="Каталог MedLibrary" loading="lazy" decoding="async">
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="audit" class="section section--split container info-hygiene">
-      <div>
-        <div class="section__head">
-          <p class="eyebrow">Информационная гигиена</p>
-          <h2 class="section__title">Мы оставили только нужное</h2>
-          <p class="section__subtitle">
-            Фокус на поиске, чтении и установке PWA. Новости, баннеры и второстепенные блоки скрыты, чтобы не мешать работе.
-          </p>
-        </div>
-        <ul class="checklist">
-          <li>Минимальная навигация: каталог, категории, авторизация</li>
-          <li>Четкие CTA — открыть каталог, скачать JSON/Excel, установить PWA</li>
-          <li>Подсказки по горячим клавишам только там, где они полезны</li>
-          <li>Плотные карточки с ключевыми метаданными книги</li>
-        </ul>
-      </div>
-      <div class="info-hygiene__panel">
-        <p class="info-hygiene__eyebrow">Новые опорные точки</p>
-        <h3 class="info-hygiene__title">Быстрые переходы</h3>
-        <div class="pill-row">
-          <a class="pill pill--ghost" href="book.html">Таблица каталога</a>
-          <a class="pill pill--ghost" href="BookCategory.html">69 направлений</a>
-          <a class="pill pill--ghost" href="Book.xlsx" download>Экспорт Excel</a>
-          <a class="pill pill--ghost" href="data/books.json" download>JSON для интеграций</a>
-        </div>
-        <p class="info-hygiene__note">Весь лишний контент убран в пользу быстрых сценариев поиска и скачивания.</p>
-      </div>
-    </section>
-
-    <section id="features" class="section container">
-      <div class="section__head">
-        <p class="eyebrow">Возможности</p>
-        <h2 class="section__title">Главные сценарии без лишнего</h2>
-        <p class="section__subtitle">Только то, что помогает найти, открыть или сохранить книгу.</p>
-      </div>
-      <div class="feature-grid">
-        <article class="feature-card">
-          <div class="feature-icon" aria-hidden="true">📚</div>
-          <h3>Единый каталог</h3>
-          <p>Таблица с 1000+ книгами, быстрыми фильтрами и карточками — без новостных блоков и отвлекающих панелей.</p>
-        </article>
-        <article class="feature-card">
-          <div class="feature-icon" aria-hidden="true">🧭</div>
-          <h3>Категории BooksMed</h3>
-          <p>69 направлений в привычной логике. Один клик — и сразу к нужной области знаний.</p>
-        </article>
-        <article class="feature-card">
-          <div class="feature-icon" aria-hidden="true">🔍</div>
-          <h3>Поиск без шумов</h3>
-          <p>Глобальный поиск по всем колонкам с нормализацией текста. Минимум отвлекающих элементов и вспомогательных окон.</p>
-        </article>
-        <article class="feature-card">
-          <div class="feature-icon" aria-hidden="true">⚡</div>
-          <h3>Быстрый старт</h3>
-          <p>Готовые кнопки: каталог, категории, Excel/JSON и PWA — никакой лишней навигации.</p>
-        </article>
-      </div>
-    </section>
-
-    <section id="catalog" class="section section--split container">
-      <div>
-        <div class="section__head">
-          <p class="eyebrow">Каталог</p>
-          <h2 class="section__title">Таблица, карточки и экспорт</h2>
-          <p class="section__subtitle">Бережно обновленная структура: сортировки, фильтры по колонкам и чистые карточки.</p>
-        </div>
-        <ul class="checklist">
-          <li>Поиск по названию, авторам, ISBN, УДК, ББК</li>
-          <li>Карточки найденных книг без перегруза информации</li>
-          <li>Экспорт в Excel/JSON и офлайн-доступ</li>
-        </ul>
-        <div class="cta-inline">
-          <a class="button button--primary" href="book.html">Каталог книг</a>
-          <a class="button button--ghost" href="Book.xlsx" download>Excel</a>
-          <a class="button button--text" href="data/books.json" download>JSON</a>
-        </div>
-      </div>
-      <div class="accent-card">
-        <p class="accent-card__eyebrow">Подборка за секунды</p>
-        <h3 class="accent-card__title">Готовые маршруты</h3>
-        <div class="accent-card__tags">
-          <span class="pill">Кардиология</span>
-          <span class="pill">Педиатрия</span>
-          <span class="pill">Хирургия</span>
-          <span class="pill">Анатомия</span>
-          <span class="pill">Диагностика</span>
-        </div>
-        <p class="accent-card__text">Категории и фильтры открываются в соседних вкладках, чтобы быстрее найти нужный материал.</p>
-      </div>
-    </section>
-
-    <section id="platform" class="section container">
-      <div class="section__head">
-        <p class="eyebrow">Платформа</p>
-        <h2 class="section__title">Современная логика без лишнего шума</h2>
-        <p class="section__subtitle">Легкий интерфейс, PWA, офлайн-режим и плавные сценарии авторизации.</p>
-      </div>
-      <div class="platform__grid">
-        <article class="platform__card">
-          <h3>PWA и офлайн</h3>
-          <p>Сервис-воркер кэширует каталог, поэтому поиск и чтение продолжаются даже без сети.</p>
-          <button class="button button--text" type="button" data-install-trigger data-install-sticky>Установить</button>
-        </article>
-        <article class="platform__card">
-          <h3>Авторизация</h3>
-          <p>Регистрация, вход, Google Identity и понятные статусы. Нет лишних форм — только essentials.</p>
-          <button class="button button--ghost auth-open-button" type="button">Открыть окно входа</button>
-        </article>
-        <article class="platform__card">
-          <h3>Структура BooksMed</h3>
-          <p>Навигация, категории и фильтры повторяют логику BooksMed, но с более чистым визуалом.</p>
-          <a class="button button--text" href="BookCategory.html">Перейти к категориям</a>
-        </article>
-      </div>
-    </section>
-
-    <section id="gallery" class="gallery-slider section container">
-      <div class="section__head">
-        <p class="eyebrow">Интерфейс</p>
-        <h2>Как выглядит обновление</h2>
-        <p class="section__subtitle">Светлые карточки, четкие акценты и быстрые кнопки.</p>
-      </div>
-      <div class="gallery-slider__viewport">
-        <div class="slide"><img src="1.webp" alt="Каталог MedLibrary" loading="lazy" decoding="async"></div>
-        <div class="slide"><img src="2.webp" alt="Список категорий" loading="lazy" decoding="async"></div>
-        <div class="slide"><img src="3.webp" alt="Интерфейс авторизации" loading="lazy" decoding="async"></div>
-        <div class="slide"><img src="4.webp" alt="Адаптивный дизайн" loading="lazy" decoding="async"></div>
-        <div class="slide"><img src="5.webp" alt="Страница книги" loading="lazy" decoding="async"></div>
-        <div class="slide"><img src="6.webp" alt="Поиск по каталогу" loading="lazy" decoding="async"></div>
-      </div>
-      <button class="gallery-slider__control prev" type="button" aria-label="Предыдущее изображение">&#10094;</button>
-      <button class="gallery-slider__control next" type="button" aria-label="Следующее изображение">&#10095;</button>
-    </section>
-
-    <section id="contact" class="contact section container">
-      <div class="section__head">
-        <p class="eyebrow lang" data-lang="ru">Связь</p>
-        <p class="eyebrow lang" data-lang="en">Contact</p>
-        <p class="eyebrow lang" data-lang="tm">Habarlaşyň</p>
-        <h2 class="section__title lang" data-lang="ru">Напишите разработчику</h2>
-        <h2 class="section__title lang" data-lang="en">Get in touch</h2>
-        <h2 class="section__title lang" data-lang="tm">Habarlaşyň</h2>
-        <p class="section__subtitle lang" data-lang="ru">Предложите книги, интеграции или улучшения интерфейса.</p>
-        <p class="section__subtitle lang" data-lang="en">Share books to add, integrations, or UX ideas.</p>
-        <p class="section__subtitle lang" data-lang="tm">Goşmaly kitaplary, integrasiýalary ýa-da UX teklipleriňizi iberiň.</p>
-      </div>
-      <form class="contact__form" onsubmit="sendMail(); return false;">
-        <label class="form-group">
-          <span class="lang" data-lang="ru">Ваше имя</span>
-          <span class="lang" data-lang="en">Name</span>
-          <span class="lang" data-lang="tm">Adyňyz</span>
-          <input type="text" id="name" name="name" required>
-        </label>
-        <label class="form-group">
-          <span class="lang" data-lang="ru">Ваш email</span>
-          <span class="lang" data-lang="en">Email</span>
-          <span class="lang" data-lang="tm">Email</span>
-          <input type="email" id="email" name="email" required>
-        </label>
-        <label class="form-group">
-          <span class="lang" data-lang="ru">Сообщение</span>
-          <span class="lang" data-lang="en">Message</span>
-          <span class="lang" data-lang="tm">Habar</span>
-          <textarea id="message" name="message" required></textarea>
-        </label>
-        <button class="button button--primary" type="submit" accesskey="s" aria-describedby="contact-hotkey">
-          <span class="lang" data-lang="ru">Отправить</span>
-          <span class="lang" data-lang="en">Send</span>
-          <span class="lang" data-lang="tm">Ugrat</span>
-          <span id="contact-hotkey" class="hotkey-hint" aria-hidden="true">Alt+Shift+S</span>
-        </button>
-        <p id="contact-status" class="auth-status" role="status" aria-live="polite"></p>
-      </form>
-      <div class="contact__info">
-        <a href="tel:+99362234094">+993 62 23 40 94</a>
-        <a href="mailto:tdlipf@gmail.com">tdlipf@gmail.com</a>
-      </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container site-footer__content">
-      <div>
-        <strong>© 2025 MedLibrary</strong>
-        <p>Медицинская электронная библиотека.</p>
-      </div>
-      <div class="site-footer__links">
-        <a href="index.html">Главная</a>
-        <a href="BookCategory.html">Категории</a>
-        <a href="book.html">Каталог</a>
-      </div>
-    </div>
-  </footer>
-
-  </div>
-
-  <div id="auth-modal" class="auth-modal" hidden aria-hidden="true">
-    <div class="auth-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="auth-heading">
-      <button id="auth-close-button" class="auth-modal__close" type="button" aria-label="Закрыть окно авторизации">×</button>
-      <div id="auth" aria-labelledby="auth-heading">
-        <div class="auth-header">
-          <h2 id="auth-heading">Регистрация и вход</h2>
-          <div class="auth-tabs" role="tablist">
+          <div class="site-header__actions">
+            <select id="language-select" aria-label="Сменить язык">
+              <option value="tm">Türkmençe</option>
+              <option value="ru" selected>Русский</option>
+              <option value="en">English</option>
+            </select>
             <button
-              id="register-tab"
-              class="auth-tab active"
+              id="install-button"
+              class="button button--ghost"
               type="button"
-              role="tab"
-              aria-controls="register-form"
-              aria-selected="true"
-              data-target="register-form"
+              hidden
+              data-install-trigger
             >
-              Регистрация
+              <span class="lang" data-lang="ru">Скачать приложение</span>
+              <span class="lang" data-lang="en">Download app</span>
+              <span class="lang" data-lang="tm">Programmany ýükläň</span>
             </button>
             <button
-              id="login-tab"
-              class="auth-tab"
+              id="auth-open-button"
+              class="button button--outline auth-open-button"
               type="button"
-              role="tab"
-              aria-controls="login-form"
-              aria-selected="false"
-              data-target="login-form"
+              accesskey="a"
+              aria-describedby="auth-hotkey"
             >
-              Вход
+              <span class="lang" data-lang="ru">Регистрация / вход</span>
+              <span class="lang" data-lang="en">Sign up / Sign in</span>
+              <span class="lang" data-lang="tm">Hasaba al / Içeri gir</span>
+              <span id="auth-hotkey" class="hotkey-hint" aria-hidden="true"
+                >Alt+Shift+A</span
+              >
             </button>
           </div>
         </div>
-        <div class="auth-panels">
-          <form id="register-form" class="auth-panel is-active" role="tabpanel" aria-labelledby="register-tab">
-            <h3>Создайте учетную запись</h3>
-            <label class="visually-hidden" for="register-email">Email</label>
-            <input type="email" id="register-email" placeholder="Email" autocomplete="email" required>
-            <label class="visually-hidden" for="register-password">Пароль</label>
-            <input type="password" id="register-password" placeholder="Пароль (мин. 6 символов)" minlength="6" autocomplete="new-password" required>
-            <label class="visually-hidden" for="register-confirm">Подтверждение пароля</label>
-            <input type="password" id="register-confirm" placeholder="Повторите пароль" minlength="6" autocomplete="new-password" required>
-            <button id="register-button" type="submit" accesskey="r" aria-describedby="register-hotkey">Зарегистрироваться <span id="register-hotkey" class="hotkey-hint" aria-hidden="true">Alt+Shift+R</span></button>
-            <p id="register-status" class="auth-status" role="status" aria-live="polite"></p>
-          </form>
-          <form id="login-form" class="auth-panel" role="tabpanel" aria-labelledby="login-tab" hidden>
-            <h3>Войдите в существующий аккаунт</h3>
-            <label class="visually-hidden" for="login-email">Email</label>
-            <input type="email" id="login-email" placeholder="Email" autocomplete="email" required>
-            <label class="visually-hidden" for="login-password">Пароль</label>
-            <input type="password" id="login-password" placeholder="Пароль" minlength="6" autocomplete="current-password" required>
-            <button id="login-button" type="submit" accesskey="l" aria-describedby="login-hotkey">Войти <span id="login-hotkey" class="hotkey-hint" aria-hidden="true">Alt+Shift+L</span></button>
-            <div class="auth-divider"><span>или</span></div>
-            <div class="auth-provider-card">
-              <p class="auth-provider-card__title">Используйте учетную запись Google</p>
-              <div
-                id="google-signin-button"
-                class="google-signin-placeholder"
-                data-loading-text="Подключаем Google Identity..."
-                aria-live="polite"
-              ></div>
-              <p class="auth-helper-text">
-                Мы подтвердим вашу личность через Google и автоматически создадим профиль в библиотеке.
+        <nav class="site-nav" aria-label="Основная навигация">
+          <div class="container site-nav__wrap">
+            <a href="#hero">Главная</a>
+            <a href="#features">Возможности</a>
+            <a href="#catalog">Каталог</a>
+            <a href="#platform">Платформа</a>
+            <a href="#gallery">Интерфейс</a>
+            <a href="#contact">Связь</a>
+            <a href="book.html">Каталог книг</a>
+            <a href="BookCategory.html">Категории</a>
+          </div>
+        </nav>
+      </header>
+
+      <main>
+        <section id="hero" class="hero">
+          <div class="container hero__layout">
+            <div class="hero__content">
+              <p class="hero__eyebrow lang" data-lang="ru">
+                Современный сценарий
+              </p>
+              <p class="hero__eyebrow lang" data-lang="en">Modern experience</p>
+              <p class="hero__eyebrow lang" data-lang="tm">
+                Täzeçillik tejribesi
+              </p>
+              <h2 class="hero__title lang" data-lang="ru">
+                Каталог медицинских знаний
+              </h2>
+              <h2 class="hero__title lang" data-lang="en">
+               Medical catalog
+              </h2>
+              <h2 class="hero__title lang" data-lang="tm">
+                Lukmançylyk katalogy
+              </h2>
+              <p class="hero__text lang" data-lang="ru">
+                Поиск, категории, офлайн‑режим и установка PWA. Акценты и кнопки ведут
+                к основным действиям.
+              </p>
+              <p class="hero__text lang" data-lang="en">
+                Search, curated
+                categories, offline mode, and a clear PWA install flow inspired
+                by BooksMed.
+              </p>
+              <p class="hero__text lang" data-lang="tm">
+               Gözleg, baý kategoriýalar,
+                oflaýn režimi we düşnükli PWA gurnama. BooksMed logikasyna
+                meňzeş arassa gurluş.
+              </p>
+              <div class="hero__actions">
+                <a class="button button--primary" href="book.html">
+                  <span class="lang" data-lang="ru">Открыть каталог</span>
+                  <span class="lang" data-lang="en">Open catalog</span>
+                  <span class="lang" data-lang="tm">Katalogy aç</span>
+                </a>
+                <a class="button button--ghost" href="#platform">
+                  <span class="lang" data-lang="ru">Как устроено</span>
+                  <span class="lang" data-lang="en">How it works</span>
+                  <span class="lang" data-lang="tm">Näme üçin amatly</span>
+                </a>
+                <button
+                  class="button button--text"
+                  type="button"
+                  data-install-trigger
+                  data-install-sticky
+                >
+                  <span class="lang" data-lang="ru">Установить PWA</span>
+                  <span class="lang" data-lang="en">Install PWA</span>
+                  <span class="lang" data-lang="tm">PWA gurnamak</span>
+                </button>
+              </div>
+              <div class="hero__meta">
+                <span class="pill">1000+ книг </span>
+                <span class="pill">62 направлений</span>
+                <span class="pill">Онлайн и офлайн доступ</span>
+              </div>
+            </div>
+            <div class="hero__panel" aria-hidden="true">
+              <div class="preview-card">
+                <div class="preview-card__header">
+                  <span class="pill">Быстрый доступ</span>
+                                 </div>
+                <p class="preview-card__title">
+                  Каталог, категории и поиск в одном экране
+                </p>
+                <p class="preview-card__text">
+                  Чистые карточки, быстрый доступ.
+                </p>
+                <div class="preview-card__actions">
+                  <a class="button button--ghost" href="BookCategory.html"
+                    >Категории</a
+                  >
+                  <a class="button button--text" href="book.html#table"
+                    >Фильтры каталога</a
+                  >
+                </div>
+                <div class="preview-card__image">
+                  <img
+                    src="1.webp"
+                    alt="Каталог MedLibrary"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="audit"
+          class="section section--split container info-hygiene"
+        >
+          <div>
+            <div class="section__head">
+      
+              <p class="section__subtitle">
+                Фокус на поиске, чтении и установке PWA. Новости, баннеры и
+                второстепенные блоки скрыты, чтобы не мешать работе.
               </p>
             </div>
-            <p id="login-status" class="auth-status" role="status" aria-live="polite"></p>
+            <ul class="checklist">
+              <li>Минимальная навигация: каталог, категории, авторизация</li>
+              <li>
+                Четкие CTA — открыть каталог, скачать JSON/Excel, установить PWA
+              </li>
+              <li>Подсказки по горячим клавишам только там, где они полезны</li>
+              <li>Плотные карточки с ключевыми метаданными книги</li>
+            </ul>
+          </div>
+          <div class="info-hygiene__panel">
+            <p class="info-hygiene__eyebrow">Новые опорные точки</p>
+            <h3 class="info-hygiene__title">Быстрые переходы</h3>
+            <div class="pill-row">
+              <a class="pill pill--ghost" href="book.html">Таблица каталога</a>
+              <a class="pill pill--ghost" href="BookCategory.html"
+                >62 направлений</a
+              >
+              <a class="pill pill--ghost" href="Book.xlsx" download
+                >Экспорт Excel</a
+              >
+              <a class="pill pill--ghost" href="data/books.json" download
+                >JSON для интеграций</a
+              >
+            </div>
+            <p class="info-hygiene__note">
+              Весь лишний контент убран в пользу быстрых сценариев поиска и
+              скачивания.
+            </p>
+          </div>
+        </section>
+
+        <section id="features" class="section container">
+          <div class="section__head">
+            <p class="eyebrow">Возможности</p>
+            <h2 class="section__title">Главные</h2>
+            <p class="section__subtitle">
+              Только то, что помогает найти, открыть или сохранить книгу.
+            </p>
+          </div>
+          <div class="feature-grid">
+            <article class="feature-card">
+              <div class="feature-icon" aria-hidden="true">📚</div>
+              <h3>Единый каталог</h3>
+              <p>
+                Таблица с 1000+ книгами, быстрыми фильтрами и карточками — без
+                новостных блоков и отвлекающих панелей.
+              </p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-icon" aria-hidden="true">🧭</div>
+              <h3>Категории BooksMed</h3>
+              <p>
+                69 направлений в привычной логике. Один клик — и сразу к нужной
+                области знаний.
+              </p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-icon" aria-hidden="true">🔍</div>
+              <h3>Поиск без шумов</h3>
+              <p>
+                Глобальный поиск по всем колонкам с нормализацией текста.
+                Минимум отвлекающих элементов и вспомогательных окон.
+              </p>
+            </article>
+            <article class="feature-card">
+              <div class="feature-icon" aria-hidden="true">⚡</div>
+              <h3>Быстрый старт</h3>
+              <p>
+                Готовые кнопки: каталог, категории, Excel/JSON и PWA — никакой
+                лишней навигации.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section id="catalog" class="section section--split container">
+          <div>
+            <div class="section__head">
+              <p class="eyebrow">Каталог</p>
+              <h2 class="section__title">Таблица, карточки и экспорт</h2>
+              <p class="section__subtitle">
+                Бережно обновленная структура: сортировки, фильтры по колонкам и
+                чистые карточки.
+              </p>
+            </div>
+            <ul class="checklist">
+              <li>Поиск по названию, авторам, ISBN, УДК, ББК</li>
+              <li>Карточки найденных книг без перегруза информации</li>
+              <li>Экспорт в Excel/JSON и офлайн-доступ</li>
+            </ul>
+            <div class="cta-inline">
+              <a class="button button--primary" href="book.html"
+                >Каталог книг</a
+              >
+              <a class="button button--ghost" href="Book.xlsx" download
+                >Excel</a
+              >
+              <a class="button button--text" href="data/books.json" download
+                >JSON</a
+              >
+            </div>
+          </div>
+          <div class="accent-card">
+            <p class="accent-card__eyebrow">Подборка за секунды</p>
+            <h3 class="accent-card__title">Готовые маршруты</h3>
+            <div class="accent-card__tags">
+              <span class="pill">Кардиология</span>
+              <span class="pill">Педиатрия</span>
+              <span class="pill">Хирургия</span>
+              <span class="pill">Анатомия</span>
+              <span class="pill">Диагностика</span>
+            </div>
+            <p class="accent-card__text">
+              Категории и фильтры открываются в соседних вкладках, чтобы быстрее
+              найти нужный материал.
+            </p>
+          </div>
+        </section>
+
+        <section id="platform" class="section container">
+          <div class="section__head">
+            <p class="eyebrow">Платформа</p>
+            <h2 class="section__title">Современная логика без лишнего шума</h2>
+            <p class="section__subtitle">
+              Легкий интерфейс, PWA, офлайн-режим и плавные сценарии
+              авторизации.
+            </p>
+          </div>
+          <div class="platform__grid">
+            <article class="platform__card">
+              <h3>PWA и офлайн</h3>
+              <p>
+                Сервис-воркер кэширует каталог, поэтому поиск и чтение
+                продолжаются даже без сети.
+              </p>
+              <button
+                class="button button--text"
+                type="button"
+                data-install-trigger
+                data-install-sticky
+              >
+                Установить
+              </button>
+            </article>
+            <article class="platform__card">
+              <h3>Авторизация</h3>
+              <p>
+                Регистрация, вход, Google Identity и понятные статусы. Нет
+                лишних форм — только essentials.
+              </p>
+              <button
+                class="button button--ghost auth-open-button"
+                type="button"
+              >
+                Открыть окно входа
+              </button>
+            </article>
+            <article class="platform__card">
+              <h3>Структура BooksMed</h3>
+              <p>
+                Навигация, категории и фильтры повторяют логику BooksMed, но с
+                более чистым визуалом.
+              </p>
+              <a class="button button--text" href="BookCategory.html"
+                >Перейти к категориям</a
+              >
+            </article>
+          </div>
+        </section>
+
+        <section id="gallery" class="gallery-slider section container">
+          <div class="section__head">
+            <p class="eyebrow">Интерфейс</p>
+            <h2>Как выглядит обновление</h2>
+            <p class="section__subtitle">
+              Светлые карточки, четкие акценты и быстрые кнопки.
+            </p>
+          </div>
+          <div class="gallery-slider__viewport">
+            <div class="slide">
+              <img
+                src="1.webp"
+                alt="Каталог MedLibrary"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="slide">
+              <img
+                src="2.webp"
+                alt="Список категорий"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="slide">
+              <img
+                src="3.webp"
+                alt="Интерфейс авторизации"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="slide">
+              <img
+                src="4.webp"
+                alt="Адаптивный дизайн"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="slide">
+              <img
+                src="5.webp"
+                alt="Страница книги"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="slide">
+              <img
+                src="6.webp"
+                alt="Поиск по каталогу"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          </div>
+          <button
+            class="gallery-slider__control prev"
+            type="button"
+            aria-label="Предыдущее изображение"
+          >
+            &#10094;
+          </button>
+          <button
+            class="gallery-slider__control next"
+            type="button"
+            aria-label="Следующее изображение"
+          >
+            &#10095;
+          </button>
+        </section>
+
+        <section id="contact" class="contact section container">
+          <div class="section__head">
+            <p class="eyebrow lang" data-lang="ru">Связь</p>
+            <p class="eyebrow lang" data-lang="en">Contact</p>
+            <p class="eyebrow lang" data-lang="tm">Habarlaşyň</p>
+            <h2 class="section__title lang" data-lang="ru">
+              Напишите разработчику
+            </h2>
+            <h2 class="section__title lang" data-lang="en">Get in touch</h2>
+            <h2 class="section__title lang" data-lang="tm">Habarlaşyň</h2>
+            <p class="section__subtitle lang" data-lang="ru">
+              Предложите книги, интеграции или улучшения интерфейса.
+            </p>
+            <p class="section__subtitle lang" data-lang="en">
+              Share books to add, integrations, or UX ideas.
+            </p>
+            <p class="section__subtitle lang" data-lang="tm">
+              Goşmaly kitaplary, integrasiýalary ýa-da UX teklipleriňizi iberiň.
+            </p>
+          </div>
+          <form class="contact__form" onsubmit="sendMail(); return false;">
+            <label class="form-group">
+              <span class="lang" data-lang="ru">Ваше имя</span>
+              <span class="lang" data-lang="en">Name</span>
+              <span class="lang" data-lang="tm">Adyňyz</span>
+              <input type="text" id="name" name="name" required />
+            </label>
+            <label class="form-group">
+              <span class="lang" data-lang="ru">Ваш email</span>
+              <span class="lang" data-lang="en">Email</span>
+              <span class="lang" data-lang="tm">Email</span>
+              <input type="email" id="email" name="email" required />
+            </label>
+            <label class="form-group">
+              <span class="lang" data-lang="ru">Сообщение</span>
+              <span class="lang" data-lang="en">Message</span>
+              <span class="lang" data-lang="tm">Habar</span>
+              <textarea id="message" name="message" required></textarea>
+            </label>
+            <button
+              class="button button--primary"
+              type="submit"
+              accesskey="s"
+              aria-describedby="contact-hotkey"
+            >
+              <span class="lang" data-lang="ru">Отправить</span>
+              <span class="lang" data-lang="en">Send</span>
+              <span class="lang" data-lang="tm">Ugrat</span>
+              <span id="contact-hotkey" class="hotkey-hint" aria-hidden="true"
+                >Alt+Shift+S</span
+              >
+            </button>
+            <p
+              id="contact-status"
+              class="auth-status"
+              role="status"
+              aria-live="polite"
+            ></p>
           </form>
+          <div class="contact__info">
+            <a href="tel:+99362234094">+993 62 23 40 94</a>
+            <a href="mailto:tdlipf@gmail.com">tdlipf@gmail.com</a>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <div class="container site-footer__content">
+          <div>
+            <strong>© 2025 MedLibrary</strong>
+            <p>Медицинская электронная библиотека.</p>
+          </div>
+          <div class="site-footer__links">
+            <a href="index.html">Главная</a>
+            <a href="BookCategory.html">Категории</a>
+            <a href="book.html">Каталог</a>
+          </div>
         </div>
-        <div class="auth-session">
-          <p id="auth-session-status" class="auth-status" role="status" aria-live="polite"></p>
-          <button id="logout-button" type="button" hidden>Выйти</button>
+      </footer>
+    </div>
+
+    <div id="auth-modal" class="auth-modal" hidden aria-hidden="true">
+      <div
+        class="auth-modal__dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="auth-heading"
+      >
+        <button
+          id="auth-close-button"
+          class="auth-modal__close"
+          type="button"
+          aria-label="Закрыть окно авторизации"
+        >
+          ×
+        </button>
+        <div id="auth" aria-labelledby="auth-heading">
+          <div class="auth-header">
+            <h2 id="auth-heading">Регистрация и вход</h2>
+            <div class="auth-tabs" role="tablist">
+              <button
+                id="register-tab"
+                class="auth-tab active"
+                type="button"
+                role="tab"
+                aria-controls="register-form"
+                aria-selected="true"
+                data-target="register-form"
+              >
+                Регистрация
+              </button>
+              <button
+                id="login-tab"
+                class="auth-tab"
+                type="button"
+                role="tab"
+                aria-controls="login-form"
+                aria-selected="false"
+                data-target="login-form"
+              >
+                Вход
+              </button>
+            </div>
+          </div>
+          <div class="auth-panels">
+            <form
+              id="register-form"
+              class="auth-panel is-active"
+              role="tabpanel"
+              aria-labelledby="register-tab"
+            >
+              <h3>Создайте учетную запись</h3>
+              <label class="visually-hidden" for="register-email">Email</label>
+              <input
+                type="email"
+                id="register-email"
+                placeholder="Email"
+                autocomplete="email"
+                required
+              />
+              <label class="visually-hidden" for="register-password"
+                >Пароль</label
+              >
+              <input
+                type="password"
+                id="register-password"
+                placeholder="Пароль (мин. 6 символов)"
+                minlength="6"
+                autocomplete="new-password"
+                required
+              />
+              <label class="visually-hidden" for="register-confirm"
+                >Подтверждение пароля</label
+              >
+              <input
+                type="password"
+                id="register-confirm"
+                placeholder="Повторите пароль"
+                minlength="6"
+                autocomplete="new-password"
+                required
+              />
+              <button
+                id="register-button"
+                type="submit"
+                accesskey="r"
+                aria-describedby="register-hotkey"
+              >
+                Зарегистрироваться
+                <span
+                  id="register-hotkey"
+                  class="hotkey-hint"
+                  aria-hidden="true"
+                  >Alt+Shift+R</span
+                >
+              </button>
+              <p
+                id="register-status"
+                class="auth-status"
+                role="status"
+                aria-live="polite"
+              ></p>
+            </form>
+            <form
+              id="login-form"
+              class="auth-panel"
+              role="tabpanel"
+              aria-labelledby="login-tab"
+              hidden
+            >
+              <h3>Войдите в существующий аккаунт</h3>
+              <label class="visually-hidden" for="login-email">Email</label>
+              <input
+                type="email"
+                id="login-email"
+                placeholder="Email"
+                autocomplete="email"
+                required
+              />
+              <label class="visually-hidden" for="login-password">Пароль</label>
+              <input
+                type="password"
+                id="login-password"
+                placeholder="Пароль"
+                minlength="6"
+                autocomplete="current-password"
+                required
+              />
+              <button
+                id="login-button"
+                type="submit"
+                accesskey="l"
+                aria-describedby="login-hotkey"
+              >
+                Войти
+                <span id="login-hotkey" class="hotkey-hint" aria-hidden="true"
+                  >Alt+Shift+L</span
+                >
+              </button>
+              <div class="auth-divider"><span>или</span></div>
+              <div class="auth-provider-card">
+                <p class="auth-provider-card__title">
+                  Используйте учетную запись Google
+                </p>
+                <div
+                  id="google-signin-button"
+                  class="google-signin-placeholder"
+                  data-loading-text="Подключаем Google Identity..."
+                  aria-live="polite"
+                ></div>
+                <p class="auth-helper-text">
+                  Мы подтвердим вашу личность через Google и автоматически
+                  создадим профиль в библиотеке.
+                </p>
+              </div>
+              <p
+                id="login-status"
+                class="auth-status"
+                role="status"
+                aria-live="polite"
+              ></p>
+            </form>
+          </div>
+          <div class="auth-session">
+            <p
+              id="auth-session-status"
+              class="auth-status"
+              role="status"
+              aria-live="polite"
+            ></p>
+            <button id="logout-button" type="button" hidden>Выйти</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <script
-    src="https://accounts.google.com/gsi/client"
-    async
-    defer
-    onerror="
+    <script
+      src="https://accounts.google.com/gsi/client"
+      async
+      defer
+      onerror="
       (function () {
         var el = document.getElementById('google-signin-button');
         if (!el) return;
@@ -421,8 +703,8 @@
         el.classList.add('google-signin-placeholder', 'is-error');
       })();
     "
-  ></script>
-  <script defer src="scripts.js"></script>
-  <script defer src="pwa.js"></script>
-</body>
+    ></script>
+    <script defer src="scripts.js"></script>
+    <script defer src="pwa.js"></script>
+  </body>
 </html>
