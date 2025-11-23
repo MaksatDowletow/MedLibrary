@@ -934,7 +934,7 @@
       }
       const hash = hashString(normalized);
       const index = Math.abs(hash) % fallbackCoverImages.length;
-      const url = `./${fallbackCoverImages[index]}`;
+      const url = fallbackCoverImages[index];
       fallbackCoverCache.set(normalized, url);
       return url;
     }
