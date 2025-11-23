@@ -1,0 +1,35 @@
+<section id="contact" class="contact section container">
+  <div class="section__head">
+    <p class="eyebrow" data-i18n="contact.eyebrow"></p>
+    <h2 class="section__title" data-i18n="contact.title"></h2>
+    <p class="section__subtitle" data-i18n="contact.subtitle"></p>
+  </div>
+  <form class="contact__form" onsubmit="sendMail(); return false;">
+    <label class="form-group">
+      <span data-i18n="contact.name"></span>
+      <input type="text" id="name" name="name" required data-i18n-attr="placeholder" data-i18n-placeholder="contact.namePlaceholder" />
+    </label>
+    <label class="form-group">
+      <span data-i18n="contact.email"></span>
+      <input type="email" id="email" name="email" required data-i18n-attr="placeholder" data-i18n-placeholder="contact.emailPlaceholder" />
+    </label>
+    <label class="form-group">
+      <span data-i18n="contact.message"></span>
+      <textarea id="message" name="message" required data-i18n-attr="placeholder" data-i18n-placeholder="contact.messagePlaceholder"></textarea>
+    </label>
+    <button
+      class="button button--primary"
+      type="submit"
+      accesskey="s"
+      aria-describedby="contact-hotkey"
+      data-i18n="contact.submit"
+    >
+      <span id="contact-hotkey" class="hotkey-hint" aria-hidden="true">Alt+Shift+S</span>
+    </button>
+    <p id="contact-status" class="auth-status" role="status" aria-live="polite"></p>
+  </form>
+  <div class="contact__info">
+    <a href="tel:+99362234094" data-i18n="contact.phone"></a>
+    <a href="mailto:tdlipf@gmail.com" data-i18n="contact.emailAddress"></a>
+  </div>
+</section>

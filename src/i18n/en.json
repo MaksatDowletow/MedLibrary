@@ -1,0 +1,143 @@
+{
+  "meta": {
+    "title": "MedLibrary — medical digital library",
+    "description": "MedLibrary is a modern medical e-library with offline access, PWA install, fast search, and more than 1,000 books."
+  },
+  "header": {
+    "tagline": "medical library",
+    "install": "Download app"
+  },
+  "nav": {
+    "home": "Home",
+    "features": "Features",
+    "catalog": "Catalog",
+    "platform": "Platform",
+    "gallery": "Interface",
+    "contact": "Contact",
+    "bookCatalog": "Book catalog",
+    "categories": "Categories"
+  },
+  "hero": {
+    "eyebrow": "Modern scenario",
+    "title": "Catalog of medical knowledge",
+    "text": "Search, categories, offline mode, and PWA install. Clear accents and buttons lead to the main actions.",
+    "ctaCatalog": "Open catalog",
+    "ctaPlatform": "How it works",
+    "ctaInstall": "Install PWA",
+    "metaBooks": "1000+ books",
+    "metaDirections": "62 specialties",
+    "metaAccess": "Online and offline access"
+  },
+  "preview": {
+    "badge": "Quick access",
+    "title": "Catalog, categories, and search on one screen",
+    "text": "Clean cards, instant access.",
+    "ctaCategories": "Categories",
+    "ctaFilters": "Catalog filters",
+    "imageAlt": "MedLibrary catalog"
+  },
+  "audit": {
+    "subtitle": "Focus on search, reading, and installing the PWA. News and secondary blocks are hidden to stay out of the way.",
+    "pointNavigation": "Minimal navigation: catalog, categories, authentication",
+    "pointCta": "Clear CTAs — open catalog, download JSON/Excel, install PWA",
+    "pointHotkeys": "Hotkey hints only where they help",
+    "pointCards": "Dense cards with key book metadata",
+    "panelEyebrow": "New anchors",
+    "panelTitle": "Quick jumps",
+    "jumpTable": "Catalog table",
+    "jumpDirections": "62 specialties",
+    "jumpExcel": "Excel export",
+    "jumpJson": "JSON for integrations",
+    "note": "All extra content is removed in favor of fast search and download flows."
+  },
+  "features": {
+    "eyebrow": "Features",
+    "title": "Core",
+    "subtitle": "Only what helps you find, open, or save a book.",
+    "catalog": {
+      "title": "Unified catalog",
+      "text": "A table of 1000+ books with quick filters and clean cards — no news blocks or distractions."
+    },
+    "categories": {
+      "title": "BooksMed categories",
+      "text": "69 familiar directions. One click to jump to the right field of knowledge."
+    },
+    "search": {
+      "title": "Noise-free search",
+      "text": "Global search across all columns with text normalization. Minimum distractions and helper popups."
+    },
+    "start": {
+      "title": "Fast start",
+      "text": "Ready buttons: catalog, categories, Excel/JSON, and PWA — no extra navigation."
+    }
+  },
+  "catalog": {
+    "eyebrow": "Catalog",
+    "title": "Table, cards, and export",
+    "subtitle": "Carefully refreshed structure: sorting, per-column filters, and clean cards.",
+    "pointSearch": "Search by title, authors, ISBN, UDC, LBC",
+    "pointCards": "Book cards without information overload",
+    "pointExport": "Export to Excel/JSON and offline access",
+    "ctaCatalog": "Book catalog",
+    "ctaExcel": "Excel",
+    "ctaJson": "JSON",
+    "accentEyebrow": "Pick in seconds",
+    "accentTitle": "Ready-made routes",
+    "tagCardiology": "Cardiology",
+    "tagPediatrics": "Pediatrics",
+    "tagSurgery": "Surgery",
+    "tagAnatomy": "Anatomy",
+    "tagDiagnostics": "Diagnostics",
+    "accentText": "Categories and filters open in neighbor tabs to find materials faster."
+  },
+  "platform": {
+    "eyebrow": "Platform",
+    "title": "Modern logic without the noise",
+    "subtitle": "Lightweight UI, PWA, offline mode, and smooth auth flows.",
+    "pwa": {
+      "title": "PWA and offline",
+      "text": "Service worker caches the catalog so search and reading continue without a connection.",
+      "cta": "Install"
+    },
+    "auth": {
+      "title": "Authentication",
+      "text": "Signup, login, Google Identity, and clear statuses. No extra forms — only essentials."
+    },
+    "structure": {
+      "title": "BooksMed structure",
+      "text": "Navigation, categories, and filters mirror BooksMed logic with a cleaner look.",
+      "cta": "Go to categories"
+    }
+  },
+  "gallery": {
+    "eyebrow": "Interface",
+    "title": "What the update looks like",
+    "subtitle": "Bright cards, crisp accents, and quick buttons.",
+    "slide1": "MedLibrary catalog",
+    "slide2": "Categories list",
+    "slide3": "Auth interface",
+    "slide4": "Responsive design",
+    "slide5": "Book page",
+    "slide6": "Catalog search",
+    "prev": "Previous image",
+    "next": "Next image"
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "title": "Message the developer",
+    "subtitle": "Suggest books, integrations, or interface improvements.",
+    "name": "Your name",
+    "email": "Your email",
+    "message": "Message",
+    "submit": "Send",
+    "namePlaceholder": "Enter your name",
+    "emailPlaceholder": "Enter your email",
+    "messagePlaceholder": "How can we help?",
+    "phone": "+993 62 23 40 94",
+    "emailAddress": "tdlipf@gmail.com"
+  },
+  "footer": {
+    "copyright": "© 2025 MedLibrary",
+    "tagline": "Medical digital library."
+  }
+}

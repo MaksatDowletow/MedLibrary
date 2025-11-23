@@ -1178,3 +1178,8 @@ main {
   color: var(--muted);
   background: var(--surface-soft);
 }
+
+.lang-switch__active {
+  background-color: #0b1224;
+  color: #f8f9fb;
+}

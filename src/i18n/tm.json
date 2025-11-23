@@ -1,0 +1,143 @@
+{
+  "meta": {
+    "title": "MedLibrary — lukmançylyk elektron kitaphanasy",
+    "description": "MedLibrary — oflaýn elýeterlik, PWA gurnama, çalt gözleg we 1000+ kitaply häzirki zaman lukmançylyk kitaphanasy."
+  },
+  "header": {
+    "tagline": "lukmançylyk kitaphanasy",
+    "install": "Programmany ýükläp al"
+  },
+  "nav": {
+    "home": "Baş sahypa",
+    "features": "Mümkinçilikler",
+    "catalog": "Katalog",
+    "platform": "Platforma",
+    "gallery": "Interfeýs",
+    "contact": "Habarlaşmak",
+    "bookCatalog": "Kitap katalogy",
+    "categories": "Kategoriýalar"
+  },
+  "hero": {
+    "eyebrow": "Häzirki zaman ssenariýasy",
+    "title": "Lukmançylyk bilimleriniň katalogy",
+    "text": "Gözleg, kategoriýalar, oflaýn tertip we PWA gurnama. Esasy hereketlere gönükdirilen düwmeler.",
+    "ctaCatalog": "Katalogy aç",
+    "ctaPlatform": "Näme üçin şeýle",
+    "ctaInstall": "PWA gur",
+    "metaBooks": "1000+ kitap",
+    "metaDirections": "62 ugry",
+    "metaAccess": "Onlaýn we oflaýn elýeterlik"
+  },
+  "preview": {
+    "badge": "Çalt giriş",
+    "title": "Katalog, kategoriýalar we gözleg bir ekranda",
+    "text": "Arassa kartalar, dessine geçiş.",
+    "ctaCategories": "Kategoriýalar",
+    "ctaFilters": "Katalog filtrleri",
+    "imageAlt": "MedLibrary katalogy"
+  },
+  "audit": {
+    "subtitle": "Gözleg, okamak we PWA gurnamagyna üns. Täzelikler we ikinji derejeli bloklar päsgel bermeýär.",
+    "pointNavigation": "Minimal navigasiýa: katalog, kategoriýalar, awtorizasiýa",
+    "pointCta": "Any maqsatly CTA: katalogy aç, JSON/Excel ýükle, PWA gur",
+    "pointHotkeys": "Gyzyklanan ýerinde gyzgyn düwmeler",
+    "pointCards": "Kitabyň esasy metadatalary ýerleşdirilen gysga kartalar",
+    "panelEyebrow": "Täze dayanç nokatlar",
+    "panelTitle": "Çalt geçişler",
+    "jumpTable": "Katalog tablisasy",
+    "jumpDirections": "62 ugry",
+    "jumpExcel": "Excel eksporty",
+    "jumpJson": "Integrasiýa üçin JSON",
+    "note": "Art dưwmeler we mazmun aýrylyp, çalt gözleg we ýüklemeler üçin sazlandy."
+  },
+  "features": {
+    "eyebrow": "Mümkinçilikler",
+    "title": "Esasy",
+    "subtitle": "Diňe kitaby tapmaga, açmaga ýa-da saklamaga kömek edýän zatlar.",
+    "catalog": {
+      "title": "Birikdirilen katalog",
+      "text": "1000+ kitaply tablisa, çalt filtrler we arassa kartalar — täzelik bloklary we üns bölüji elementler ýok."
+    },
+    "categories": {
+      "title": "BooksMed kategoriýalary",
+      "text": "69 tanyş ugur. Bir basyş bilen gerekli bilim uguryna geçiň."
+    },
+    "search": {
+      "title": "Şowsuzsyz gözleg",
+      "text": "Ähli sütünlerde global gözleg, tekst normalizasiýasy bilen. Üns bölüji elementler minimum."
+    },
+    "start": {
+      "title": "Çalt başlangyç",
+      "text": "Taýýar düwmeler: katalog, kategoriýalar, Excel/JSON we PWA — goşmaça navigasiýa ýok."
+    }
+  },
+  "catalog": {
+    "eyebrow": "Katalog",
+    "title": "Tablisa, kartalar we eksport",
+    "subtitle": "Üýtgedilen gurluş: tertiplemeler, sütün boýunça filtrler we arassa kartalar.",
+    "pointSearch": "Ady, awtorlar, ISBN, UDK, BBK boýunça gözleg",
+    "pointCards": "Maglumat bilen artykmaç ýüklänsiz kitap kartalary",
+    "pointExport": "Excel/JSON eksporty we oflaýn elýeterlik",
+    "ctaCatalog": "Kitap katalogy",
+    "ctaExcel": "Excel",
+    "ctaJson": "JSON",
+    "accentEyebrow": "Sekuntda saýla",
+    "accentTitle": "Taýýar ugrukdyryjylar",
+    "tagCardiology": "Kardiologiýa",
+    "tagPediatrics": "Pediatriýa",
+    "tagSurgery": "Hirurgiýa",
+    "tagAnatomy": "Anatomiýa",
+    "tagDiagnostics": "Diagnostika",
+    "accentText": "Kategoriýalar we filtrler golaýdaky sahypada açylýar, materialy çalt tapmak üçin."
+  },
+  "platform": {
+    "eyebrow": "Platforma",
+    "title": "Artık ses ýok",
+    "subtitle": "Ýeňil UI, PWA, oflaýn tertip we ýumşak awtorizasiýa ssenariýalary.",
+    "pwa": {
+      "title": "PWA we oflaýn",
+      "text": "Serwis işgäri katalogy kessep, internet bolmasa-da gözleg we okamak dowam edýär.",
+      "cta": "Gur"
+    },
+    "auth": {
+      "title": "Awtentifikasiýa",
+      "text": "Hasaba alyş, giriş, Google Identity we düşnükli statuslar. Zerur zatlaryň özi."
+    },
+    "structure": {
+      "title": "BooksMed gurluşy",
+      "text": "Navigasiýa, kategoriýalar we filtrler BooksMed logikasyna laýyk, has arassa wizual bilen.",
+      "cta": "Kategoriýalara geç"
+    }
+  },
+  "gallery": {
+    "eyebrow": "Interfeýs",
+    "title": "Täzelenme nähili görünýär",
+    "subtitle": "Ýagty kartalar, anyk aktsentler we çalt düwmeler.",
+    "slide1": "MedLibrary katalogy",
+    "slide2": "Kategoriýalar sanawy",
+    "slide3": "Awtentifikasiýa interfeýsi",
+    "slide4": "Adaptiv dizaýn",
+    "slide5": "Kitap sahypasy",
+    "slide6": "Katalog gözlegi",
+    "prev": "Öňki surat",
+    "next": "Indiki surat"
+  },
+  "contact": {
+    "eyebrow": "Habarlaşmak",
+    "title": "Döredijä ýaz",
+    "subtitle": "Kitaplary, integrasiýalary ýa-da interfeýs gowulandyrmalaryny teklip ediň.",
+    "name": "Adyňyz",
+    "email": "Email",
+    "message": "Habaryňyz",
+    "submit": "Ugrat",
+    "namePlaceholder": "Adyňyzy ýazyň",
+    "emailPlaceholder": "Email ýaz",
+    "messagePlaceholder": "Näme kömek gerek?",
+    "phone": "+993 62 23 40 94",
+    "emailAddress": "tdlipf@gmail.com"
+  },
+  "footer": {
+    "copyright": "© 2025 MedLibrary",
+    "tagline": "Lukmançylyk elektron kitaphanasy."
+  }
+}
