@@ -13,11 +13,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.dataset.apiBase = apiBase;
   }
 
+  const statusControls = initStatusIndicators(apiBase);
   initAuthSwitcher();
   initRegisterForm(apiBase);
   const refreshSession = initLoginForm(apiBase);
-  initGoogleIdentity(apiBase, refreshSession);
-  initSupportDialogs(apiBase);
+  initGoogleIdentity(apiBase, refreshSession, statusControls);
 });
 
 function initAuthSwitcher() {
@@ -419,7 +419,35 @@ function initLoginForm(apiBase) {
   return refreshSession;
 }
 
-function initGoogleIdentity(apiBase, refreshSession = () => {}) {
+function initStatusIndicators(apiBase) {
+  const apiBadge = document.getElementById("apiBaseBadge");
+  const networkBadge = document.getElementById("networkBadge");
+  const googleBadge = document.getElementById("googleBadge");
+
+  updateBadge(apiBadge, `API: ${apiBase || "по умолчанию"}`, "info");
+
+  const renderNetwork = () => {
+    const online = navigator.onLine;
+    updateBadge(
+      networkBadge,
+      online ? "Онлайн" : "Оффлайн",
+      online ? "success" : "error"
+    );
+  };
+
+  window.addEventListener("online", renderNetwork);
+  window.addEventListener("offline", renderNetwork);
+  renderNetwork();
+
+  updateBadge(googleBadge, "Google Identity подключается...", "pending");
+
+  return {
+    setGoogleStatus: (text, state) => updateBadge(googleBadge, text, state),
+    renderNetwork,
+  };
+}
+
+function initGoogleIdentity(apiBase, refreshSession = () => {}, statusControls) {
   const container = document.getElementById("google-signin-button");
   if (!container) {
     return;
@@ -429,11 +457,13 @@ function initGoogleIdentity(apiBase, refreshSession = () => {}) {
   const sessionStatus = document.getElementById("sessionStatus");
   const logoutButton = document.getElementById("logout");
   const googleClientId = resolveGoogleClientId();
+  const setGoogleStatus = statusControls?.setGoogleStatus;
 
   if (!googleClientId) {
     container.textContent =
       "Укажите GOOGLE_CLIENT_ID и data-google-client-id, чтобы включить Google вход";
     container.classList.add("is-error");
+    setGoogleStatus?.("Google Identity отключён", "error");
     return;
   }
 
@@ -442,10 +472,12 @@ function initGoogleIdentity(apiBase, refreshSession = () => {}) {
   const handleCredential = async (credential) => {
     if (!credential) {
       setStatus(statusElement, "Google не вернул credential", "error");
+      setGoogleStatus?.("Google не вернул credential", "error");
       return;
     }
 
     setStatus(statusElement, "Подтверждаем аккаунт Google...", "pending");
+    setGoogleStatus?.("Подтверждаем аккаунт Google...", "pending");
     try {
       const data = await apiRequest(endpoint, {
         method: "POST",
@@ -462,6 +494,7 @@ function initGoogleIdentity(apiBase, refreshSession = () => {}) {
         "success",
         { autoClear: true }
       );
+      setGoogleStatus?.("Вход выполнен через Google", "success");
       if (typeof refreshSession === "function") {
         refreshSession(false);
       } else if (sessionStatus) {
@@ -477,6 +510,7 @@ function initGoogleIdentity(apiBase, refreshSession = () => {}) {
       }
     } catch (error) {
       setStatus(statusElement, error?.message || "Не удалось войти через Google", "error");
+      setGoogleStatus?.(error?.message || "Не удалось войти через Google", "error");
     }
   };
 
@@ -500,114 +534,16 @@ function initGoogleIdentity(apiBase, refreshSession = () => {}) {
     window.google.accounts.id.prompt();
     container.classList.remove("is-error");
     container.textContent = "";
+    setGoogleStatus?.("Google Identity готов", "success");
     return true;
   };
 
   if (!renderButton()) {
     container.textContent =
       container.dataset.loadingText || "Подключаем Google Identity...";
-    attachGoogleScriptHandlers(container, renderButton);
+    setGoogleStatus?.("Подключаем Google Identity...", "pending");
+    attachGoogleScriptHandlers(container, renderButton, setGoogleStatus);
   }
-}
-
-function initSupportDialogs(apiBase) {
-  const forgotModal = createModalController(
-    document.getElementById("forgotPasswordModal")
-  );
-  const resendModal = createModalController(
-    document.getElementById("resendVerificationModal")
-  );
-
-  document
-    .getElementById("forgotPasswordTrigger")
-    ?.addEventListener("click", () => forgotModal.open());
-  document
-    .getElementById("resendEmailTrigger")
-    ?.addEventListener("click", () => resendModal.open());
-
-  initRecoveryForm({
-    formId: "forgotPasswordForm",
-    emailInputId: "forgot-password-email",
-    submitId: "forgot-password-submit",
-    statusId: "forgotPasswordMessage",
-    endpoint: buildEndpoint(apiBase, "/password/forgot"),
-    successMessage:
-      "Если email зарегистрирован, мы отправили ссылку для смены пароля.",
-    modalController: forgotModal,
-  });
-
-  initRecoveryForm({
-    formId: "resendVerificationForm",
-    emailInputId: "resend-email",
-    submitId: "resend-email-submit",
-    statusId: "resendEmailMessage",
-    endpoint: buildEndpoint(apiBase, "/email/resend"),
-    successMessage:
-      "Если аккаунт зарегистрирован, письмо отправлено повторно.",
-    modalController: resendModal,
-  });
-}
-
-function initRecoveryForm(options) {
-  const {
-    formId,
-    emailInputId,
-    submitId,
-    statusId,
-    endpoint,
-    successMessage,
-    modalController,
-  } = options;
-
-  const form = document.getElementById(formId);
-  if (!form) {
-    return;
-  }
-
-  const emailInput = document.getElementById(emailInputId);
-  const submitButton = document.getElementById(submitId);
-  const statusElement = document.getElementById(statusId);
-
-  modalController?.onOpen?.(() => {
-    clearStatus(statusElement);
-    form.reset();
-    emailInput?.focus();
-  });
-
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const email = emailInput?.value.trim();
-    if (!isEmailValid(email)) {
-      setStatus(statusElement, "Введите корректный email", "error");
-      return;
-    }
-
-    setStatus(statusElement, "Идёт отправка…", "pending");
-    setButtonLoading(submitButton, true);
-    try {
-      const data = await apiRequest(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      setStatus(
-        statusElement,
-        data?.message || successMessage || "Запрос отправлен",
-        "success",
-        { autoClear: true }
-      );
-      form.reset();
-      window.setTimeout(() => modalController?.close?.(), 1400);
-    } catch (error) {
-      setStatus(
-        statusElement,
-        error?.message || "Не удалось отправить запрос",
-        "error"
-      );
-    } finally {
-      setButtonLoading(submitButton, false);
-    }
-  });
 }
 
 function clearStatus(element) {
@@ -652,6 +588,18 @@ function updateRequirementList(listElement, requirements) {
     });
 }
 
+function updateBadge(badge, text, state = "") {
+  if (!badge) {
+    return;
+  }
+
+  badge.textContent = text;
+  badge.classList.remove("is-success", "is-error", "is-pending", "is-info");
+  if (state) {
+    badge.classList.add(`is-${state}`);
+  }
+}
+
 function resolveApiBase(attributeBase = "") {
   const params = new URLSearchParams(window.location.search);
   const overrideBase = params.get("apiBase");
@@ -690,7 +638,7 @@ function resolveGoogleClientId() {
   return "";
 }
 
-function attachGoogleScriptHandlers(container, onReady) {
+function attachGoogleScriptHandlers(container, onReady, setGoogleStatus) {
   const script = document.querySelector(
     'script[src*="accounts.google.com/gsi/client"]'
   );
@@ -703,6 +651,10 @@ function attachGoogleScriptHandlers(container, onReady) {
       container.dataset.errorText ||
       "Не удалось загрузить Google Identity. Проверьте соединение и разрешите accounts.google.com";
     container.classList.add("google-signin-placeholder", "is-error");
+    setGoogleStatus?.(
+      "Не удалось загрузить Google Identity",
+      "error"
+    );
   };
 
   const handleLoad = () => {
@@ -903,84 +855,6 @@ function setButtonLoading(button, isLoading, loadingText = "Идёт отпра�
   button.disabled = wasDisabled;
   delete button.dataset.originalDisabled;
   delete button.dataset.originalText;
-}
-
-function createModalController(modalElement) {
-  if (!modalElement) {
-    return {
-      open: () => {},
-      close: () => {},
-      onOpen: () => {},
-      onClose: () => {},
-    };
-  }
-
-  const openListeners = new Set();
-  const closeListeners = new Set();
-  const dialog = modalElement.querySelector(".modal__dialog");
-  const closeButton = modalElement.querySelector("[data-modal-close]");
-
-  const emit = (listeners) => {
-    listeners.forEach((listener) => {
-      try {
-        listener();
-      } catch (error) {
-        console.error("Ошибка в обработчике модалки", error);
-      }
-    });
-  };
-
-  const close = () => {
-    if (modalElement.hidden) {
-      return;
-    }
-    modalElement.hidden = true;
-    modalElement.dataset.open = "false";
-    document.removeEventListener("keydown", handleEscape);
-    emit(closeListeners);
-  };
-
-  const handleEscape = (event) => {
-    if (event.key === "Escape") {
-      close();
-    }
-  };
-
-  const handleBackdropClick = (event) => {
-    if (event.target === modalElement) {
-      close();
-    }
-  };
-
-  const open = () => {
-    modalElement.hidden = false;
-    modalElement.dataset.open = "true";
-    document.addEventListener("keydown", handleEscape);
-    emit(openListeners);
-    const focusTarget =
-      dialog?.querySelector("input, button, [tabindex]") || dialog;
-    focusTarget?.focus?.();
-  };
-
-  modalElement.addEventListener("click", handleBackdropClick);
-  closeButton?.addEventListener("click", close);
-
-  return {
-    open,
-    close,
-    onOpen(listener) {
-      if (typeof listener === "function") {
-        openListeners.add(listener);
-      }
-      return () => openListeners.delete(listener);
-    },
-    onClose(listener) {
-      if (typeof listener === "function") {
-        closeListeners.add(listener);
-      }
-      return () => closeListeners.delete(listener);
-    },
-  };
 }
 
 function initPasswordToggle(toggleButton, inputs = []) {
