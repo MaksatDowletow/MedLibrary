@@ -218,140 +218,189 @@
       </div>
     </section>
 
-    <section id="solutions" class="section container">
+    <section id="overview" class="section container library-shell">
       <div class="section__head">
-        <p class="eyebrow lang" data-lang="ru">Структура как в BooksMed</p>
-        <p class="eyebrow lang" data-lang="en">BooksMed-inspired sections</p>
-        <p class="eyebrow lang" data-lang="tm">BooksMed görnüşli bölümler</p>
-        <h2 class="section__title lang" data-lang="ru">Четыре блока: каталог, категории, поиск, контакт</h2>
-        <h2 class="section__title lang" data-lang="en">Four pillars: catalog, categories, search, contact</h2>
-        <h2 class="section__title lang" data-lang="tm">Dört sütün: katalog, kategoriýa, gözleg, habarlaşmak</h2>
-        <p class="section__subtitle lang" data-lang="ru">
-          Повторили привычную логику BooksMed: быстрый вход в каталог, раздел категорий, контекстный поиск и отдельный блок
-          связи. Добавили офлайн, PWA и авторизацию.
-        </p>
-        <p class="section__subtitle lang" data-lang="en">
-          We mirror the familiar BooksMed flow: quick catalog entry, categories hub, contextual search, and a contact section.
-          Offline, PWA, and authentication are built in.
-        </p>
-        <p class="section__subtitle lang" data-lang="tm">
-          BooksMed logikasyny gaýtaladyl: katalog, kategoriýalar, kontekstli gözleg we habarlaşmak bölümi. Oflaýn, PWA we awtorizasiýa goşuldy.
+        <p class="eyebrow">Структура как на BooksMed</p>
+        <h2 class="section__title">Главная лента, боковая навигация и короткие блоки помощи</h2>
+        <p class="section__subtitle">
+          Перестроили страницу, чтобы повторить привычное трехколоночное восприятие: слева меню с поиском и кнопками, в центре —
+          поток материалов, справа — поддержка, популярные разделы и архивы.
         </p>
       </div>
-      <div class="feature-grid" role="list">
-        <article class="feature-card" role="listitem">
+      <div class="library-shell__grid">
+        <aside class="nav-panel">
+          <div class="nav-panel__block">
+            <label class="nav-panel__label" for="site-search">Поиск по библиотеке</label>
+            <div class="nav-panel__search">
+              <input id="site-search" type="search" placeholder="Введите запрос" aria-label="Поиск по библиотеке">
+              <a class="nav-panel__search-link" href="book.html">Открыть расширенный поиск</a>
+            </div>
+          </div>
+          <div class="nav-panel__block">
+            <p class="nav-panel__label">Основные разделы</p>
+            <div class="nav-panel__links">
+              <a href="#catalog">Каталог</a>
+              <a href="BookCategory.html">Категории</a>
+              <a href="#download">Скачать</a>
+              <a href="#contact">Контакты</a>
+              <a href="#gallery">Интерфейс</a>
+            </div>
+          </div>
+          <div class="nav-panel__block nav-panel__tags">
+            <p class="nav-panel__label">Направления</p>
+            <div class="pill">Кардиология</div>
+            <div class="pill">Анатомия</div>
+            <div class="pill">Неврология</div>
+            <div class="pill">Педиатрия</div>
+            <div class="pill">Хирургия</div>
+            <div class="pill">Эндокринология</div>
+          </div>
+          <div class="nav-panel__cta">
+            <p>Нужна помощь с подбором книги?</p>
+            <a class="button button--ghost" href="#contact">Написать разработчику</a>
+          </div>
+        </aside>
+
+        <div class="library-feed" role="feed">
+          <article class="feed-card" role="article">
+            <div class="feed-card__meta">
+              <span class="pill">Новости</span>
+              <span>06.11.2025</span>
+            </div>
+            <h3>Инфаркт миокарда — смертельная угроза и спасение сердца</h3>
+            <p>
+              Инфаркт миокарда — серьезное состояние, требующее мгновенной реакции. Мы собрали проверенные руководства и
+              учебники, чтобы быстрее ориентироваться в диагностике и лечении.
+            </p>
+            <div class="feed-card__actions">
+              <a href="book.html" class="button button--primary">Перейти к каталогу</a>
+              <a href="Book.xlsx" download class="button button--text">Скачать Excel</a>
+            </div>
+          </article>
+
+          <article class="feed-card" role="article">
+            <div class="feed-card__meta">
+              <span class="pill">Статьи</span>
+              <span>22.07.2025</span>
+            </div>
+            <h3>Массаж стоп по китайскому рецепту</h3>
+            <p>
+              Попробуйте альтернативные методики оздоровления: собрали книги и методички по массажу, ЛФК и восстановлению после
+              нагрузок.
+            </p>
+            <div class="feed-card__actions">
+              <a href="BookCategory.html" class="button button--ghost">Открыть категории</a>
+              <a href="book.html#table" class="button button--text">Перейти к поиску</a>
+            </div>
+          </article>
+
+          <article class="feed-card" role="article">
+            <div class="feed-card__meta">
+              <span class="pill">Педиатрия</span>
+              <span>15.02.2025</span>
+            </div>
+            <h3>Ранняя диагностика РАС</h3>
+            <p>
+              Педиатры играют ключевую роль в раннем определении риска расстройств аутистического спектра. Подготовили подборку
+              материалов для скрининга и сопровождения.
+            </p>
+            <div class="feed-card__actions">
+              <a href="book.html" class="button button--ghost">Найти книги</a>
+              <a href="#contact" class="button button--text">Запросить подборку</a>
+            </div>
+          </article>
+
+          <article class="feed-card" role="article">
+            <div class="feed-card__meta">
+              <span class="pill">Диетология</span>
+              <span>01.09.2025</span>
+            </div>
+            <h3>Профилактика метаболического синдрома у детей</h3>
+            <p>
+              Обновили разделы с международными рекомендациями по питанию и физической активности. Фильтры позволяют быстро
+              отобрать нужные руководства.
+            </p>
+            <div class="feed-card__actions">
+              <a href="book.html" class="button button--primary">Перейти к фильтрам</a>
+              <a href="BookCategory.html" class="button button--text">Открыть направление</a>
+            </div>
+          </article>
+        </div>
+
+        <aside class="library-aside">
+          <div class="aside-card aside-card--accent">
+            <p class="aside-card__title">Поддержите библиотеку</p>
+            <p>Помогите развивать MedLibrary и добавлять новые книги.</p>
+            <div class="aside-card__donate">
+              <p><strong>USDT (TRC20)</strong> — TXpBhNvPWNvHNv44R8968hmCLXui32pLzi</p>
+              <p><strong>USDC (ERC20)</strong> — 0x1a814e58f9d97591767a74904ff1e1dc5261e5fc</p>
+            </div>
+          </div>
+
+          <div class="aside-card">
+            <p class="aside-card__title">Популярное</p>
+            <ul class="aside-list">
+              <li><a href="book.html">Каталог книг с быстрым поиском</a></li>
+              <li><a href="BookCategory.html">69 медицинских направлений</a></li>
+              <li><a href="db-catalog.html">Каталог из SQLite</a></li>
+              <li><a href="#download">PWA и офлайн-доступ</a></li>
+            </ul>
+          </div>
+
+          <div class="aside-card">
+            <p class="aside-card__title">Архив обновлений</p>
+            <div class="archive-grid">
+              <a href="#catalog">Ноябрь 2025</a>
+              <a href="#catalog">Октябрь 2025</a>
+              <a href="#catalog">Сентябрь 2025</a>
+              <a href="#catalog">Август 2025</a>
+              <a href="#catalog">Июль 2025</a>
+              <a href="#catalog">Июнь 2025</a>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="catalog" class="section info-panels container">
+      <div class="info-panels__grid">
+        <article class="info-card">
           <div class="feature-icon" aria-hidden="true">📚</div>
           <h3>Каталог</h3>
           <p>Мгновенное открытие списка книг с сортировками, карточками и экспортом в Excel/JSON.</p>
+          <div class="cta-inline">
+            <a class="button button--primary" href="book.html">Каталог книг</a>
+            <a class="button button--ghost" href="Book.xlsx" download>Скачать Excel</a>
+          </div>
         </article>
-        <article class="feature-card" role="listitem">
+        <article class="info-card">
           <div class="feature-icon" aria-hidden="true">🧭</div>
           <h3>Категории</h3>
           <p>69 тематических направлений как на BooksMed: от анатомии до хирургии, с быстрым фильтром.</p>
+          <div class="cta-inline">
+            <a class="button button--ghost" href="BookCategory.html">Категории</a>
+            <a class="button button--text" href="book.html#table">Применить фильтры</a>
+          </div>
         </article>
-        <article class="feature-card" role="listitem">
+        <article class="info-card">
           <div class="feature-icon" aria-hidden="true">🔍</div>
           <h3>Поиск</h3>
           <p>Глобальный поиск по всем колонкам каталога с учетом диакритики и подсказками по категориям.</p>
+          <div class="cta-inline">
+            <a class="button button--ghost" href="book.html#table">Перейти к таблице</a>
+            <a class="button button--text" href="db-catalog.html">SQLite каталог</a>
+          </div>
         </article>
-        <article class="feature-card" role="listitem">
+        <article class="info-card">
           <div class="feature-icon" aria-hidden="true">📞</div>
           <h3>Контакты</h3>
           <p>Прямая связь с разработчиком: задавайте вопросы, заказывайте добавление книг и интеграции.</p>
-        </article>
-      </div>
-    </section>
-
-    <section id="catalog" class="section section--split container">
-      <div>
-        <h2 class="section__title lang" data-lang="ru">Каталог и категории в знакомой логике</h2>
-        <h2 class="section__title lang" data-lang="en">Catalog and categories with familiar flow</h2>
-        <h2 class="section__title lang" data-lang="tm">Tanyş gurluşly katalog we kategoriýalar</h2>
-        <p class="section__subtitle lang" data-lang="ru">Каталог открывается в один клик, категории вынесены в отдельный раздел, а поиск объединяет оба сценария.</p>
-        <p class="section__subtitle lang" data-lang="en">Open the catalog in one click, explore categories separately, and use unified search across both.</p>
-        <p class="section__subtitle lang" data-lang="tm">Katalogy bir basyş bilen açyň, kategoriýalary aýratyn görüň we birleşdirilen gözlegi ulanyň.</p>
-        <ul class="checklist">
-          <li>Экспорт каталога в Excel и JSON</li>
-          <li>Фильтрация и карточки по аналогии с BooksMed</li>
-          <li>Подсветка категории и ключевых полей</li>
-        </ul>
-        <div class="cta-inline">
-          <a class="button button--primary" href="book.html">Каталог книг</a>
-          <a class="button button--ghost" href="BookCategory.html">Категории</a>
-        </div>
-      </div>
-      <div class="accent-card">
-        <p class="accent-card__eyebrow">Статистика</p>
-        <h3>69 тематик и 1000+ изданий</h3>
-        <p>От анатомии и хирургии до эпидемиологии и генетики — вся структура перенесена в MedLibrary.</p>
-        <div class="accent-card__tags">
-          <span class="pill">Анатомия</span>
-          <span class="pill">Кардиология</span>
-          <span class="pill">Педиатрия</span>
-          <span class="pill">Хирургия</span>
-        </div>
-      </div>
-    </section>
-
-    <section id="platform" class="section platform container">
-      <div class="section__head">
-        <p class="eyebrow">Platforma</p>
-        <h2>MedLibrary как полнофункциональный сервис</h2>
-        <p class="section__subtitle">Архитектура сайта повторяет структуру BooksMed, но добавляет офлайн-кэш, авторизацию и возможность установки.</p>
-      </div>
-      <div class="platform__grid">
-        <article class="platform__card">
-          <div class="feature-icon" aria-hidden="true">⚡</div>
-          <h3>Производительность</h3>
-          <p>Ленивая загрузка и оптимизация таблиц удерживают скорость на уровне 2–3× даже при большом каталоге.</p>
-        </article>
-        <article class="platform__card">
-          <div class="feature-icon" aria-hidden="true">📱</div>
-          <h3>PWA + офлайн</h3>
-          <p>Установите библиотеку как приложение: сервис‑воркер кэширует страницы, категории и файлы каталога.</p>
-        </article>
-        <article class="platform__card">
-          <div class="feature-icon" aria-hidden="true">🔐</div>
-          <h3>Авторизация</h3>
-          <p>Регистрация, вход и Google Identity помогают безопасно делиться подборками и сохранять сессии.</p>
-        </article>
-        <article class="platform__card">
-          <div class="feature-icon" aria-hidden="true">🛰️</div>
-          <h3>Интеграции</h3>
-          <p>Подключение внешних сервисов для обложек и аналитики обеспечивает актуальные данные и визуализацию.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="section steps container">
-      <div class="section__head">
-        <p class="eyebrow">Путь пользователя</p>
-        <h2>Простой маршрут, как на BooksMed</h2>
-        <p class="section__subtitle">Повторяем знакомую логику: заходите на главную, переходите в каталог, уточняете поиск и связываетесь при необходимости.</p>
-      </div>
-      <ol class="steps__list">
-        <li>
-          <span class="steps__index">01</span>
-          <div>
-            <h3>Главная</h3>
-            <p>Получите обзор сервиса и сразу выберите нужный раздел — каталог или категории.</p>
+          <div class="cta-inline">
+            <a class="button button--ghost" href="#contact">Написать</a>
+            <a class="button button--text" href="#download">Установить PWA</a>
           </div>
-        </li>
-        <li>
-          <span class="steps__index">02</span>
-          <div>
-            <h3>Каталог / категории</h3>
-            <p>Используйте быстрый поиск, фильтры по колонкам и подсветку тематик для точного результата.</p>
-          </div>
-        </li>
-        <li>
-          <span class="steps__index">03</span>
-          <div>
-            <h3>Скачивание и контакт</h3>
-            <p>Экспортируйте Excel/JSON, установите PWA и напишите разработчику, если нужно расширить библиотеку.</p>
-          </div>
-        </li>
-      </ol>
+        </article>
+      </div>
     </section>
 
     <section id="gallery" class="gallery-slider section container">
