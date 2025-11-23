@@ -448,7 +448,10 @@ const authLimiter = rateLimit({
   message: { message: "Слишком много попыток. Попробуйте позже." },
 });
 
-app.use(["/register", "/login", "/auth/google"], authLimiter);
+app.use(
+  ["/register", "/login", "/auth/google", "/password/forgot", "/email/resend"],
+  authLimiter
+);
 
 const asyncHandler = (handler) => (req, res, next) =>
   Promise.resolve(handler(req, res, next)).catch(next);
@@ -472,6 +475,13 @@ const sanitizeUser = (user) => {
         email,
       }
     : null;
+};
+
+const normalizeEmail = (email = "") => email.trim().toLowerCase();
+
+const logMailAction = (action, email, exists) => {
+  const suffix = exists === false ? " (пользователь не найден)" : "";
+  console.info(`[mail] ${action} для ${email}${suffix}`);
 };
 
 const generateToken = (user) =>
@@ -656,7 +666,7 @@ app.post(
       return res.status(400).json({ message: "Пароль должен содержать минимум 6 символов" });
     }
 
-    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedEmail = normalizeEmail(email);
     const existingUser = await userStore.findByEmail(normalizedEmail);
     if (existingUser) {
       return res.status(409).json({ message: "Пользователь уже зарегистрирован" });
@@ -680,7 +690,7 @@ app.post(
       return res.status(400).json({ message: "Неверный email или пароль" });
     }
 
-    const user = await userStore.findByEmailWithPassword(email.trim().toLowerCase());
+    const user = await userStore.findByEmailWithPassword(normalizeEmail(email));
     if (!user) {
       return res.status(400).json({ message: "Неверный email или пароль" });
     }
@@ -695,6 +705,44 @@ app.post(
     return res.json({
       message: "Вход выполнен",
       ...tokenResponse,
+    });
+  })
+);
+
+app.post(
+  "/password/forgot",
+  asyncHandler(async (req, res) => {
+    const { email = "" } = req.body || {};
+    if (!validateEmail(email)) {
+      return res.status(400).json({ message: "Укажите корректный email" });
+    }
+
+    const normalizedEmail = normalizeEmail(email);
+    const user = await userStore.findByEmail(normalizedEmail);
+    logMailAction("Запрошено восстановление пароля", normalizedEmail, Boolean(user));
+
+    return res.json({
+      message:
+        "Если указанный email зарегистрирован, мы отправили письмо со ссылкой для смены пароля.",
+    });
+  })
+);
+
+app.post(
+  "/email/resend",
+  asyncHandler(async (req, res) => {
+    const { email = "" } = req.body || {};
+    if (!validateEmail(email)) {
+      return res.status(400).json({ message: "Укажите корректный email" });
+    }
+
+    const normalizedEmail = normalizeEmail(email);
+    const user = await userStore.findByEmail(normalizedEmail);
+    logMailAction("Переотправка письма с подтверждением", normalizedEmail, Boolean(user));
+
+    return res.json({
+      message:
+        "Если пользователь зарегистрирован, письмо отправлено повторно. Проверьте входящие и папку спама.",
     });
   })
 );
