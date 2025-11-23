@@ -1304,9 +1304,10 @@
       try {
         const remoteUrl = await coverFetchPromises.get(cacheKey);
         if (remoteUrl) {
-          image.src = remoteUrl;
+          const finalUrl = await persistCoverLocally(remoteUrl, cacheKey);
+          image.src = finalUrl;
           image.dataset.coverHydrated = 'true';
-          cacheRemoteCover(cacheKey, remoteUrl);
+          cacheRemoteCover(cacheKey, finalUrl);
         }
       } catch (error) {
         console.warn('Unable to load remote cover', error);
@@ -1368,6 +1369,30 @@
       ensureRemoteCoverCache();
       remoteCoverCache.set(key, url);
       scheduleCoverCachePersist();
+    }
+
+    async function persistCoverLocally(url, cacheKey) {
+      if (!url || !API_BASE) {
+        return url;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/covers/cache`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url, key: cacheKey })
+        });
+
+        if (!response.ok) {
+          return url;
+        }
+
+        const payload = await response.json();
+        return payload?.localUrl || url;
+      } catch (error) {
+        console.warn('Unable to persist cover', error);
+        return url;
+      }
     }
 
     function persistCoverCache() {

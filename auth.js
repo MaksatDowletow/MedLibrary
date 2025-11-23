@@ -13,11 +13,56 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.dataset.apiBase = apiBase;
   }
 
+  initAuthSwitcher();
   initRegisterForm(apiBase);
   const refreshSession = initLoginForm(apiBase);
   initGoogleIdentity(apiBase, refreshSession);
   initSupportDialogs(apiBase);
 });
+
+function initAuthSwitcher() {
+  const wrapper = document.querySelector(".auth-wrapper");
+  const panels = document.querySelectorAll("[data-auth-panel]");
+  const tabs = document.querySelectorAll("[data-auth-switch]");
+  const quickSwitchers = document.querySelectorAll("[data-auth-switch-target]");
+  if (!wrapper || panels.length === 0 || tabs.length === 0) {
+    return;
+  }
+
+  const urlParams = new URLSearchParams(window.location.search);
+  let activeView = urlParams.get("view") === "register" ? "register" : "login";
+
+  const setActiveView = (view) => {
+    activeView = view === "register" ? "register" : "login";
+    wrapper.dataset.activeView = activeView;
+
+    panels.forEach((panel) => {
+      panel.hidden = panel.dataset.authPanel !== activeView;
+    });
+
+    tabs.forEach((tab) => {
+      const isActive = tab.dataset.authSwitch === activeView;
+      tab.setAttribute("aria-selected", isActive ? "true" : "false");
+    });
+
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set("view", activeView);
+    window.history.replaceState({}, "", currentUrl.toString());
+  };
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => setActiveView(tab.dataset.authSwitch));
+  });
+
+  quickSwitchers.forEach((link) => {
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      setActiveView(link.dataset.authSwitchTarget);
+    });
+  });
+
+  setActiveView(activeView);
+}
 
 function initRegisterForm(apiBase) {
   const form = document.getElementById("registerForm");
