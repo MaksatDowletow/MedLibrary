@@ -409,8 +409,14 @@ function initRegistrationForm(apiBase, modalControls = {}) {
     const password = passwordInput.value.trim();
     const confirmPassword = confirmInput.value.trim();
 
+    updateInputValidity(emailInput, true, statusElement);
+    updateInputValidity(passwordInput, true, statusElement);
+    updateInputValidity(confirmInput, true, statusElement);
+
     if (!isEmailValid(email)) {
       setStatusMessage(statusElement, "Введите корректный email", "error");
+      updateInputValidity(emailInput, false, statusElement);
+      emailInput.focus();
       return;
     }
 
@@ -420,11 +426,15 @@ function initRegistrationForm(apiBase, modalControls = {}) {
         "Пароль должен содержать минимум 6 символов",
         "error"
       );
+      updateInputValidity(passwordInput, false, statusElement);
+      passwordInput.focus();
       return;
     }
 
     if (password !== confirmPassword) {
       setStatusMessage(statusElement, "Пароли не совпадают", "error");
+      updateInputValidity(confirmInput, false, statusElement);
+      confirmInput.focus();
       return;
     }
 
@@ -559,8 +569,13 @@ function initLoginForm(apiBase, modalControls = {}) {
     const email = emailInput.value.trim();
     const password = passwordInput.value.trim();
 
+    updateInputValidity(emailInput, true, statusElement);
+    updateInputValidity(passwordInput, true, statusElement);
+
     if (!isEmailValid(email)) {
       setStatusMessage(statusElement, "Введите корректный email", "error");
+      updateInputValidity(emailInput, false, statusElement);
+      emailInput.focus();
       return;
     }
 
@@ -570,6 +585,8 @@ function initLoginForm(apiBase, modalControls = {}) {
         "Пароль должен содержать минимум 6 символов",
         "error"
       );
+      updateInputValidity(passwordInput, false, statusElement);
+      passwordInput.focus();
       return;
     }
 
@@ -1313,10 +1330,33 @@ function setStatusMessage(element, message, state) {
   if (!element) {
     return;
   }
+
   element.textContent = message || "";
   element.classList.remove("success", "error", "pending");
   if (state) {
     element.classList.add(state);
+  }
+
+  element.setAttribute("role", "status");
+  element.setAttribute("aria-live", "polite");
+}
+
+function updateInputValidity(input, isValid, statusElement) {
+  if (!input) {
+    return;
+  }
+
+  if (isValid) {
+    input.removeAttribute("aria-invalid");
+    if (statusElement?.id && input.getAttribute("aria-describedby") === statusElement.id) {
+      input.removeAttribute("aria-describedby");
+    }
+    return;
+  }
+
+  input.setAttribute("aria-invalid", "true");
+  if (statusElement?.id) {
+    input.setAttribute("aria-describedby", statusElement.id);
   }
 }
 
@@ -1635,8 +1675,34 @@ window.sendMail = () => {
   const name = document.getElementById("name");
   const email = document.getElementById("email");
   const message = document.getElementById("message");
+  const statusElement = document.getElementById("contact-status");
 
   if (!name || !email || !message) {
+    return;
+  }
+
+  updateInputValidity(name, true, statusElement);
+  updateInputValidity(email, true, statusElement);
+  updateInputValidity(message, true, statusElement);
+
+  if (!name.value.trim()) {
+    setStatusMessage(statusElement, "Введите ваше имя", "error");
+    updateInputValidity(name, false, statusElement);
+    name.focus();
+    return;
+  }
+
+  if (!isEmailValid(email.value.trim())) {
+    setStatusMessage(statusElement, "Введите корректный email", "error");
+    updateInputValidity(email, false, statusElement);
+    email.focus();
+    return;
+  }
+
+  if (!message.value.trim()) {
+    setStatusMessage(statusElement, "Введите сообщение", "error");
+    updateInputValidity(message, false, statusElement);
+    message.focus();
     return;
   }
 
@@ -1648,6 +1714,9 @@ window.sendMail = () => {
     email.value +
     "%0D%0AСообщение: " +
     message.value;
+
+  setStatusMessage(statusElement, "Открываем почтовый клиент...", "pending");
   window.location.href =
     "mailto:tdlipfmdm@gmail.com?subject=" + subject + "&body=" + body;
+  setStatusMessage(statusElement, "Черновик письма создан", "success");
 };

@@ -548,6 +548,24 @@ main {
   color: var(--muted);
 }
 
+.auth-status.success {
+  color: #22c55e;
+}
+
+.auth-status.error {
+  color: #f87171;
+}
+
+.auth-status.pending {
+  color: #e0b100;
+}
+
+.hotkey-hint {
+  font-size: 0.85em;
+  color: #8a93a5;
+  margin-left: 8px;
+}
+
 .auth-divider {
   display: flex;
   align-items: center;
