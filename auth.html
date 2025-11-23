@@ -30,6 +30,55 @@
             border-radius: 24px;
             box-shadow: 0 20px 60px rgba(15, 23, 42, 0.12);
         }
+        .status-strip {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.25rem;
+        }
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.45rem 0.75rem;
+            border-radius: 999px;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            color: #0f172a;
+            font-size: 0.95rem;
+        }
+        .status-pill::before {
+            content: "";
+            display: block;
+            width: 10px;
+            height: 10px;
+            border-radius: 999px;
+            background: #cbd5e1;
+        }
+        .status-pill.is-success {
+            border-color: #bbf7d0;
+            background: #ecfdf3;
+            color: #166534;
+        }
+        .status-pill.is-success::before { background: #22c55e; }
+        .status-pill.is-error {
+            border-color: #fecdd3;
+            background: #fff1f2;
+            color: #9f1239;
+        }
+        .status-pill.is-error::before { background: #f43f5e; }
+        .status-pill.is-pending {
+            border-color: #fde68a;
+            background: #fffbeb;
+            color: #92400e;
+        }
+        .status-pill.is-pending::before { background: #f59e0b; }
+        .status-pill.is-info {
+            border-color: #bfdbfe;
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+        .status-pill.is-info::before { background: #3b82f6; }
         h1 {
             margin-top: 0;
             text-align: center;
@@ -221,12 +270,6 @@
             border-color: #f87171;
             color: #b91c1c;
         }
-        .support-links {
-            display: flex;
-            justify-content: space-between;
-            gap: 0.75rem;
-            margin-bottom: 0.75rem;
-        }
         .link-button {
             width: auto;
             padding: 0.35rem 0.5rem;
@@ -238,47 +281,6 @@
         }
         .link-button:hover {
             text-decoration: underline;
-        }
-        .modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.45);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-            z-index: 1000;
-        }
-        .modal[hidden] {
-            display: none;
-        }
-        .modal__dialog {
-            background: #fff;
-            width: min(420px, 100%);
-            border-radius: 20px;
-            padding: 1.5rem;
-            position: relative;
-            box-shadow: 0 12px 45px rgba(15, 23, 42, 0.25);
-        }
-        .modal__close {
-            position: absolute;
-            top: 10px;
-            right: 12px;
-            background: transparent;
-            border: none;
-            font-size: 1.5rem;
-            line-height: 1;
-            cursor: pointer;
-            color: #0f172a;
-        }
-        .modal__title {
-            margin-top: 0;
-            margin-bottom: 0.25rem;
-        }
-        .modal__description {
-            margin-top: 0;
-            color: #475569;
-            font-size: 0.95rem;
         }
         .session-state {
             text-align: center;
@@ -299,8 +301,13 @@
 </head>
 <body data-google-client-id="815759578613-pf7pkrfsc0u70edgykqvku3m0p1wq3p2.apps.googleusercontent.com">
     <div class="auth-wrapper" data-active-view="login">
-        <h1>Регистрация и вход</h1>
-        <p class="auth-subtitle">Выберите, что хотите сделать: создать аккаунт или войти в существующий.</p>
+        <h1>Авторизация</h1>
+        <p class="auth-subtitle">Регистрация, вход, Google Identity и понятные статусы. Никаких лишних действий.</p>
+        <div class="status-strip" aria-live="polite">
+            <span class="status-pill is-info" id="apiBaseBadge">API: ...</span>
+            <span class="status-pill" id="networkBadge">Проверяем подключение...</span>
+            <span class="status-pill" id="googleBadge">Google Identity подключается...</span>
+        </div>
         <div class="auth-switcher" role="tablist" aria-label="Переключатель между входом и регистрацией">
             <button type="button" role="tab" id="loginTab" class="auth-switcher__tab" data-auth-switch="login" aria-selected="true" aria-controls="loginPanel">Вход</button>
             <button type="button" role="tab" id="registerTab" class="auth-switcher__tab" data-auth-switch="register" aria-selected="false" aria-controls="registerPanel">Регистрация</button>
@@ -314,10 +321,6 @@
                     <button type="button" class="password-toggle" data-target="login-password">Показать пароль</button>
                 </div>
                 <button type="submit" id="login">Войти</button>
-                <div class="support-links">
-                    <button type="button" class="link-button" id="forgotPasswordTrigger">Забыли пароль?</button>
-                    <button type="button" class="link-button" id="resendEmailTrigger">Отправить письмо повторно</button>
-                </div>
                 <div class="divider"><span>или</span></div>
                 <div class="provider-card">
                     <h2>Вход через Google</h2>
@@ -356,32 +359,6 @@
         <div class="session-state">
             <p id="sessionStatus" class="message" aria-live="polite"></p>
             <button id="logout" type="button" hidden>Выйти</button>
-        </div>
-    </div>
-
-    <div class="modal" id="forgotPasswordModal" hidden>
-        <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="forgotPasswordTitle">
-            <button type="button" class="modal__close" aria-label="Закрыть" data-modal-close>&times;</button>
-            <h2 class="modal__title" id="forgotPasswordTitle">Восстановление пароля</h2>
-            <p class="modal__description">Укажите email, чтобы получить ссылку для смены пароля.</p>
-            <form id="forgotPasswordForm">
-                <input type="email" id="forgot-password-email" placeholder="Ваш email" autocomplete="email" required>
-                <button type="submit" id="forgot-password-submit">Отправить ссылку</button>
-                <p id="forgotPasswordMessage" class="message" aria-live="polite"></p>
-            </form>
-        </div>
-    </div>
-
-    <div class="modal" id="resendVerificationModal" hidden>
-        <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="resendVerificationTitle">
-            <button type="button" class="modal__close" aria-label="Закрыть" data-modal-close>&times;</button>
-            <h2 class="modal__title" id="resendVerificationTitle">Отправить письмо повторно</h2>
-            <p class="modal__description">Проверьте и введите адрес, чтобы мы снова выслали письмо.</p>
-            <form id="resendVerificationForm">
-                <input type="email" id="resend-email" placeholder="Ваш email" autocomplete="email" required>
-                <button type="submit" id="resend-email-submit">Выслать письмо</button>
-                <p id="resendEmailMessage" class="message" aria-live="polite"></p>
-            </form>
         </div>
     </div>
     <script
