@@ -47,10 +47,11 @@
         <span class="lang" data-lang="en">Download app</span>
         <span class="lang" data-lang="tm">Programmany ýükläň</span>
       </button>
-      <button id="auth-open-button" class="button button--outline auth-open-button" type="button">
+      <button id="auth-open-button" class="button button--outline auth-open-button" type="button" accesskey="a" aria-describedby="auth-hotkey">
         <span class="lang" data-lang="ru">Регистрация / вход</span>
         <span class="lang" data-lang="en">Sign up / Sign in</span>
         <span class="lang" data-lang="tm">Hasaba al / Içeri gir</span>
+        <span id="auth-hotkey" class="hotkey-hint" aria-hidden="true">Alt+Shift+A</span>
       </button>
     </div>
     <nav class="site-nav" aria-label="Основная навигация">
@@ -311,11 +312,13 @@
           <span class="lang" data-lang="tm">Habar</span>
           <textarea id="message" name="message" required></textarea>
         </label>
-        <button class="button button--primary" type="submit">
+        <button class="button button--primary" type="submit" accesskey="s" aria-describedby="contact-hotkey">
           <span class="lang" data-lang="ru">Отправить</span>
           <span class="lang" data-lang="en">Send</span>
           <span class="lang" data-lang="tm">Ugrat</span>
+          <span id="contact-hotkey" class="hotkey-hint" aria-hidden="true">Alt+Shift+S</span>
         </button>
+        <p id="contact-status" class="auth-status" role="status" aria-live="polite"></p>
       </form>
       <div class="contact__info">
         <a href="tel:+99362234094">+993 62 23 40 94</a>
@@ -376,7 +379,7 @@
             <input type="password" id="register-password" placeholder="Пароль (мин. 6 символов)" minlength="6" autocomplete="new-password" required>
             <label class="visually-hidden" for="register-confirm">Подтверждение пароля</label>
             <input type="password" id="register-confirm" placeholder="Повторите пароль" minlength="6" autocomplete="new-password" required>
-            <button id="register-button" type="submit">Зарегистрироваться</button>
+            <button id="register-button" type="submit" accesskey="r" aria-describedby="register-hotkey">Зарегистрироваться <span id="register-hotkey" class="hotkey-hint" aria-hidden="true">Alt+Shift+R</span></button>
             <p id="register-status" class="auth-status" role="status" aria-live="polite"></p>
           </form>
           <form id="login-form" class="auth-panel" role="tabpanel" aria-labelledby="login-tab" hidden>
@@ -385,7 +388,7 @@
             <input type="email" id="login-email" placeholder="Email" autocomplete="email" required>
             <label class="visually-hidden" for="login-password">Пароль</label>
             <input type="password" id="login-password" placeholder="Пароль" minlength="6" autocomplete="current-password" required>
-            <button id="login-button" type="submit">Войти</button>
+            <button id="login-button" type="submit" accesskey="l" aria-describedby="login-hotkey">Войти <span id="login-hotkey" class="hotkey-hint" aria-hidden="true">Alt+Shift+L</span></button>
             <div class="auth-divider"><span>или</span></div>
             <div class="auth-provider-card">
               <p class="auth-provider-card__title">Используйте учетную запись Google</p>
