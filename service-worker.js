@@ -1,41 +1,22 @@
-const CACHE_NAME = 'medlibrary-v7';
-const APP_SHELL = [
-  './',
-  './index.html',
-  './auth.html',
-  './book.html',
-  './BookCategory.html',
-  './db-catalog.html',
-  './styles.css',
-  './scripts.js',
-  './auth.js',
-  './db-catalog.js',
-  './config.js',
-  './lang.js',
-  './pwa.js',
-  './src/main.js',
-  './src/components/header.html',
-  './src/components/hero.html',
-  './src/components/audit.html',
-  './src/components/features.html',
-  './src/components/catalog-preview.html',
-  './src/components/platform.html',
-  './src/components/gallery.html',
-  './src/components/contact.html',
-  './src/components/footer.html',
-  './src/i18n/en.json',
-  './src/i18n/ru.json',
-  './src/i18n/tm.json',
-  './manifest.webmanifest',
-  './data/books.json',
-  './Book.xlsx',
-  './icons/icon-192.svg',
-  './icons/icon-512.svg'
+const CACHE_NAME = 'medlibrary-v8';
+const STATIC_ASSETS = [
+  '/MedLibrary/',
+  '/MedLibrary/index.html',
+  '/MedLibrary/book.html',
+  '/MedLibrary/styles.css',
+  '/MedLibrary/scripts.js',
+  '/MedLibrary/pwa.js',
+  '/MedLibrary/src/main.js',
 ];
+
+const CATALOG_URL = '/MedLibrary/data/books.json';
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)).then(() => self.skipWaiting())
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => cache.addAll([...STATIC_ASSETS, CATALOG_URL]))
+      .then(() => self.skipWaiting())
   );
 });
 
@@ -66,17 +47,22 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
 
   if (url.origin !== self.location.origin) {
+    event.respondWith(fetch(request));
+    return;
+  }
+
+  if (url.pathname === CATALOG_URL) {
     event.respondWith(networkFirst(request));
     return;
   }
 
-  const normalizedPath = url.pathname === '/' ? './' : `.${url.pathname}`;
-  if (APP_SHELL.includes(normalizedPath) || request.destination === 'document') {
-    event.respondWith(networkFirst(request, { fallbackToShell: true }));
+  const normalizedPath = url.pathname === '/MedLibrary' ? '/MedLibrary/' : url.pathname;
+  if (STATIC_ASSETS.includes(normalizedPath) || request.destination === 'document') {
+    event.respondWith(cacheFirst(request));
     return;
   }
 
-  event.respondWith(cacheFirst(request));
+  event.respondWith(fetch(request));
 });
 
 function networkFirst(request, options = {}) {
@@ -88,7 +74,7 @@ function networkFirst(request, options = {}) {
     })
     .catch(() => {
       if (options.fallbackToShell && request.destination === 'document') {
-        return caches.match('./index.html');
+        return caches.match('/MedLibrary/index.html');
       }
       return caches.match(request);
     });
