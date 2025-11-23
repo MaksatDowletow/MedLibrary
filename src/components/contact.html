@@ -4,7 +4,7 @@
     <h2 class="section__title" data-i18n="contact.title"></h2>
     <p class="section__subtitle" data-i18n="contact.subtitle"></p>
   </div>
-  <form class="contact__form" onsubmit="sendMail(); return false;">
+  <form class="contact__form" id="contactForm" onsubmit="sendMail(event); return false;">
     <label class="form-group">
       <span data-i18n="contact.name"></span>
       <input type="text" id="name" name="name" required data-i18n-attr="placeholder" data-i18n-placeholder="contact.namePlaceholder" />

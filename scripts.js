@@ -93,6 +93,41 @@ const UI_TEXTS = {
     en: "Pages",
     tm: "Sahypalar",
   },
+  contactNameRequired: {
+    ru: "Введите ваше имя",
+    en: "Please enter your name",
+    tm: "Adyňyzy ýazmagyňyzy haýyş edýäris",
+  },
+  contactEmailInvalid: {
+    ru: "Введите корректный email",
+    en: "Please enter a valid email",
+    tm: "Dogry email giriziň",
+  },
+  contactMessageRequired: {
+    ru: "Введите сообщение",
+    en: "Please enter a message",
+    tm: "Habar giriziň",
+  },
+  contactNotConfigured: {
+    ru: "Сервис отправки не настроен. Попробуйте позже.",
+    en: "Contact service is not configured. Please try again later.",
+    tm: "Habar ugratmak hyzmaty sazlanmady. Soňrak synanyşyň.",
+  },
+  contactSending: {
+    ru: "Отправляем сообщение...",
+    en: "Sending your message...",
+    tm: "Habar ugradylyýar...",
+  },
+  contactSendSuccess: {
+    ru: "Сообщение отправлено. Спасибо!",
+    en: "Message sent. Thank you!",
+    tm: "Habar ugradyldy. Sag boluň!",
+  },
+  contactSendError: {
+    ru: "Не удалось отправить сообщение. Попробуйте позже.",
+    en: "Could not send the message. Please try again later.",
+    tm: "Habar ugratmak başartmady. Soňrak synanyşyň.",
+  },
 };
 
 const PAGE_TRANSLATIONS = {
@@ -1940,11 +1975,29 @@ function debounce(callback, delay = 200) {
   };
 }
 
-window.sendMail = () => {
+function resolveContactEndpoint() {
+  const configuredEndpoint = (document.body?.dataset.contactEndpoint || "").trim();
+  if (configuredEndpoint) {
+    return configuredEndpoint;
+  }
+
+  const apiBase = resolveApiBase(document.body?.dataset.apiBase);
+  if (apiBase) {
+    return `${apiBase}/contact`;
+  }
+
+  return "";
+}
+
+window.sendMail = async (event) => {
+  event?.preventDefault?.();
+
+  const form = document.getElementById("contactForm") || event?.target;
   const name = document.getElementById("name");
   const email = document.getElementById("email");
   const message = document.getElementById("message");
   const statusElement = document.getElementById("contact-status");
+  const submitButton = form?.querySelector('button[type="submit"]');
 
   if (!name || !email || !message) {
     return;
@@ -1955,37 +2008,75 @@ window.sendMail = () => {
   updateInputValidity(message, true, statusElement);
 
   if (!name.value.trim()) {
-    setStatusMessage(statusElement, "Введите ваше имя", "error");
+    setStatusMessage(statusElement, translate("contactNameRequired"), "error");
     updateInputValidity(name, false, statusElement);
     name.focus();
     return;
   }
 
   if (!isEmailValid(email.value.trim())) {
-    setStatusMessage(statusElement, "Введите корректный email", "error");
+    setStatusMessage(statusElement, translate("contactEmailInvalid"), "error");
     updateInputValidity(email, false, statusElement);
     email.focus();
     return;
   }
 
   if (!message.value.trim()) {
-    setStatusMessage(statusElement, "Введите сообщение", "error");
+    setStatusMessage(statusElement, translate("contactMessageRequired"), "error");
     updateInputValidity(message, false, statusElement);
     message.focus();
     return;
   }
 
-  const subject = `Новое сообщение от ${name.value}`;
-  const body =
-    "Имя: " +
-    name.value +
-    "%0D%0AEmail: " +
-    email.value +
-    "%0D%0AСообщение: " +
-    message.value;
+  const contactEndpoint = resolveContactEndpoint();
+  if (!contactEndpoint) {
+    setStatusMessage(statusElement, translate("contactNotConfigured"), "error");
+    return;
+  }
 
-  setStatusMessage(statusElement, "Открываем почтовый клиент...", "pending");
-  window.location.href =
-    "mailto:tdlipfmdm@gmail.com?subject=" + subject + "&body=" + body;
-  setStatusMessage(statusElement, "Черновик письма создан", "success");
+  toggleDisabled(submitButton, true);
+  form?.setAttribute("aria-busy", "true");
+  setStatusMessage(statusElement, translate("contactSending"), "pending");
+
+  const payload = {
+    name: name.value.trim(),
+    email: email.value.trim(),
+    message: message.value.trim(),
+  };
+
+  try {
+    const response = await fetch(contactEndpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      let errorMessage = translate("contactSendError");
+      try {
+        const errorPayload = await response.json();
+        if (errorPayload?.message) {
+          errorMessage = errorPayload.message;
+        }
+      } catch (parseError) {
+        const text = await response.text();
+        if (text) {
+          errorMessage = text;
+        }
+      }
+      throw new Error(errorMessage || translate("contactSendError"));
+    }
+
+    setStatusMessage(statusElement, translate("contactSendSuccess"), "success");
+    form?.reset();
+  } catch (error) {
+    console.error("Contact form submission failed", error);
+    setStatusMessage(statusElement, error.message || translate("contactSendError"), "error");
+  } finally {
+    toggleDisabled(submitButton, false);
+    form?.removeAttribute("aria-busy");
+  }
 };
