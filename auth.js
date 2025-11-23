@@ -162,6 +162,7 @@ function initLoginForm(apiBase) {
   const statusElement = document.getElementById("loginMessage");
   const sessionStatus = document.getElementById("sessionStatus");
   const logoutButton = document.getElementById("logout");
+  const loginButton = document.getElementById("login");
   if (!form) {
     return () => {};
   }
