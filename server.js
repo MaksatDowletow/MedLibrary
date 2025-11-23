@@ -17,6 +17,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "change-me-in-production";
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/medlibrary";
 const TOKEN_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "2h";
 const TOKEN_REFRESH_LEEWAY_MS = 30 * 1000;
+const MAX_JSON_BODY_SIZE = process.env.MAX_JSON_BODY_SIZE || "1mb";
 const GOOGLE_CLIENT_IDS = (process.env.GOOGLE_CLIENT_ID || "")
   .split(",")
   .map((id) => id.trim())
@@ -29,6 +30,7 @@ const BOOKS_FILE = process.env.BOOKS_FILE || path.join(DATA_DIR, "books.json");
 const SQLITE_DB_PATH = process.env.SQLITE_DB_PATH || path.join(__dirname, "dbMedicalLib.sqlite");
 const COVER_CACHE_DIR = process.env.COVER_CACHE_DIR || path.join(DATA_DIR, "covers");
 const ALLOWED_COVER_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp"];
+const MAX_COVER_SIZE_BYTES = Number(process.env.MAX_COVER_SIZE_BYTES) || 2 * 1024 * 1024;
 const GOOGLE_TOKEN_INFO_URL = "https://oauth2.googleapis.com/tokeninfo";
 const GOOGLE_FETCH_TIMEOUT = 10000;
 const isFetchAvailable = typeof fetch === "function";
@@ -258,6 +260,22 @@ const normalizeCoverKey = (value = "") => {
   return normalized || null;
 };
 
+const normalizeHttpUrl = (value = "") => {
+  try {
+    const url = new URL(value);
+    if (![
+      "http:",
+      "https:",
+    ].includes(url.protocol)) {
+      return null;
+    }
+    url.hash = "";
+    return url.toString();
+  } catch (error) {
+    return null;
+  }
+};
+
 const guessCoverExtension = (contentType = "", remoteUrl = "") => {
   const baseContentType = contentType.split(";")[0]?.trim().toLowerCase();
   const typeMap = new Map([
@@ -313,6 +331,11 @@ const findCachedCover = async (baseName) => {
 };
 
 const downloadCoverToDisk = async (remoteUrl, baseName) => {
+  const normalizedUrl = normalizeHttpUrl(remoteUrl);
+  if (!normalizedUrl) {
+    throw new Error("Некорректный адрес обложки");
+  }
+
   if (!isFetchAvailable) {
     throw new Error("Загрузка обложек недоступна в этой среде");
   }
@@ -321,7 +344,7 @@ const downloadCoverToDisk = async (remoteUrl, baseName) => {
   const timeoutId = setTimeout(() => controller.abort(), 8000);
 
   try {
-    const response = await fetch(remoteUrl, { signal: controller.signal });
+    const response = await fetch(normalizedUrl, { signal: controller.signal });
     if (!response.ok) {
       throw new Error("Не удалось скачать обложку");
     }
@@ -331,8 +354,21 @@ const downloadCoverToDisk = async (remoteUrl, baseName) => {
       throw new Error("Ответ не содержит изображение");
     }
 
-    const arrayBuffer = await response.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
+    const declaredSize = Number(response.headers.get("content-length"));
+    if (Number.isFinite(declaredSize) && declaredSize > MAX_COVER_SIZE_BYTES) {
+      throw new Error("Обложка превышает допустимый размер");
+    }
+    const chunks = [];
+    let downloaded = 0;
+    for await (const chunk of response.body) {
+      downloaded += chunk.length;
+      if (downloaded > MAX_COVER_SIZE_BYTES) {
+        throw new Error("Обложка превышает допустимый размер");
+      }
+      chunks.push(chunk);
+    }
+
+    const buffer = Buffer.concat(chunks);
     const extension = guessCoverExtension(contentType, remoteUrl);
     const filename = `${baseName}${extension}`;
     const filePath = path.join(COVER_CACHE_DIR, filename);
@@ -539,7 +575,7 @@ app.use(cors());
 // получали ошибку 405 при попытке обратиться к API авторизации с других
 // источников.
 app.options("*", cors());
-app.use(express.json());
+app.use(express.json({ limit: MAX_JSON_BODY_SIZE }));
 app.use(morgan("tiny"));
 app.use(
   "/covers",
@@ -555,6 +591,14 @@ const authLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: { message: "Слишком много попыток. Попробуйте позже." },
+});
+
+const coverCacheLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Слишком много попыток загрузки обложек. Попробуйте позже." },
 });
 
 app.use(
@@ -755,20 +799,26 @@ app.get(
 
 app.post(
   "/covers/cache",
+  coverCacheLimiter,
   asyncHandler(async (req, res) => {
     const { url, key } = req.body || {};
     if (!url || typeof url !== "string") {
       return res.status(400).json({ message: "Не указан URL обложки" });
     }
 
-    const normalizedKey = normalizeCoverKey(key || url) || crypto.randomUUID();
+    const normalizedUrl = normalizeHttpUrl(url);
+    if (!normalizedUrl) {
+      return res.status(400).json({ message: "Некорректный адрес обложки" });
+    }
+
+    const normalizedKey = normalizeCoverKey(key || normalizedUrl) || crypto.randomUUID();
     const existing = await findCachedCover(normalizedKey);
     if (existing) {
       return res.json({ localUrl: buildPublicCoverUrl(existing, req) });
     }
 
     try {
-      const filename = await downloadCoverToDisk(url, normalizedKey);
+      const filename = await downloadCoverToDisk(normalizedUrl, normalizedKey);
       res.json({ localUrl: buildPublicCoverUrl(filename, req) });
     } catch (error) {
       console.warn("Не удалось сохранить обложку", error.message);
