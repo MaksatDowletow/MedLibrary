@@ -261,6 +261,8 @@
     const BOOK_CACHE_VERSION = '4.0.0';
     const BOOK_CACHE_TTL = 1000 * 60 * 60 * 12; // 12 hours
     const excelSources = ['Book.xlsx'];
+    const LOCAL_COVER_DIR = 'data/covers';
+    const LOCAL_COVER_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp', '.bmp'];
     const fallbackCoverImages = [
       'https://placehold.co/600x800/0d47a1/ffffff?text=Medical+Book',
       'https://placehold.co/600x800/1364c8/ffffff?text=Health+Library',
@@ -850,6 +852,7 @@
       if (!coverValue && rowIndex !== null) {
         coverValue = getExcelCover(rowIndex);
       }
+      const coverData = resolveCoverValue(coverValue, title, author, specialty);
       return {
         title,
         author,
@@ -861,7 +864,8 @@
         specialty,
         link: sanitizedLink,
         hasExternalLink,
-        cover: resolveCoverValue(coverValue, title, author, specialty)
+        cover: coverData.url,
+        coverCandidates: coverData.candidates
       };
     }
 
@@ -883,7 +887,6 @@
 
     function resolveCoverValue(value, title, author, specialty) {
       let source = value;
-      const fallbackKey = [title, author, specialty].filter(Boolean).join(' | ');
       if (typeof source === 'string') {
         const trimmed = source.trim();
         if (!trimmed) {
@@ -905,7 +908,27 @@
           source = trimmed;
         }
       }
-      return sanitizeUrl(source, getFallbackCover(fallbackKey));
+
+      const fallbackKey = [title, author, specialty].filter(Boolean).join(' | ');
+      const sanitized = sanitizeUrl(source, '');
+      const localCandidates = sanitized ? [] : buildLocalCoverCandidates(source);
+      const selectedCover = sanitized || localCandidates[0] || getFallbackCover(fallbackKey);
+
+      return { url: selectedCover, candidates: localCandidates };
+    }
+
+    function buildLocalCoverCandidates(source) {
+      const raw = (source || '').trim();
+      if (!raw || /^(https?:|data:image|blob:)/i.test(raw) || /[\\/]/.test(raw)) {
+        return [];
+      }
+
+      const base = raw.replace(/[^\w-]/g, '');
+      if (!base || base.includes('.')) {
+        return [];
+      }
+
+      return LOCAL_COVER_EXTENSIONS.map((ext) => `./${LOCAL_COVER_DIR}/${base}${ext}`);
     }
 
     function getExcelCover(rowIndex) {
@@ -1231,7 +1254,8 @@
       const safePages = escapeHtml(book.pages || '—');
       const safeYear = escapeHtml(book.year || dict.cardYear);
       const safeSpecialty = escapeHtml(specialty);
-      const coverSource = escapeHtml(book.cover || getFallbackCover(book.title || book.author || specialty || 'default'));
+      const fallbackCover = getFallbackCover(book.title || book.author || specialty || 'default');
+      const coverSource = escapeHtml(book.cover || fallbackCover);
       const coverQuery = [book.title, book.author, book.specialty]
         .filter((value) => Boolean(value && value.trim()))
         .join(' ')
@@ -1283,6 +1307,22 @@
         image.dataset.coverQuery = coverQuery;
         image.dataset.coverTitle = book.title || '';
         image.dataset.coverAuthor = book.author || '';
+      }
+      if (image) {
+        const candidates = Array.isArray(book.coverCandidates)
+          ? book.coverCandidates.slice(1)
+          : [];
+        image.addEventListener('error', () => {
+          const next = candidates.shift();
+          if (next) {
+            image.src = next;
+            return;
+          }
+          if (image.src !== fallbackCover) {
+            image.src = fallbackCover;
+            image.dataset.coverHydrated = 'true';
+          }
+        });
       }
       return article;
     }
