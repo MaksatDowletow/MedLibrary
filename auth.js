@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initRegisterForm(apiBase);
   const refreshSession = initLoginForm(apiBase);
   initGoogleIdentity(apiBase, refreshSession);
+  initSupportDialogs(apiBase);
 });
 
 function initRegisterForm(apiBase) {
@@ -424,6 +425,106 @@ function initGoogleIdentity(apiBase, refreshSession = () => {}) {
   }
 }
 
+function initSupportDialogs(apiBase) {
+  const forgotModal = createModalController(
+    document.getElementById("forgotPasswordModal")
+  );
+  const resendModal = createModalController(
+    document.getElementById("resendVerificationModal")
+  );
+
+  document
+    .getElementById("forgotPasswordTrigger")
+    ?.addEventListener("click", () => forgotModal.open());
+  document
+    .getElementById("resendEmailTrigger")
+    ?.addEventListener("click", () => resendModal.open());
+
+  initRecoveryForm({
+    formId: "forgotPasswordForm",
+    emailInputId: "forgot-password-email",
+    submitId: "forgot-password-submit",
+    statusId: "forgotPasswordMessage",
+    endpoint: buildEndpoint(apiBase, "/password/forgot"),
+    successMessage:
+      "Если email зарегистрирован, мы отправили ссылку для смены пароля.",
+    modalController: forgotModal,
+  });
+
+  initRecoveryForm({
+    formId: "resendVerificationForm",
+    emailInputId: "resend-email",
+    submitId: "resend-email-submit",
+    statusId: "resendEmailMessage",
+    endpoint: buildEndpoint(apiBase, "/email/resend"),
+    successMessage:
+      "Если аккаунт зарегистрирован, письмо отправлено повторно.",
+    modalController: resendModal,
+  });
+}
+
+function initRecoveryForm(options) {
+  const {
+    formId,
+    emailInputId,
+    submitId,
+    statusId,
+    endpoint,
+    successMessage,
+    modalController,
+  } = options;
+
+  const form = document.getElementById(formId);
+  if (!form) {
+    return;
+  }
+
+  const emailInput = document.getElementById(emailInputId);
+  const submitButton = document.getElementById(submitId);
+  const statusElement = document.getElementById(statusId);
+
+  modalController?.onOpen?.(() => {
+    clearStatus(statusElement);
+    form.reset();
+    emailInput?.focus();
+  });
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const email = emailInput?.value.trim();
+    if (!isEmailValid(email)) {
+      setStatus(statusElement, "Введите корректный email", "error");
+      return;
+    }
+
+    setStatus(statusElement, "Идёт отправка…", "pending");
+    setButtonLoading(submitButton, true);
+    try {
+      const data = await apiRequest(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      setStatus(
+        statusElement,
+        data?.message || successMessage || "Запрос отправлен",
+        "success",
+        { autoClear: true }
+      );
+      form.reset();
+      window.setTimeout(() => modalController?.close?.(), 1400);
+    } catch (error) {
+      setStatus(
+        statusElement,
+        error?.message || "Не удалось отправить запрос",
+        "error"
+      );
+    } finally {
+      setButtonLoading(submitButton, false);
+    }
+  });
+}
+
 function clearStatus(element) {
   if (!element) {
     return;
@@ -694,6 +795,84 @@ function setButtonLoading(button, isLoading, loadingText = "Идёт отпра�
   button.disabled = wasDisabled;
   delete button.dataset.originalDisabled;
   delete button.dataset.originalText;
+}
+
+function createModalController(modalElement) {
+  if (!modalElement) {
+    return {
+      open: () => {},
+      close: () => {},
+      onOpen: () => {},
+      onClose: () => {},
+    };
+  }
+
+  const openListeners = new Set();
+  const closeListeners = new Set();
+  const dialog = modalElement.querySelector(".modal__dialog");
+  const closeButton = modalElement.querySelector("[data-modal-close]");
+
+  const emit = (listeners) => {
+    listeners.forEach((listener) => {
+      try {
+        listener();
+      } catch (error) {
+        console.error("Ошибка в обработчике модалки", error);
+      }
+    });
+  };
+
+  const close = () => {
+    if (modalElement.hidden) {
+      return;
+    }
+    modalElement.hidden = true;
+    modalElement.dataset.open = "false";
+    document.removeEventListener("keydown", handleEscape);
+    emit(closeListeners);
+  };
+
+  const handleEscape = (event) => {
+    if (event.key === "Escape") {
+      close();
+    }
+  };
+
+  const handleBackdropClick = (event) => {
+    if (event.target === modalElement) {
+      close();
+    }
+  };
+
+  const open = () => {
+    modalElement.hidden = false;
+    modalElement.dataset.open = "true";
+    document.addEventListener("keydown", handleEscape);
+    emit(openListeners);
+    const focusTarget =
+      dialog?.querySelector("input, button, [tabindex]") || dialog;
+    focusTarget?.focus?.();
+  };
+
+  modalElement.addEventListener("click", handleBackdropClick);
+  closeButton?.addEventListener("click", close);
+
+  return {
+    open,
+    close,
+    onOpen(listener) {
+      if (typeof listener === "function") {
+        openListeners.add(listener);
+      }
+      return () => openListeners.delete(listener);
+    },
+    onClose(listener) {
+      if (typeof listener === "function") {
+        closeListeners.add(listener);
+      }
+      return () => closeListeners.delete(listener);
+    },
+  };
 }
 
 function initPasswordToggle(toggleButton, inputs = []) {
