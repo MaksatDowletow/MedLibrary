@@ -856,3 +856,234 @@ main {
   .site-footer__content { flex-direction: column; align-items: flex-start; }
   .gallery-slider__control { display: none; }
 }
+
+/* Book catalog layout */
+.book-shell { display: grid; gap: 1.5rem; padding-block: clamp(1.5rem, 4vw, 2.5rem); }
+
+.language-switcher { display: flex; align-items: center; gap: 0.5rem; }
+
+.language-switcher label { font-weight: 600; color: var(--muted); }
+
+.filter-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: clamp(1.1rem, 3vw, 1.75rem);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 1rem;
+}
+
+.filter-panel__head { display: grid; gap: 0.35rem; }
+.filter-panel__title { margin: 0; font-size: clamp(1.35rem, 3vw, 1.7rem); }
+.filter-panel__subtitle { margin: 0; color: var(--muted); }
+
+.filter-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.85rem;
+}
+
+.filter-field { display: grid; gap: 0.35rem; font-weight: 600; color: var(--muted); }
+
+.filter-field input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.75rem 0.85rem;
+  font-size: 1rem;
+  color: var(--text);
+  background: #fff;
+  box-shadow: inset 0 1px 0 rgba(15, 23, 42, 0.04);
+}
+
+.filter-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+.status-bar { display: flex; align-items: center; gap: 0.6rem; }
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--primary);
+  font-weight: 700;
+  border: 1px solid rgba(26, 108, 255, 0.25);
+}
+
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.book-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1rem;
+  display: grid;
+  gap: 0.85rem;
+  box-shadow: var(--shadow);
+}
+
+.book-card__header { display: grid; gap: 0.25rem; }
+
+.book-card__title { margin: 0; font-size: 1.15rem; color: var(--text); }
+
+.book-card__meta { color: var(--muted); margin: 0; }
+
+.book-card__details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.5rem;
+  font-size: 0.96rem;
+  color: var(--muted);
+}
+
+.book-card__label { color: var(--text); font-weight: 700; margin-right: 0.35rem; }
+
+.badge-grid { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--primary);
+  border: 1px solid rgba(26, 108, 255, 0.2);
+  font-weight: 700;
+}
+
+.badge__icon { opacity: 0.65; }
+
+.book-card__actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+.book-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 12px;
+  text-decoration: none;
+  background: linear-gradient(120deg, var(--primary), var(--primary-2));
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 12px 25px rgba(26, 108, 255, 0.18);
+  border: 1px solid rgba(26, 108, 255, 0.18);
+}
+
+.book-card__link:hover { transform: translateY(-1px); }
+.book-card__link[aria-disabled="true"] { opacity: 0.65; cursor: not-allowed; box-shadow: none; }
+
+.empty-state {
+  grid-column: 1 / -1;
+  background: rgba(26, 108, 255, 0.08);
+  color: var(--primary);
+  padding: 2rem;
+  border-radius: 24px;
+  text-align: center;
+  font-weight: 600;
+}
+
+@media (max-width: 720px) {
+  .book-card__details { grid-template-columns: 1fr; }
+}
+
+/* SQLite catalog layout */
+.sqlite-shell { display: grid; gap: 1.5rem; padding-block: clamp(1.5rem, 4vw, 2.5rem); }
+
+.sqlite-hero {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+.sqlite-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem; margin-top: 0.5rem; }
+
+.sqlite-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 0.75rem;
+}
+
+.panel-title { margin: 0; font-weight: 800; font-size: 1.05rem; }
+.panel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.85rem; }
+.panel-field { display: grid; gap: 0.3rem; font-weight: 600; color: var(--muted); }
+
+.panel-field input,
+.panel-field select {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.7rem 0.9rem;
+  font-size: 1rem;
+  color: var(--text);
+  background: #fff;
+  box-shadow: inset 0 1px 0 rgba(15, 23, 42, 0.04);
+}
+
+.panel-hint { margin: 0; color: var(--muted); }
+
+.sqlite-category-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+.category-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface-soft);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.category-chip--active { border-color: rgba(26, 108, 255, 0.35); box-shadow: 0 12px 25px rgba(26, 108, 255, 0.12); }
+.category-chip__title { font-weight: 700; color: var(--text); }
+.category-chip__count { color: var(--muted); font-size: 0.9rem; }
+
+.sqlite-book-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+
+.sqlite-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1rem;
+  display: grid;
+  gap: 0.6rem;
+  box-shadow: var(--shadow);
+}
+
+.sqlite-card__title { margin: 0; font-size: 1.05rem; }
+.sqlite-card__subtitle { margin: 0; color: var(--muted); }
+
+.sqlite-card__meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.35rem 0.65rem;
+  margin: 0;
+}
+
+.sqlite-card__meta dt { color: var(--muted); font-weight: 600; }
+.sqlite-card__meta dd { margin: 0; font-weight: 700; }
+
+.sqlite-card__tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.tag { display: inline-flex; align-items: center; padding: 0.3rem 0.7rem; border-radius: 999px; background: var(--surface-soft); color: var(--primary); border: 1px solid rgba(26, 108, 255, 0.2); font-weight: 600; }
+
+.sqlite-placeholder {
+  padding: 1rem;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  color: var(--muted);
+  background: var(--surface-soft);
+}

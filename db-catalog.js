@@ -1,3 +1,159 @@
+const translations = {
+  tm: {
+    pageTitle: "BD katalogy — MedLibrary",
+    brandEyebrow: "MedLibrary",
+    brandTitle: "Bazada ýerleşýän katalog",
+    brandLead: "dbMedicalLib.sqlite – kategoriýalar, kitaplar we çalt gözleg",
+    navHome: "Baş sahypa",
+    navCategories: "Kategoriýalar",
+    navJson: "JSON katalogy",
+    navDb: "BD katalogy",
+    languageLabel: "Dil",
+    heroTitle: "Integrirlenen kategoriýalar we kitaplar",
+    heroSubtitle:
+      "Maglumatlar gönüden-göni dbMedicalLib.sqlite bazasyndan alynýar: ady, awtory, kategoriýasy, dili we ýyly boýunça filtrleň.",
+    statsBooks: "Kitaplar",
+    statsCategories: "Kategoriýalar",
+    panelTitle: "Gözleg",
+    freeSearchLabel: "Erkin gözleg",
+    freeSearchPlaceholder: "Ady, awtor, ISBN...",
+    categoryLabel: "Kategoriýa",
+    categoryAny: "Ähli kategoriýalar",
+    languageLabelShort: "Dil",
+    languageAny: "Islendik",
+    statusLoading: "Katalog ýüklenýär...",
+    catalogEmpty: "Katalog boş",
+    statusFound: "{shown} / {total} kitap görkezilýär",
+    filterNoResults: "Görnüşlere laýyk kitap tapylmady",
+    untitled: "Ady ýok",
+    metaAuthor: "Awtor",
+    metaPublisher: "Neşirçi",
+    metaCity: "Şäher",
+    metaYear: "Ýyl",
+    metaPages: "Sah.",
+    metaPagesLabel: "Sahypa",
+    metaLanguage: "Dil",
+    metaIsbn: "ISBN",
+    metaUdk: "UDK",
+    metaBbk: "BBK",
+    categoriesEmpty: "Kategoriýalar tapylmady",
+    categoryCount: "{count} kitap",
+    categoriesTitle: "Kategoriýalar",
+    categoriesSubtitle: "Netijäni çalt gysgatmak üçin kategoriýa boýunça saýlaň.",
+    categoriesLoading: "Ugry sanawyny ýükleýäris...",
+    booksTitle: "Kitaplar",
+    booksSubtitle: "Saýlanan süzgüçlere görä görkezilýär.",
+    booksPlaceholder: "Bazadan maglumatlary garaşýarys...",
+    loadError: "dbMedicalLib.sqlite bilen maglumat ýüklenmedi",
+    optionAny: "Islendik",
+    footerTitle: "© 2025 MedLibrary",
+    footerText: "Lukmançylyk elektron kitaphanasy. Ähli hukuklar goralan.",
+  },
+  ru: {
+    pageTitle: "Каталог БД — MedLibrary",
+    brandEyebrow: "MedLibrary",
+    brandTitle: "Каталог из базы данных",
+    brandLead: "dbMedicalLib.sqlite — категории, книги и быстрый поиск",
+    navHome: "Главная",
+    navCategories: "Категории",
+    navJson: "Каталог JSON",
+    navDb: "Каталог БД",
+    languageLabel: "Язык",
+    heroTitle: "Интегрированные категории и книги",
+    heroSubtitle:
+      "Данные берутся напрямую из dbMedicalLib.sqlite. Фильтруйте по названию, авторам, категориям, языку и году.",
+    statsBooks: "Книг",
+    statsCategories: "Категорий",
+    panelTitle: "Поиск",
+    freeSearchLabel: "Свободный поиск",
+    freeSearchPlaceholder: "Название, автор, ISBN...",
+    categoryLabel: "Категория",
+    categoryAny: "Все категории",
+    languageLabelShort: "Язык",
+    languageAny: "Любой",
+    statusLoading: "Загружаем каталог...",
+    catalogEmpty: "Каталог пуст",
+    statusFound: "Найдено {shown} из {total} книг",
+    filterNoResults: "Нет совпадений по заданным фильтрам.",
+    untitled: "Без названия",
+    metaAuthor: "Автор",
+    metaPublisher: "Издатель",
+    metaCity: "Город",
+    metaYear: "Год",
+    metaPages: "стр.",
+    metaPagesLabel: "Страниц",
+    metaLanguage: "Язык",
+    metaIsbn: "ISBN",
+    metaUdk: "УДК",
+    metaBbk: "ББК",
+    categoriesEmpty: "Категории не найдены",
+    categoryCount: "{count} книг",
+    categoriesTitle: "Категории",
+    categoriesSubtitle: "Щёлкните по категории, чтобы сузить выдачу.",
+    categoriesLoading: "Загружаем список направлений...",
+    booksTitle: "Книги",
+    booksSubtitle: "Показываем совпадения по выбранным фильтрам.",
+    booksPlaceholder: "Ожидаем данные из базы...",
+    loadError: "Не удалось загрузить dbMedicalLib.sqlite",
+    optionAny: "Любой",
+    footerTitle: "© 2025 MedLibrary",
+    footerText: "Медицинская электронная библиотека. Все права защищены.",
+  },
+  en: {
+    pageTitle: "DB catalogue — MedLibrary",
+    brandEyebrow: "MedLibrary",
+    brandTitle: "Database catalogue",
+    brandLead: "dbMedicalLib.sqlite — categories, books, and fast filters",
+    navHome: "Home",
+    navCategories: "Categories",
+    navJson: "JSON catalog",
+    navDb: "DB catalog",
+    languageLabel: "Language",
+    heroTitle: "Integrated categories and books",
+    heroSubtitle:
+      "Data comes directly from dbMedicalLib.sqlite. Filter by title, author, category, language, and year.",
+    statsBooks: "Books",
+    statsCategories: "Categories",
+    panelTitle: "Search",
+    freeSearchLabel: "Free search",
+    freeSearchPlaceholder: "Title, author, ISBN...",
+    categoryLabel: "Category",
+    categoryAny: "All categories",
+    languageLabelShort: "Language",
+    languageAny: "Any",
+    statusLoading: "Loading catalog...",
+    catalogEmpty: "Catalog is empty",
+    statusFound: "Showing {shown} of {total} books",
+    filterNoResults: "No matches for current filters.",
+    untitled: "Untitled",
+    metaAuthor: "Author",
+    metaPublisher: "Publisher",
+    metaCity: "City",
+    metaYear: "Year",
+    metaPages: "pages",
+    metaPagesLabel: "Pages",
+    metaLanguage: "Language",
+    metaIsbn: "ISBN",
+    metaUdk: "UDC",
+    metaBbk: "BBK",
+    categoriesEmpty: "No categories found",
+    categoryCount: "{count} books",
+    categoriesTitle: "Categories",
+    categoriesSubtitle: "Click a category to narrow the list.",
+    categoriesLoading: "Loading categories...",
+    booksTitle: "Books",
+    booksSubtitle: "Filtered results.",
+    booksPlaceholder: "Waiting for data from the database...",
+    loadError: "Failed to load dbMedicalLib.sqlite",
+    optionAny: "Any",
+    footerTitle: "© 2025 MedLibrary",
+    footerText: "Medical digital library. All rights reserved.",
+  },
+};
+
+let activeLang =
+  document.documentElement.dataset.lang || document.documentElement.lang || "tm";
+
 const state = {
   catalog: null,
   filteredBooks: [],
@@ -8,6 +164,40 @@ const state = {
 
 const elements = {};
 let apiBase = "";
+
+const t = (key) =>
+  translations[activeLang]?.[key] ??
+  translations.tm?.[key] ??
+  translations.ru?.[key] ??
+  "";
+
+const applyTranslations = () => {
+  document.documentElement.lang = activeLang;
+  document.documentElement.dataset.lang = activeLang;
+  document.title = t("pageTitle") || document.title;
+
+  document.querySelectorAll("[data-i18n]").forEach((node) => {
+    const key = node.dataset.i18n;
+    const value = t(key);
+    if (value) {
+      node.textContent = value;
+    }
+  });
+
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((node) => {
+    const key = node.dataset.i18nPlaceholder;
+    const value = t(key);
+    if (value) {
+      node.placeholder = value;
+    }
+  });
+
+  if (state.catalog) {
+    populateFilters();
+    updateStatus();
+    renderBooks();
+  }
+};
 
 const normalizeValue = (value) =>
   value == null
@@ -31,7 +221,7 @@ const resolveApiBase = () => {
 
 const formatPages = (pages) => {
   if (!pages) return "";
-  return `${pages} стр.`;
+  return `${pages} ${t("metaPages")}`;
 };
 
 const updateStatus = () => {
@@ -39,10 +229,11 @@ const updateStatus = () => {
   const total = state.catalog.books.length;
   const shown = state.filteredBooks.length;
   if (total === 0) {
-    elements.filterStatus.textContent = "Каталог пуст";
+    elements.filterStatus.textContent = t("catalogEmpty");
     return;
   }
-  elements.filterStatus.textContent = `Найдено ${shown} из ${total} книг`;
+  elements.filterStatus.textContent =
+    t("statusFound").replace("{shown}", shown).replace("{total}", total);
 };
 
 const renderBooks = () => {
@@ -52,7 +243,7 @@ const renderBooks = () => {
   if (!state.filteredBooks.length) {
     const placeholder = document.createElement("div");
     placeholder.className = "sqlite-placeholder";
-    placeholder.textContent = "Нет совпадений по заданным фильтрам.";
+    placeholder.textContent = t("filterNoResults");
     elements.bookGrid.appendChild(placeholder);
     return;
   }
@@ -65,7 +256,7 @@ const renderBooks = () => {
 
     const title = document.createElement("h4");
     title.className = "sqlite-card__title";
-    title.textContent = book.titleRu || book.titleTm || "Без названия";
+    title.textContent = book.titleRu || book.titleTm || t("untitled");
     card.appendChild(title);
 
     if (book.titleTm && book.titleRu && book.titleTm !== book.titleRu) {
@@ -79,15 +270,15 @@ const renderBooks = () => {
     metaList.className = "sqlite-card__meta";
 
     const metaItems = [
-      ["Автор", book.authorRu || book.authorTm],
-      ["Издатель", book.publisher],
-      ["Город", book.city],
-      ["Год", book.year],
-      ["Страниц", formatPages(book.pages)],
-      ["Язык", book.language],
-      ["ISBN", book.isbn],
-      ["УДК", book.udk],
-      ["ББК", book.bbk],
+      [t("metaAuthor"), book.authorRu || book.authorTm],
+      [t("metaPublisher"), book.publisher],
+      [t("metaCity"), book.city],
+      [t("metaYear"), book.year],
+      [t("metaPagesLabel"), formatPages(book.pages)],
+      [t("metaLanguage"), book.language],
+      [t("metaIsbn"), book.isbn],
+      [t("metaUdk"), book.udk],
+      [t("metaBbk"), book.bbk],
     ];
 
     metaItems.forEach(([label, value]) => {
@@ -137,7 +328,7 @@ const renderCategoryCards = () => {
   if (!state.catalog.categories.length) {
     const placeholder = document.createElement("p");
     placeholder.className = "muted";
-    placeholder.textContent = "Категории не найдены";
+    placeholder.textContent = t("categoriesEmpty");
     elements.categoryList.appendChild(placeholder);
     return;
   }
@@ -156,11 +347,11 @@ const renderCategoryCards = () => {
 
     const title = document.createElement("span");
     title.className = "category-chip__title";
-    title.textContent = category.nameRu || category.nameTm || "Без названия";
+    title.textContent = category.nameRu || category.nameTm || t("untitled");
 
     const count = document.createElement("span");
     count.className = "category-chip__count";
-    count.textContent = `${category.count} книг`;
+    count.textContent = t("categoryCount").replace("{count}", category.count);
 
     button.append(title, count);
     button.addEventListener("click", () => {
@@ -227,7 +418,12 @@ const populateFilters = () => {
   }
 
   if (elements.categoryFilter) {
-    elements.categoryFilter.innerHTML = '<option value="">Все категории</option>';
+    const selected = elements.categoryFilter.value;
+    elements.categoryFilter.innerHTML = "";
+    const anyOption = document.createElement("option");
+    anyOption.value = "";
+    anyOption.textContent = t("categoryAny");
+    elements.categoryFilter.appendChild(anyOption);
     state.catalog.categories.forEach((category) => {
       const option = document.createElement("option");
       const normalized = normalizeCategoryValue(category);
@@ -235,10 +431,16 @@ const populateFilters = () => {
       option.textContent = category.nameRu || category.nameTm;
       elements.categoryFilter.appendChild(option);
     });
+    elements.categoryFilter.value = selected;
   }
 
   if (elements.languageFilter) {
-    elements.languageFilter.innerHTML = '<option value="">Любой</option>';
+    const selected = elements.languageFilter.value;
+    elements.languageFilter.innerHTML = "";
+    const anyOption = document.createElement("option");
+    anyOption.value = "";
+    anyOption.textContent = t("languageAny");
+    elements.languageFilter.appendChild(anyOption);
     const languages = Array.from(
       new Set(
         state.catalog.books
@@ -262,6 +464,7 @@ const populateFilters = () => {
         option.textContent = display;
         elements.languageFilter.appendChild(option);
       });
+    elements.languageFilter.value = selected;
   }
 
   renderCategoryCards();
@@ -285,7 +488,7 @@ const attachEvents = () => {
 
 const fetchCatalog = async () => {
   if (!elements.filterStatus) return;
-  elements.filterStatus.textContent = "Загружаем каталог...";
+  elements.filterStatus.textContent = t("statusLoading");
 
   try {
     const endpoint = apiBase ? `${apiBase}/db/catalog` : "/db/catalog";
@@ -296,17 +499,15 @@ const fetchCatalog = async () => {
     const catalog = await response.json();
     state.catalog = catalog;
     state.filteredBooks = catalog.books;
-    populateFilters();
-    updateStatus();
-    renderBooks();
+    applyTranslations();
   } catch (error) {
     console.warn(error);
-    elements.filterStatus.textContent = "Не удалось загрузить каталог";
+    elements.filterStatus.textContent = t("loadError");
     if (elements.bookGrid) {
       elements.bookGrid.innerHTML = "";
       const notice = document.createElement("div");
       notice.className = "sqlite-placeholder";
-      notice.textContent = "Ошибка загрузки данных из dbMedicalLib.sqlite";
+      notice.textContent = t("loadError");
       elements.bookGrid.appendChild(notice);
     }
     return;
@@ -322,12 +523,24 @@ const init = () => {
   elements.bookGrid = document.querySelector("[data-book-grid]");
   elements.booksCount = document.querySelector("[data-books-count]");
   elements.categoriesCount = document.querySelector("[data-categories-count]");
+  elements.languageSelect = document.getElementById("language-select");
 
   apiBase = resolveApiBase();
   if (document.body) {
     document.body.dataset.apiBase = apiBase;
   }
 
+  if (elements.languageSelect) {
+    if (elements.languageSelect.value !== activeLang) {
+      elements.languageSelect.value = activeLang;
+    }
+    elements.languageSelect.addEventListener("change", (event) => {
+      activeLang = event.target.value || "tm";
+      applyTranslations();
+    });
+  }
+
+  applyTranslations();
   attachEvents();
   fetchCatalog();
 };
