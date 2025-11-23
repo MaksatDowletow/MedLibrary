@@ -23,7 +23,7 @@
             background: radial-gradient(circle at top, #dbeafe, #f8fafc 55%);
         }
         .auth-wrapper {
-            width: min(420px, 100%);
+            width: min(480px, 100%);
             background: #fff;
             padding: 2rem;
             border-radius: 24px;
@@ -33,11 +33,47 @@
             margin-top: 0;
             text-align: center;
         }
-        form {
+        .auth-subtitle {
+            margin: 0.25rem 0 1.5rem;
+            text-align: center;
+            color: #475569;
+        }
+        .auth-switcher {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .auth-switcher__tab {
+            padding: 0.75rem;
+            border-radius: 14px;
+            border: 1px solid #d0d5dd;
+            background: #f8fafc;
+            color: #0f172a;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .auth-switcher__tab[aria-selected="true"] {
+            background: linear-gradient(135deg, #2563eb, #22d3ee);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35);
+        }
+        .auth-panel {
             display: flex;
             flex-direction: column;
             gap: 0.85rem;
             margin-bottom: 1.5rem;
+        }
+        .auth-panel[hidden] {
+            display: none;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            margin: 0;
         }
         input, button {
             width: 100%;
@@ -261,48 +297,60 @@
     </style>
 </head>
 <body data-google-client-id="815759578613-pf7pkrfsc0u70edgykqvku3m0p1wq3p2.apps.googleusercontent.com">
-    <div class="auth-wrapper">
+    <div class="auth-wrapper" data-active-view="login">
         <h1>Регистрация и вход</h1>
-        <form id="registerForm">
-            <input type="email" id="register-email" placeholder="Email" autocomplete="email" required>
-            <div class="password-field">
-                <input type="password" id="register-password" placeholder="Пароль (мин. 6 символов)" minlength="6" autocomplete="new-password" required>
-                <button type="button" class="password-toggle" data-target="register-password register-password-confirm">Показать пароль</button>
-            </div>
-            <div class="hint-block" aria-live="polite">
-                <p class="field-hint">Пароль должен содержать:</p>
-                <ul class="hint-list" id="passwordRequirements">
-                    <li data-requirement="length">Не менее 6 символов</li>
-                    <li data-requirement="digit">Хотя бы одну цифру</li>
-                    <li data-requirement="letter">Хотя бы одну букву</li>
-                    <li data-requirement="special">Спецсимвол (например, !@#$%)</li>
-                </ul>
-            </div>
-            <input type="password" id="register-password-confirm" placeholder="Подтвердите пароль" autocomplete="new-password" required>
-            <p class="field-hint" id="confirmHint" aria-live="polite"></p>
-            <button type="submit" id="register">Зарегистрироваться</button>
-            <p id="registerMessage" class="message" aria-live="polite"></p>
-        </form>
+        <p class="auth-subtitle">Выберите, что хотите сделать: создать аккаунт или войти в существующий.</p>
+        <div class="auth-switcher" role="tablist" aria-label="Переключатель между входом и регистрацией">
+            <button type="button" role="tab" id="loginTab" class="auth-switcher__tab" data-auth-switch="login" aria-selected="true" aria-controls="loginPanel">Вход</button>
+            <button type="button" role="tab" id="registerTab" class="auth-switcher__tab" data-auth-switch="register" aria-selected="false" aria-controls="registerPanel">Регистрация</button>
+        </div>
 
-        <form id="loginForm">
-            <input type="email" id="login-email" placeholder="Email" autocomplete="email" required>
-            <div class="password-field">
-                <input type="password" id="login-password" placeholder="Пароль" minlength="6" autocomplete="current-password" required>
-                <button type="button" class="password-toggle" data-target="login-password">Показать пароль</button>
-            </div>
-            <button type="submit" id="login">Войти</button>
-            <div class="support-links">
-                <button type="button" class="link-button" id="forgotPasswordTrigger">Забыли пароль?</button>
-                <button type="button" class="link-button" id="resendEmailTrigger">Отправить письмо повторно</button>
-            </div>
-            <div class="divider"><span>или</span></div>
-            <div class="provider-card">
-                <h2>Вход через Google</h2>
-                <div id="google-signin-button" class="google-signin-placeholder" data-loading-text="Подключаем Google Identity..." aria-live="polite"></div>
-                <p class="message">Подтвердите учетную запись Google, и мы создадим профиль автоматически.</p>
-            </div>
-            <p id="loginMessage" class="message" aria-live="polite"></p>
-        </form>
+        <section class="auth-panel" id="loginPanel" role="tabpanel" aria-labelledby="loginTab" data-auth-panel="login">
+            <form id="loginForm">
+                <input type="email" id="login-email" placeholder="Email" autocomplete="email" required>
+                <div class="password-field">
+                    <input type="password" id="login-password" placeholder="Пароль" minlength="6" autocomplete="current-password" required>
+                    <button type="button" class="password-toggle" data-target="login-password">Показать пароль</button>
+                </div>
+                <button type="submit" id="login">Войти</button>
+                <div class="support-links">
+                    <button type="button" class="link-button" id="forgotPasswordTrigger">Забыли пароль?</button>
+                    <button type="button" class="link-button" id="resendEmailTrigger">Отправить письмо повторно</button>
+                </div>
+                <div class="divider"><span>или</span></div>
+                <div class="provider-card">
+                    <h2>Вход через Google</h2>
+                    <div id="google-signin-button" class="google-signin-placeholder" data-loading-text="Подключаем Google Identity..." aria-live="polite"></div>
+                    <p class="message">Подтвердите учетную запись Google, и мы создадим профиль автоматически.</p>
+                </div>
+                <p id="loginMessage" class="message" aria-live="polite"></p>
+                <button type="button" class="link-button" data-auth-switch-target="register">Нет аккаунта? Зарегистрируйтесь</button>
+            </form>
+        </section>
+
+        <section class="auth-panel" id="registerPanel" role="tabpanel" aria-labelledby="registerTab" data-auth-panel="register" hidden>
+            <form id="registerForm">
+                <input type="email" id="register-email" placeholder="Email" autocomplete="email" required>
+                <div class="password-field">
+                    <input type="password" id="register-password" placeholder="Пароль (мин. 6 символов)" minlength="6" autocomplete="new-password" required>
+                    <button type="button" class="password-toggle" data-target="register-password register-password-confirm">Показать пароль</button>
+                </div>
+                <div class="hint-block" aria-live="polite">
+                    <p class="field-hint">Пароль должен содержать:</p>
+                    <ul class="hint-list" id="passwordRequirements">
+                        <li data-requirement="length">Не менее 6 символов</li>
+                        <li data-requirement="digit">Хотя бы одну цифру</li>
+                        <li data-requirement="letter">Хотя бы одну букву</li>
+                        <li data-requirement="special">Спецсимвол (например, !@#$%)</li>
+                    </ul>
+                </div>
+                <input type="password" id="register-password-confirm" placeholder="Подтвердите пароль" autocomplete="new-password" required>
+                <p class="field-hint" id="confirmHint" aria-live="polite"></p>
+                <button type="submit" id="register">Зарегистрироваться</button>
+                <p id="registerMessage" class="message" aria-live="polite"></p>
+                <button type="button" class="link-button" data-auth-switch-target="login">Уже есть аккаунт? Войдите</button>
+            </form>
+        </section>
 
         <div class="session-state">
             <p id="sessionStatus" class="message" aria-live="polite"></p>

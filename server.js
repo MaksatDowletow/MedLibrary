@@ -27,6 +27,8 @@ const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "data");
 const USERS_FILE = process.env.USERS_FILE || path.join(DATA_DIR, "users.json");
 const BOOKS_FILE = process.env.BOOKS_FILE || path.join(DATA_DIR, "books.json");
 const SQLITE_DB_PATH = process.env.SQLITE_DB_PATH || path.join(__dirname, "dbMedicalLib.sqlite");
+const COVER_CACHE_DIR = process.env.COVER_CACHE_DIR || path.join(DATA_DIR, "covers");
+const ALLOWED_COVER_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp"];
 const GOOGLE_TOKEN_INFO_URL = "https://oauth2.googleapis.com/tokeninfo";
 const GOOGLE_FETCH_TIMEOUT = 10000;
 const isFetchAvailable = typeof fetch === "function";
@@ -246,6 +248,102 @@ const normalizeSqliteText = (value) => {
   return value.toString().replace(/\s+/g, " ").trim();
 };
 
+const normalizeCoverKey = (value = "") => {
+  const normalized = value
+    .toString()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+  return normalized || null;
+};
+
+const guessCoverExtension = (contentType = "", remoteUrl = "") => {
+  const baseContentType = contentType.split(";")[0]?.trim().toLowerCase();
+  const typeMap = new Map([
+    ["image/jpeg", ".jpg"],
+    ["image/jpg", ".jpg"],
+    ["image/png", ".png"],
+    ["image/webp", ".webp"],
+  ]);
+
+  if (typeMap.has(baseContentType)) {
+    return typeMap.get(baseContentType);
+  }
+
+  try {
+    const ext = path.extname(new URL(remoteUrl).pathname).toLowerCase();
+    if (ALLOWED_COVER_EXTENSIONS.includes(ext)) {
+      return ext;
+    }
+  } catch (error) {
+    // ignore
+  }
+
+  return ".jpg";
+};
+
+const buildPublicCoverUrl = (filename, req) => {
+  if (!filename) {
+    return "";
+  }
+  const host = req?.get("host");
+  const protocol = req?.protocol || "http";
+  const origin = host ? `${protocol}://${host}` : "";
+  return `${origin}/covers/${encodeURIComponent(filename)}`;
+};
+
+const findCachedCover = async (baseName) => {
+  if (!baseName) {
+    return null;
+  }
+
+  for (const ext of ALLOWED_COVER_EXTENSIONS) {
+    const filename = `${baseName}${ext}`;
+    const filePath = path.join(COVER_CACHE_DIR, filename);
+    try {
+      await fs.access(filePath);
+      return filename;
+    } catch (error) {
+      // try next extension
+    }
+  }
+
+  return null;
+};
+
+const downloadCoverToDisk = async (remoteUrl, baseName) => {
+  if (!isFetchAvailable) {
+    throw new Error("Загрузка обложек недоступна в этой среде");
+  }
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+  try {
+    const response = await fetch(remoteUrl, { signal: controller.signal });
+    if (!response.ok) {
+      throw new Error("Не удалось скачать обложку");
+    }
+
+    const contentType = response.headers.get("content-type") || "";
+    if (!contentType.startsWith("image/")) {
+      throw new Error("Ответ не содержит изображение");
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const extension = guessCoverExtension(contentType, remoteUrl);
+    const filename = `${baseName}${extension}`;
+    const filePath = path.join(COVER_CACHE_DIR, filename);
+    await fs.mkdir(COVER_CACHE_DIR, { recursive: true });
+    await fs.writeFile(filePath, buffer);
+    return filename;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+};
+
 const revokedTokens = new Map();
 
 const cleanupRevokedTokens = () => {
@@ -443,6 +541,13 @@ app.use(cors());
 app.options("*", cors());
 app.use(express.json());
 app.use(morgan("tiny"));
+app.use(
+  "/covers",
+  express.static(COVER_CACHE_DIR, {
+    maxAge: "7d",
+    immutable: true,
+  })
+);
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -645,6 +750,32 @@ app.get(
     const books = await loadBooksFromStore();
     const specialties = buildSpecialtyIndex(books);
     res.json({ specialties });
+  })
+);
+
+app.post(
+  "/covers/cache",
+  asyncHandler(async (req, res) => {
+    const { url, key } = req.body || {};
+    if (!url || typeof url !== "string") {
+      return res.status(400).json({ message: "Не указан URL обложки" });
+    }
+
+    const normalizedKey = normalizeCoverKey(key || url) || crypto.randomUUID();
+    const existing = await findCachedCover(normalizedKey);
+    if (existing) {
+      return res.json({ localUrl: buildPublicCoverUrl(existing, req) });
+    }
+
+    try {
+      const filename = await downloadCoverToDisk(url, normalizedKey);
+      res.json({ localUrl: buildPublicCoverUrl(filename, req) });
+    } catch (error) {
+      console.warn("Не удалось сохранить обложку", error.message);
+      res
+        .status(500)
+        .json({ message: error.message || "Не удалось сохранить обложку" });
+    }
   })
 );
 
