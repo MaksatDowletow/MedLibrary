@@ -1,10 +1,12 @@
 :root {
   color-scheme: light;
-  --page-bg: #f5f7fb;
+  --page-bg: radial-gradient(circle at 10% 20%, rgba(26, 108, 255, 0.08), transparent 32%),
+    radial-gradient(circle at 80% 0%, rgba(11, 146, 222, 0.06), transparent 28%),
+    #f6f7fb;
   --surface: #ffffff;
   --surface-soft: #eef2f7;
-  --text: #0f172a;
-  --muted: #4b5563;
+  --text: #0b1224;
+  --muted: #475569;
   --primary: #1a6cff;
   --primary-2: #5ea3ff;
   --border: #e2e8f0;
@@ -19,9 +21,7 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: radial-gradient(circle at 20% 20%, rgba(26, 108, 255, 0.08), transparent 32%),
-    radial-gradient(circle at 80% 0%, rgba(11, 146, 222, 0.08), transparent 30%),
-    var(--page-bg);
+  background: var(--page-bg);
   color: var(--text);
   line-height: 1.6;
 }
@@ -58,7 +58,7 @@ main {
   top: 0;
   z-index: 10;
   backdrop-filter: blur(12px);
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.96);
   border-bottom: 1px solid var(--border);
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
 }
@@ -195,15 +195,40 @@ main {
 .hero__content {
   display: grid;
   gap: 0.85rem;
-  padding: clamp(1.5rem, 3vw, 2rem);
-  background: var(--surface);
+  padding: clamp(1.6rem, 3vw, 2.4rem);
+  background: linear-gradient(135deg, #ffffff, #f3f6ff);
   border: 1px solid var(--border);
-  border-radius: 18px;
-  box-shadow: var(--shadow);
+  border-radius: 22px;
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.08);
 }
 
 .hero__title { margin: 0; font-size: clamp(2rem, 4vw, 2.8rem); }
 .hero__text { margin: 0; color: var(--muted); }
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+}
+
+.stat-card {
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+}
+
+.stat-card__value {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.stat-card__label {
+  margin: 0.15rem 0 0;
+  color: var(--muted);
+}
 
 .pill-group {
   display: flex;
@@ -221,6 +246,12 @@ main {
   border: 1px solid var(--border);
   font-weight: 600;
   color: var(--muted);
+}
+
+.pill--ghost {
+  background: transparent;
+  color: #cbd5e1;
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .hero__actions {
@@ -278,37 +309,40 @@ main {
   gap: 1rem;
 }
 
-.hero-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 1.25rem;
-  box-shadow: var(--shadow);
+.preview-card {
+  background: #0b1224;
+  color: #e2e8f0;
+  border-radius: 22px;
+  padding: 1.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.2);
+  display: grid;
+  gap: 0.75rem;
 }
 
-.hero-card__label {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.35rem 0.65rem;
-  border-radius: 999px;
-  background: #eaf1ff;
-  color: var(--primary);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-size: 0.75rem;
-}
-
-.hero-card__grid {
+.preview-card__header {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-top: 0.5rem;
+  align-items: center;
 }
 
-.hero-card--image img { border-radius: 12px; }
-.hero-card__hint { margin-top: 0.5rem; color: var(--muted); }
+.preview-card__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.preview-card__text { margin: 0; color: #cbd5e1; }
+
+.preview-card__actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+.preview-card__image {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.preview-card__image img { width: 100%; display: block; }
 
 .section {
   background: var(--surface);
@@ -377,6 +411,8 @@ main {
 
 .accent-card__eyebrow { text-transform: uppercase; letter-spacing: 0.15em; color: var(--primary); font-weight: 700; }
 .accent-card__tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+.accent-card__title { margin: 0.35rem 0 0.25rem; }
+.accent-card__text { margin: 0.35rem 0 0; color: var(--muted); }
 
 .platform__grid {
   display: grid;
