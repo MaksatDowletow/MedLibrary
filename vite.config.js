@@ -18,12 +18,8 @@ export default defineConfig({
         { src: 'Book.xlsx', dest: '' },
         { src: 'Book.xls', dest: '' },
         { src: 'Book.mht', dest: '' },
-        { src: '1.webp', dest: '' },
-        { src: '2.webp', dest: '' },
-        { src: '3.webp', dest: '' },
-        { src: '4.webp', dest: '' },
-        { src: '5.webp', dest: '' },
-        { src: '6.webp', dest: '' }
+        { src: 'public/hero-preview.svg', dest: '' },
+        { src: 'public/gallery', dest: 'gallery' }
       ]
     })
   ]

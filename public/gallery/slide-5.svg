@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="Offline-ready cards">
+  <defs>
+    <linearGradient id="grad-5" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#274f6a" />
+      <stop offset="100%" stop-color="#47a5c3" />
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#grad-5)" rx="32" />
+  <g fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="8">
+    <rect x="120" y="160" width="1360" height="580" rx="28" />
+    <rect x="160" y="220" width="1280" height="420" rx="20" />
+    <line x1="160" y1="320" x2="1440" y2="320" />
+    <line x1="160" y1="420" x2="1440" y2="420" />
+  </g>
+  <text x="140" y="140" fill="rgba(255,255,255,0.85)" font-family="Inter, Arial, sans-serif" font-size="48" font-weight="700">Offline-ready cards</text>
+  <text x="140" y="760" fill="rgba(255,255,255,0.7)" font-family="Inter, Arial, sans-serif" font-size="32">MedLibrary UI highlight #5</text>
+</svg>
