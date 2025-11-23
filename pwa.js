@@ -23,7 +23,7 @@
 
   async function registerServiceWorker() {
     try {
-      await navigator.serviceWorker.register('./service-worker.js');
+      await navigator.serviceWorker.register('/MedLibrary/service-worker.js');
     } catch (error) {
       console.error('SW registration failed', error);
     }
@@ -32,7 +32,7 @@
   async function handleInstallClick(event, button) {
     event.preventDefault();
     if (!deferredPrompt) {
-      window.open('./manifest.webmanifest', '_blank');
+      window.open('/MedLibrary/manifest.webmanifest', '_blank');
       return;
     }
     try {
