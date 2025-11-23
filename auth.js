@@ -5,6 +5,7 @@ const SESSION_REFRESH_OFFSET = 5 * 60 * 1000;
 const tokenCleanupListeners = new Set();
 let logoutTimerId = null;
 let refreshTimerId = null;
+const statusClearTimers = new WeakMap();
 
 document.addEventListener("DOMContentLoaded", () => {
   const apiBase = resolveApiBase(document.body?.dataset.apiBase);
@@ -31,6 +32,11 @@ function initRegisterForm(apiBase) {
   const submitButton = document.getElementById("register");
   const statusElement = document.getElementById("registerMessage");
   const endpoint = buildEndpoint(apiBase, "/register");
+
+  initPasswordToggle(
+    document.querySelector(".password-toggle[data-target~='register-password']"),
+    [passwordInput, confirmInput]
+  );
 
   const renderPasswordHints = () => {
     const password = passwordInput.value;
@@ -104,18 +110,26 @@ function initRegisterForm(apiBase) {
       return;
     }
 
-    setStatus(statusElement, "Создаем аккаунт...", "pending");
+    setStatus(statusElement, "Идёт отправка…", "pending");
+    setButtonLoading(submitButton, true);
     try {
       const data = await apiRequest(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      setStatus(statusElement, data?.message || "Регистрация завершена", "success");
+      setStatus(
+        statusElement,
+        data?.message || "Регистрация завершена",
+        "success",
+        { autoClear: true }
+      );
       form.reset();
       renderPasswordHints();
     } catch (error) {
       setStatus(statusElement, error?.message || "Не удалось зарегистрироваться", "error");
+    } finally {
+      setButtonLoading(submitButton, false);
     }
   });
 
@@ -137,6 +151,11 @@ function initLoginForm(apiBase) {
   const sessionEndpoint = buildEndpoint(apiBase, "/session");
   const refreshEndpoint = buildEndpoint(apiBase, "/token/refresh");
   const logoutEndpoint = buildEndpoint(apiBase, "/logout");
+
+  initPasswordToggle(
+    document.querySelector(".password-toggle[data-target~='login-password']"),
+    [passwordInput]
+  );
 
   const expireSession = (message) => {
     safeRemoveToken();
@@ -288,7 +307,8 @@ function initLoginForm(apiBase) {
       return;
     }
 
-    setStatus(statusElement, "Авторизуемся...", "pending");
+    setStatus(statusElement, "Идёт отправка…", "pending");
+    setButtonLoading(loginButton, true);
     try {
       const data = await apiRequest(loginEndpoint, {
         method: "POST",
@@ -299,11 +319,13 @@ function initLoginForm(apiBase) {
         safeStoreToken(data.token, data.expiresAt);
         scheduleSessionTimers(data.token);
       }
-      setStatus(statusElement, data?.message || "Вход выполнен", "success");
+      setStatus(statusElement, data?.message || "Вход выполнен", "success", { autoClear: true });
       form.reset();
       refreshSession(false);
     } catch (error) {
       setStatus(statusElement, error?.message || "Не удалось войти", "error");
+    } finally {
+      setButtonLoading(loginButton, false);
     }
   });
 
@@ -348,7 +370,12 @@ function initGoogleIdentity(apiBase, refreshSession = () => {}) {
         safeStoreToken(data.token, data.expiresAt);
         scheduleSessionTimers(data.token);
       }
-      setStatus(statusElement, data?.message || "Вход выполнен через Google", "success");
+      setStatus(
+        statusElement,
+        data?.message || "Вход выполнен через Google",
+        "success",
+        { autoClear: true }
+      );
       if (typeof refreshSession === "function") {
         refreshSession(false);
       } else if (sessionStatus) {
@@ -397,15 +424,17 @@ function initGoogleIdentity(apiBase, refreshSession = () => {}) {
   }
 }
 
-function setStatus(element, message, state) {
+function clearStatus(element) {
   if (!element) {
     return;
   }
-  element.textContent = message || "";
-  element.classList.remove("success", "error", "pending");
-  if (state) {
-    element.classList.add(state);
+  const timerId = statusClearTimers.get(element);
+  if (timerId) {
+    window.clearTimeout(timerId);
+    statusClearTimers.delete(element);
   }
+  element.textContent = "";
+  element.classList.remove("success", "error", "pending");
 }
 
 function validatePassword(password = "") {
@@ -578,38 +607,113 @@ function isEmailValid(email) {
   return /.+@.+\..+/.test(email);
 }
 
-function apiRequest(url, options = {}) {
+async function apiRequest(url, options = {}) {
   const controller = new AbortController();
-  const timerId = window.setTimeout(() => controller.abort(), 10000);
+  const timerId = window.setTimeout(() => controller.abort("timeout"), 10000);
 
-  return fetch(url, { ...options, signal: controller.signal })
-    .then(async (response) => {
-      const contentType = response.headers.get("content-type") || "";
-      const payload = contentType.includes("application/json")
-        ? await response.json()
-        : await response.text();
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    const contentType = response.headers.get("content-type") || "";
+    const payload = contentType.includes("application/json")
+      ? await response.json()
+      : await response.text();
 
-      if (!response.ok) {
-        const message =
-          (payload && typeof payload === "object" && payload.message) ||
-          (typeof payload === "string" && payload) ||
-          "Запрос завершился ошибкой";
-        if (response.status === 401) {
-          safeRemoveToken();
-          const error = new Error(
-            `${message}. Пожалуйста, войдите снова для продолжения работы.`
-          );
-          error.status = 401;
-          throw error;
-        }
-        throw new Error(message);
+    if (!response.ok) {
+      const message =
+        (payload && typeof payload === "object" && payload.message) ||
+        (typeof payload === "string" && payload) ||
+        "Запрос завершился ошибкой";
+      if (response.status === 401) {
+        safeRemoveToken();
+        const error = new Error(
+          `${message}. Пожалуйста, войдите снова для продолжения работы.`
+        );
+        error.status = 401;
+        throw error;
       }
+      throw new Error(message);
+    }
 
-      return payload;
-    })
-    .finally(() => {
-      window.clearTimeout(timerId);
+    return payload;
+  } catch (error) {
+    if (controller.signal.aborted || error?.name === "AbortError") {
+      if (controller.signal.reason === "timeout") {
+        const timeoutError = new Error(
+          "Превышено время ожидания запроса. Проверьте подключение и повторите попытку."
+        );
+        timeoutError.code = "TIMEOUT";
+        throw timeoutError;
+      }
+      const abortError = new Error(
+        "Запрос был отменён. Попробуйте ещё раз после проверки соединения."
+      );
+      abortError.code = "ABORT";
+      throw abortError;
+    }
+    throw error instanceof Error ? error : new Error("Не удалось выполнить запрос");
+  } finally {
+    window.clearTimeout(timerId);
+  }
+}
+
+function setStatus(element, message, state, options = {}) {
+  if (!element) {
+    return;
+  }
+  clearStatus(element);
+  element.textContent = message || "";
+  element.classList.remove("success", "error", "pending");
+  if (state) {
+    element.classList.add(state);
+  }
+  if (options.autoClear && state === "success") {
+    const timerId = window.setTimeout(() => clearStatus(element), 3500);
+    statusClearTimers.set(element, timerId);
+  }
+}
+
+function setButtonLoading(button, isLoading, loadingText = "Идёт отправка…") {
+  if (!button) {
+    return;
+  }
+
+  if (isLoading) {
+    button.dataset.originalText = button.textContent;
+    button.dataset.originalDisabled = String(button.disabled);
+    button.disabled = true;
+    button.classList.add("is-loading");
+    button.textContent = loadingText;
+    return;
+  }
+
+  const wasDisabled = button.dataset.originalDisabled === "true";
+  button.classList.remove("is-loading");
+  if (button.dataset.originalText) {
+    button.textContent = button.dataset.originalText;
+  }
+  button.disabled = wasDisabled;
+  delete button.dataset.originalDisabled;
+  delete button.dataset.originalText;
+}
+
+function initPasswordToggle(toggleButton, inputs = []) {
+  if (!toggleButton || !inputs.length) {
+    return;
+  }
+
+  const handleToggle = () => {
+    const shouldShow = toggleButton.dataset.visible !== "true";
+    inputs.forEach((input) => {
+      if (!input) {
+        return;
+      }
+      input.type = shouldShow ? "text" : "password";
     });
+    toggleButton.dataset.visible = shouldShow ? "true" : "false";
+    toggleButton.textContent = shouldShow ? "Скрыть пароль" : "Показать пароль";
+  };
+
+  toggleButton.addEventListener("click", handleToggle);
 }
 
 function safeStoreToken(token, expiresAt) {

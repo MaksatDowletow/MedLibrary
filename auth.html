@@ -62,6 +62,40 @@
             opacity: 0.65;
             cursor: progress;
         }
+        button.is-loading {
+            position: relative;
+            pointer-events: none;
+        }
+        button.is-loading::before {
+            content: "";
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+        .password-field {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .password-field input {
+            width: 100%;
+        }
+        .password-toggle {
+            width: auto;
+            white-space: nowrap;
+            background: #f8fafc;
+            color: #0f172a;
+            border: 1px solid #d0d5dd;
+        }
         .field-hint {
             margin: 0;
             font-size: 0.9rem;
@@ -172,7 +206,10 @@
         <h1>Регистрация и вход</h1>
         <form id="registerForm">
             <input type="email" id="register-email" placeholder="Email" autocomplete="email" required>
-            <input type="password" id="register-password" placeholder="Пароль (мин. 6 символов)" minlength="6" autocomplete="new-password" required>
+            <div class="password-field">
+                <input type="password" id="register-password" placeholder="Пароль (мин. 6 символов)" minlength="6" autocomplete="new-password" required>
+                <button type="button" class="password-toggle" data-target="register-password register-password-confirm">Показать пароль</button>
+            </div>
             <div class="hint-block" aria-live="polite">
                 <p class="field-hint">Пароль должен содержать:</p>
                 <ul class="hint-list" id="passwordRequirements">
@@ -190,7 +227,10 @@
 
         <form id="loginForm">
             <input type="email" id="login-email" placeholder="Email" autocomplete="email" required>
-            <input type="password" id="login-password" placeholder="Пароль" minlength="6" autocomplete="current-password" required>
+            <div class="password-field">
+                <input type="password" id="login-password" placeholder="Пароль" minlength="6" autocomplete="current-password" required>
+                <button type="button" class="password-toggle" data-target="login-password">Показать пароль</button>
+            </div>
             <button type="submit" id="login">Войти</button>
             <div class="divider"><span>или</span></div>
             <div class="provider-card">
