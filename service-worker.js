@@ -1,11 +1,17 @@
-const CACHE_NAME = 'medlibrary-v5';
+const CACHE_NAME = 'medlibrary-v6';
 const APP_SHELL = [
   './',
   './index.html',
+  './auth.html',
   './book.html',
   './BookCategory.html',
+  './db-catalog.html',
   './styles.css',
   './scripts.js',
+  './auth.js',
+  './db-catalog.js',
+  './config.js',
+  './lang.js',
   './pwa.js',
   './manifest.webmanifest',
   './data/books.json',
