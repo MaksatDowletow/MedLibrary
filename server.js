@@ -437,6 +437,10 @@ const app = express();
 
 app.use(helmet());
 app.use(cors());
+// Явно разрешаем preflight-запросы для всех маршрутов, чтобы браузеры не
+// получали ошибку 405 при попытке обратиться к API авторизации с других
+// источников.
+app.options("*", cors());
 app.use(express.json());
 app.use(morgan("tiny"));
 
