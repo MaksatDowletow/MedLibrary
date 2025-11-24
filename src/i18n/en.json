@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "MedLibrary — medical digital library (1,000+ books across 62 specialties)",
-    "description": "MedLibrary library: 1,000+ medical books across 62 specialties with search, categories, and offline access."
+    "title": "MedLibrary — medical digital library (1,000+ books across 67 specialties)",
+    "description": "MedLibrary library: 1,000+ medical books across 67 specialties with search, categories, and offline access."
   },
   "header": {
     "tagline": "medical library",
@@ -25,7 +25,7 @@
     "ctaPlatform": "How it works",
     "ctaInstall": "Install PWA",
     "metaBooks": "1000+ books",
-    "metaDirections": "62 specialties",
+    "metaDirections": "67 specialties",
     "metaAccess": "Online and offline access"
   },
   "preview": {
@@ -45,7 +45,7 @@
     "panelEyebrow": "New anchors",
     "panelTitle": "Quick jumps",
     "jumpTable": "Catalog table",
-    "jumpDirections": "62 specialties",
+    "jumpDirections": "67 specialties",
     "jumpExcel": "Excel export",
     "jumpJson": "JSON for integrations",
     "note": "All extra content is removed in favor of fast search and download flows."
