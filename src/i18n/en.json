@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "MedLibrary — medical digital library",
-    "description": "MedLibrary is a modern medical e-library with offline access, PWA install, fast search, and more than 1,000 books."
+    "title": "MedLibrary — medical digital library (1,000+ books across 62 specialties)",
+    "description": "MedLibrary library: 1,000+ medical books across 62 specialties with search, categories, and offline access."
   },
   "header": {
     "tagline": "medical library",
