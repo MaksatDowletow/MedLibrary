@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "MedLibrary — lukmançylyk elektron kitaphanasy (62 ugry boýunça 1000+ kitap)",
-    "description": "MedLibrary: 62 ugry boýunça 1000+ lukmançylyk kitabynyň gözlegi, kategoriýalary we oflaýn elýeterligi."
+    "title": "MedLibrary — lukmançylyk elektron kitaphanasy (67 ugry boýunça 1000+ kitap)",
+    "description": "MedLibrary: 67 ugry boýunça 1000+ lukmançylyk kitabynyň gözlegi, kategoriýalary we oflaýn elýeterligi."
   },
   "header": {
     "tagline": "lukmançylyk kitaphanasy",
@@ -25,7 +25,7 @@
     "ctaPlatform": "Näme üçin şeýle",
     "ctaInstall": "PWA gur",
     "metaBooks": "1000+ kitap",
-    "metaDirections": "62 ugry",
+    "metaDirections": "67 ugry",
     "metaAccess": "Onlaýn we oflaýn elýeterlik"
   },
   "preview": {
@@ -45,7 +45,7 @@
     "panelEyebrow": "Täze dayanç nokatlar",
     "panelTitle": "Çalt geçişler",
     "jumpTable": "Katalog tablisasy",
-    "jumpDirections": "62 ugry",
+    "jumpDirections": "67 ugry",
     "jumpExcel": "Excel eksporty",
     "jumpJson": "Integrasiýa üçin JSON",
     "note": "Art dưwmeler we mazmun aýrylyp, çalt gözleg we ýüklemeler üçin sazlandy."
@@ -92,20 +92,20 @@
   },
   "platform": {
     "eyebrow": "Platforma",
-    "title": "Artık ses ýok",
-    "subtitle": "Ýeňil UI, PWA, oflaýn tertip we ýumşak awtorizasiýa ssenariýalary.",
+    "title": "Düşnükli",
+    "subtitle": "Ýeňil UI, PWA, oflaýn tertip we ýumşak awtorizasiýa senariýalary.",
     "pwa": {
       "title": "PWA we oflaýn",
       "text": "Serwis işgäri katalogy kessep, internet bolmasa-da gözleg we okamak dowam edýär.",
-      "cta": "Gur"
+      "cta": "Programmany gur"
     },
     "auth": {
-      "title": "Awtentifikasiýa",
-      "text": "Hasaba alyş, giriş, Google Identity we düşnükli statuslar. Zerur zatlaryň özi."
+      "title": "HAsaby döretmek",
+      "text": "Hasaba alyş, giriş, Google Identity we düşnükli statuslar."
     },
     "structure": {
       "title": "BooksMed gurluşy",
-      "text": "Navigasiýa, kategoriýalar we filtrler BooksMed logikasyna laýyk, has arassa wizual bilen.",
+      "text": "Nawigasiýa, kategoriýalar we filtrler, has arassa wizual bilen.",
       "cta": "Kategoriýalara geç"
     }
   },
@@ -116,7 +116,7 @@
     "slide1": "MedLibrary katalogy",
     "slide2": "Kategoriýalar sanawy",
     "slide3": "Awtentifikasiýa interfeýsi",
-    "slide4": "Adaptiv dizaýn",
+    "slide4": "Adaptiw dizaýn",
     "slide5": "Kitap sahypasy",
     "slide6": "Katalog gözlegi",
     "prev": "Öňki surat",
@@ -124,7 +124,7 @@
   },
   "contact": {
     "eyebrow": "Habarlaşmak",
-    "title": "Döredijä ýaz",
+    "title": "Bize ýaz",
     "subtitle": "Kitaplary, integrasiýalary ýa-da interfeýs gowulandyrmalaryny teklip ediň.",
     "name": "Adyňyz",
     "email": "Email",
