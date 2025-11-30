@@ -1183,3 +1183,226 @@ main {
   background-color: #0b1224;
   color: #f8f9fb;
 }
+
+/* Video lessons page */
+.video-page main {
+  background: var(--page-bg);
+  padding-block: clamp(2rem, 5vw, 3.5rem);
+}
+
+.video-hero {
+  background: radial-gradient(circle at 10% 10%, rgba(26, 108, 255, 0.1), transparent 35%),
+    radial-gradient(circle at 80% 0%, rgba(94, 163, 255, 0.1), transparent 32%),
+    linear-gradient(135deg, #0f172a, #111827);
+  color: #fff;
+  padding-block: clamp(2.5rem, 6vw, 4rem);
+}
+
+.video-hero__grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: clamp(1.5rem, 4vw, 2.5rem);
+  align-items: start;
+}
+
+.video-hero__copy h1 {
+  margin: 0.2rem 0 0.65rem;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+}
+
+.video-hero__copy p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.video-hero__meta {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 1.25rem;
+}
+
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.stat-pill__value {
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+.stat-pill__label {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.video-hero__panel {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  padding: 1.25rem 1.35rem;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
+}
+
+.video-hero__panel h2 {
+  margin: 0 0 0.75rem;
+}
+
+.video-hero .checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.video-hero .checklist li {
+  position: relative;
+  padding-left: 1.6rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.video-hero .checklist li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.08);
+}
+
+.video-collection {
+  background: var(--page-bg);
+  padding-block: clamp(2.5rem, 6vw, 3.5rem);
+}
+
+.video-collection__header {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.muted-text {
+  color: var(--muted);
+  max-width: 620px;
+}
+
+.pill-group {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.pill {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 999px;
+  padding: 0.55rem 1.05rem;
+  font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pill:hover,
+.pill:focus-visible {
+  color: var(--text);
+  border-color: rgba(26, 108, 255, 0.4);
+  box-shadow: 0 8px 18px rgba(26, 108, 255, 0.12);
+  outline: none;
+}
+
+.pill.is-active {
+  color: #fff;
+  background: linear-gradient(120deg, var(--primary), var(--primary-2));
+  border-color: transparent;
+  box-shadow: 0 12px 30px rgba(26, 108, 255, 0.28);
+}
+
+.video-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.video-card {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 0.75rem;
+  padding: 0.85rem;
+  border-radius: 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 55px rgba(15, 23, 42, 0.08);
+}
+
+.video-card__media video,
+.video-card__media iframe {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #000;
+}
+
+.video-card__body h3 {
+  margin: 0.3rem 0 0.4rem;
+}
+
+.video-card__body p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.meta-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.6rem 0 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.meta-list li {
+  padding-left: 1.2rem;
+  position: relative;
+  color: var(--text);
+}
+
+.meta-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.6rem;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--primary);
+  box-shadow: 0 0 0 6px rgba(26, 108, 255, 0.12);
+}
+
+@media (max-width: 900px) {
+  .video-hero__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .video-collection__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .video-card {
+    grid-template-columns: 1fr;
+  }
+}

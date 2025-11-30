@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ru" data-lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Видеоуроки MedLibrary: обзор возможностей, поиск по каталогу, офлайн-режим и установка PWA." />
+    <title>MedLibrary — Видеоуроки</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="manifest" href="/MedLibrary/manifest.webmanifest" />
+  </head>
+  <body class="page video-page">
+    <header class="site-header">
+      <div class="container site-header__bar">
+        <div class="site-header__brand">
+          <p class="eyebrow">медицинская библиотека</p>
+          <p class="site-header__title" aria-label="MedLibrary">MedLibrary</p>
+        </div>
+        <div class="site-header__actions">
+          <a class="button button--ghost" href="index.html">На главную</a>
+        </div>
+      </div>
+      <nav class="site-nav" aria-label="main navigation">
+        <div class="container site-nav__wrap">
+          <a href="index.html#catalog">Каталог</a>
+          <a href="book.html">Каталог книг</a>
+          <a href="BookCategory.html">Категории</a>
+          <a class="is-active" href="videos.html">Видеоуроки</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="video-hero">
+        <div class="container video-hero__grid">
+          <div class="video-hero__copy">
+            <p class="eyebrow">Медиатека</p>
+            <h1>Видеоуроки по работе с MedLibrary</h1>
+            <p>
+              Подборка коротких видео помогает быстро разобраться с навигацией по каталогу,
+              установкой PWA-версии и офлайн‑режимом. Каждый ролик сопровождается конспектом и
+              ключевыми шагами.
+            </p>
+            <div class="video-hero__meta">
+              <div class="stat-pill">
+                <span class="stat-pill__value" id="video-count">6</span>
+                <span class="stat-pill__label">уроков</span>
+              </div>
+              <div class="stat-pill">
+                <span class="stat-pill__value">3-7</span>
+                <span class="stat-pill__label">минут каждый</span>
+              </div>
+            </div>
+          </div>
+          <div class="video-hero__panel">
+            <h2>Сценарии</h2>
+            <ul class="checklist">
+              <li>Обзор возможностей MedLibrary</li>
+              <li>Быстрый поиск и фильтры в таблице</li>
+              <li>Работа с категориями BooksMed</li>
+              <li>Установка и обновление PWA</li>
+              <li>Офлайн-режим и резервные данные</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="video-collection">
+        <div class="container">
+          <div class="video-collection__header">
+            <div>
+              <p class="eyebrow">Подборка уроков</p>
+              <h2>Видео по ключевым действиям</h2>
+              <p class="muted-text">Фильтруйте по сценарию, чтобы быстрее перейти к нужному ролику.</p>
+            </div>
+            <div class="pill-group" role="listbox" aria-label="Фильтр по сценарию">
+              <button class="pill is-active" type="button" data-filter="all">Все</button>
+              <button class="pill" type="button" data-filter="catalog">Каталог</button>
+              <button class="pill" type="button" data-filter="navigation">Навигация</button>
+              <button class="pill" type="button" data-filter="pwa">PWA</button>
+              <button class="pill" type="button" data-filter="offline">Офлайн</button>
+            </div>
+          </div>
+
+          <div class="video-grid" id="video-grid">
+            <article class="video-card" data-topic="navigation">
+              <div class="video-card__media">
+                <video controls preload="metadata" poster="./icons/icon-512.svg">
+                  <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4" />
+                  Ваш браузер не поддерживает видео.
+                </video>
+              </div>
+              <div class="video-card__body">
+                <p class="eyebrow">Навигация</p>
+                <h3>Обзор MedLibrary за 3 минуты</h3>
+                <p>Краткая экскурсия по главной странице, ключевым ссылкам и доступу к каталогу книг.</p>
+                <ul class="meta-list">
+                  <li>Ссылки на каталог и категории</li>
+                  <li>Карточки интерфейса и быстрые CTA</li>
+                  <li>Где найти офлайн и PWA</li>
+                </ul>
+              </div>
+            </article>
+
+            <article class="video-card" data-topic="catalog">
+              <div class="video-card__media">
+                <video controls preload="metadata" poster="./icons/icon-512.svg">
+                  <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm" type="video/webm" />
+                  Ваш браузер не поддерживает видео.
+                </video>
+              </div>
+              <div class="video-card__body">
+                <p class="eyebrow">Каталог</p>
+                <h3>Поиск и фильтры в таблице</h3>
+                <p>Как искать по названию, авторам, ISBN/УДК/ББК и быстро переключаться между результатами.</p>
+                <ul class="meta-list">
+                  <li>Поле поиска и быстрые фильтры</li>
+                  <li>Очистка и сортировка столбцов</li>
+                  <li>Карточка найденной книги</li>
+                </ul>
+              </div>
+            </article>
+
+            <article class="video-card" data-topic="catalog">
+              <div class="video-card__media">
+                <video controls preload="metadata" poster="./icons/icon-512.svg">
+                  <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4" />
+                  Ваш браузер не поддерживает видео.
+                </video>
+              </div>
+              <div class="video-card__body">
+                <p class="eyebrow">Категории</p>
+                <h3>Работа с BooksMed</h3>
+                <p>Навигация по 67 направлениям: отбор по области знаний, быстрые переходы и счётчики.</p>
+                <ul class="meta-list">
+                  <li>Список направлений и поиск</li>
+                  <li>Переход в выбранную категорию</li>
+                  <li>Отображение количества книг</li>
+                </ul>
+              </div>
+            </article>
+
+            <article class="video-card" data-topic="pwa">
+              <div class="video-card__media">
+                <video controls preload="metadata" poster="./icons/icon-512.svg">
+                  <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm" type="video/webm" />
+                  Ваш браузер не поддерживает видео.
+                </video>
+              </div>
+              <div class="video-card__body">
+                <p class="eyebrow">PWA</p>
+                <h3>Установка приложения</h3>
+                <p>Как добавить MedLibrary на рабочий стол, обновлять кэш и пользоваться офлайн.</p>
+                <ul class="meta-list">
+                  <li>Кнопка установки и уведомления</li>
+                  <li>Как работает сервис-воркер</li>
+                  <li>Обновление и очистка кэша</li>
+                </ul>
+              </div>
+            </article>
+
+            <article class="video-card" data-topic="offline">
+              <div class="video-card__media">
+                <video controls preload="metadata" poster="./icons/icon-512.svg">
+                  <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4" />
+                  Ваш браузер не поддерживает видео.
+                </video>
+              </div>
+              <div class="video-card__body">
+                <p class="eyebrow">Офлайн</p>
+                <h3>Резервные данные и вход без сети</h3>
+                <p>Что доступно, когда API временно недоступно: локальные учётные записи и кэшированные каталоги.</p>
+                <ul class="meta-list">
+                  <li>Локальное хранилище пользователей</li>
+                  <li>Поведение форм входа и регистрации</li>
+                  <li>Работа с кэшированным JSON</li>
+                </ul>
+              </div>
+            </article>
+
+            <article class="video-card" data-topic="navigation">
+              <div class="video-card__media">
+                <video controls preload="metadata" poster="./icons/icon-512.svg">
+                  <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm" type="video/webm" />
+                  Ваш браузер не поддерживает видео.
+                </video>
+              </div>
+              <div class="video-card__body">
+                <p class="eyebrow">Экспорт</p>
+                <h3>Выгрузка в Excel и JSON</h3>
+                <p>Как скачать каталог, обновить выгрузку и использовать её в интеграциях.</p>
+                <ul class="meta-list">
+                  <li>Готовые ссылки на экспорт</li>
+                  <li>Что включено в файлы</li>
+                  <li>Контроль версий каталога</li>
+                </ul>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const filterButtons = document.querySelectorAll('[data-filter]');
+      const cards = document.querySelectorAll('.video-card');
+      const videoCount = document.getElementById('video-count');
+
+      function updateCount() {
+        const visible = Array.from(cards).filter(card => !card.hasAttribute('hidden')).length;
+        if (videoCount) {
+          videoCount.textContent = visible;
+        }
+      }
+
+      filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const value = button.dataset.filter;
+
+          filterButtons.forEach(btn => btn.classList.toggle('is-active', btn === button));
+
+          cards.forEach(card => {
+            const topics = (card.dataset.topic || '').split(',').map(topic => topic.trim());
+            const matches = value === 'all' || topics.includes(value);
+            card.toggleAttribute('hidden', !matches);
+          });
+
+          updateCount();
+        });
+      });
+
+      updateCount();
+    </script>
+  </body>
+</html>
