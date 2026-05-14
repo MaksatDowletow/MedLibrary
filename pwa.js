@@ -73,5 +73,6 @@
 
   registerButtons();
   document.addEventListener('DOMContentLoaded', registerButtons);
+  document.addEventListener('medlibrary:layout-ready', registerButtons);
   window.addEventListener('load', registerServiceWorker);
 })();

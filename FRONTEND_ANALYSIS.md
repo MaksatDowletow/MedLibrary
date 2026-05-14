@@ -20,3 +20,11 @@
 - Align language initialization with the selected option or persist the user’s preference in storage to avoid conflicting defaults. Replace the current `setLanguage('tm')` call with logic that reads the selector value or a saved preference. 【F:index.html†L34-L45】【F:lang.js†L1-L36】
 - Move translations into JSON locale files and render text via a lightweight i18n utility so that markup stays DRY and future languages do not require tripling every block of content. 【F:index.html†L34-L164】【F:lang.js†L2-L8】
 - Consider lazy-loading heavier catalog assets and deferring non-critical scripts to improve initial render on low-end devices, keeping the landing experience focused on the primary CTAs. 【F:index.html†L74-L200】
+
+## 2026-05-13 follow-up improvements
+- Added an immediately visible loading state, a no-script warning, and a keyboard skip link so the landing page is not blank while modular components/translations are being fetched and keyboard users can jump straight to content. 【F:index.html†L40-L53】【F:styles.css†L48-L106】
+- Made the injected `<main>` target explicit and focusable for skip-link navigation, and clear `aria-busy` on both successful and failed layout loads. 【F:src/main.js†L166-L184】【F:src/main.js†L196-L200】
+- Fixed the modular language switcher to normalize unsupported languages, apply the same active classes as the legacy script/CSS, and expose `aria-pressed` for assistive technologies. 【F:src/main.js†L55-L105】
+- Initialized the gallery slider after the async component injection, including pause-on-hover/focus and reduced-motion-aware scrolling, so controls keep working even when `scripts.js` runs before components exist. 【F:src/main.js†L116-L159】
+- Re-registered PWA install buttons after the modular layout is injected, then updated footer copyright strings for 2026 and corrected the English category count to 67 to match the rest of the site copy. 【F:pwa.js†L73-L76】
+- Updated footer copyright strings for 2026 and corrected the English category count to 67 to match the rest of the site copy. 【F:src/i18n/en.json†L54-L57】【F:src/i18n/en.json†L136-L139】

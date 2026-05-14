@@ -60,15 +60,17 @@ function getTranslation(lang, key) {
 }
 
 function applyTranslations(lang) {
-  document.documentElement.lang = lang;
-  document.documentElement.dataset.lang = lang;
+  const normalizedLang = translations[lang] ? lang : 'ru';
 
-  const dictionary = translations[lang] || translations.ru || {};
+  document.documentElement.lang = normalizedLang;
+  document.documentElement.dataset.lang = normalizedLang;
+
+  const dictionary = translations[normalizedLang] || translations.ru || {};
 
   document.querySelectorAll('[data-i18n]').forEach(element => {
     const key = element.dataset.i18n;
     const attr = element.dataset.i18nAttr || element.dataset.i18nTarget;
-    const translation = getTranslation(lang, key);
+    const translation = getTranslation(normalizedLang, key);
 
     if (!translation) {
       return;
@@ -83,7 +85,7 @@ function applyTranslations(lang) {
 
   document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
     const key = element.dataset.i18nPlaceholder;
-    const translation = getTranslation(lang, key);
+    const translation = getTranslation(normalizedLang, key);
     if (translation) {
       element.setAttribute('placeholder', translation);
     }
@@ -100,7 +102,10 @@ function applyTranslations(lang) {
   }
 
   document.querySelectorAll('.lang-switch [data-lang]').forEach(button => {
-    button.classList.toggle('lang-switch__active', button.dataset.lang === lang);
+    const isActive = button.dataset.lang === normalizedLang;
+    button.classList.toggle('is-active', isActive);
+    button.classList.toggle('lang-switch__active', isActive);
+    button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
   });
 }
 
@@ -120,14 +125,76 @@ function initLanguage() {
   applyTranslations(initialLanguage);
 }
 
+function initGallerySlider() {
+  const slider = document.querySelector('.gallery-slider');
+  if (!slider || slider.dataset.sliderReady === 'true') {
+    return;
+  }
+
+  const viewport = slider.querySelector('.gallery-slider__viewport');
+  const slides = Array.from(slider.querySelectorAll('.slide'));
+  const nextButton = slider.querySelector('.next');
+  const prevButton = slider.querySelector('.prev');
+
+  if (!viewport || slides.length < 2) {
+    return;
+  }
+
+  slider.dataset.sliderReady = 'true';
+  let currentSlide = 0;
+  let timerId;
+
+  const renderSlides = () => {
+    slides.forEach((slide, index) => {
+      slide.setAttribute('aria-hidden', index === currentSlide ? 'false' : 'true');
+    });
+    viewport.scrollTo({
+      left: viewport.clientWidth * currentSlide,
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+    });
+  };
+
+  const goToSlide = direction => {
+    currentSlide = (currentSlide + direction + slides.length) % slides.length;
+    renderSlides();
+  };
+
+  const restartTimer = () => {
+    window.clearInterval(timerId);
+    timerId = window.setInterval(() => goToSlide(1), 10000);
+  };
+
+  nextButton?.addEventListener('click', () => {
+    goToSlide(1);
+    restartTimer();
+  });
+  prevButton?.addEventListener('click', () => {
+    goToSlide(-1);
+    restartTimer();
+  });
+
+  slider.addEventListener('mouseenter', () => window.clearInterval(timerId));
+  slider.addEventListener('mouseleave', restartTimer);
+  slider.addEventListener('focusin', () => window.clearInterval(timerId));
+  slider.addEventListener('focusout', restartTimer);
+
+  renderSlides();
+  restartTimer();
+}
+
+function dispatchLayoutReady() {
+  document.dispatchEvent(new CustomEvent('medlibrary:layout-ready'));
+}
+
 function injectLayout(components) {
   const app = document.getElementById('app');
   if (!app) return;
 
+  app.setAttribute('aria-busy', 'false');
   app.innerHTML = `
     <div class="page">
       ${components.header || ''}
-      <main>
+      <main id="main-content" tabindex="-1">
         ${components.hero || ''}
         ${components.audit || ''}
         ${components.features || ''}
@@ -147,11 +214,14 @@ async function init() {
     injectLayout(components);
     initLanguage();
     bindLanguageSwitch();
+    initGallerySlider();
+    dispatchLayoutReady();
   } catch (error) {
     console.error(error);
     const app = document.getElementById('app');
     if (app) {
-      app.innerHTML = '<p class="text-center">Не удалось загрузить интерфейс. Попробуйте обновить страницу.</p>';
+      app.setAttribute('aria-busy', 'false');
+      app.innerHTML = '<p class="text-center app-error" role="alert">Не удалось загрузить интерфейс. Попробуйте обновить страницу.</p>';
     }
   }
 }
