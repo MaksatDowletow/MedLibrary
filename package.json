@@ -10,7 +10,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "npm run test:pdf-reader",
-    "test:pdf-reader": "node --check assets/reader.js && node --check assets/pdf-render-recovery.mjs && node --check cloudflare/pdf-r2-worker.mjs && node tests/qa-pdf-availability-gate.mjs && node tests/qa-pdf-url-resolution.mjs && node tests/qa-render-geometry.mjs"
+    "test:pdf-reader": "node --check assets/reader.js && node --check assets/pdf-render-recovery.mjs && node --check cloudflare/pdf-r2-worker.mjs && node tests/qa-pdf-availability-gate.mjs && node tests/qa-pdf-url-resolution.mjs && node tests/qa-render-geometry.mjs && node tests/qa-r2-range-worker.mjs"
   },
   "author": "Maksat Dowletow",
   "license": "MIT",
