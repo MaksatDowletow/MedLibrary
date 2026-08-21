@@ -8,7 +8,9 @@
     "dev": "vite",
     "dev:server": "nodemon server.js",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "npm run test:pdf-reader",
+    "test:pdf-reader": "node --check assets/reader.js && node --check assets/pdf-render-recovery.mjs && node --check cloudflare/pdf-r2-worker.mjs && node tests/qa-pdf-availability-gate.mjs && node tests/qa-pdf-url-resolution.mjs && node tests/qa-render-geometry.mjs"
   },
   "author": "Maksat Dowletow",
   "license": "MIT",
