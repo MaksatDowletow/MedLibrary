@@ -70,7 +70,19 @@
 
   function resolveBookId() {
     const params = new URLSearchParams(location.search);
-    return params.get('book') || params.get('id') || '';
+    const queryId = params.get('book') || params.get('id') || '';
+    if (queryId) return queryId;
+
+    const parts = String(location.pathname || '').split('/').filter(Boolean);
+    const readerIndex = parts.findIndex((part) => part.toLowerCase() === 'reader');
+    if (readerIndex >= 0 && parts[readerIndex + 1]) {
+      try {
+        return decodeURIComponent(parts[readerIndex + 1]);
+      } catch (_) {
+        return parts[readerIndex + 1];
+      }
+    }
+    return '';
   }
 
   function safeUrl(value) {
@@ -319,6 +331,7 @@
   window.MedLibraryReader = {
     getCurrentPageText: () => state.currentText,
     getCurrentPage: () => state.page,
+    resolveBookId,
     resolvePdfUrl,
   };
 }());

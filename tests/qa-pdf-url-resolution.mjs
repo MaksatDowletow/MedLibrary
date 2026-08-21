@@ -3,7 +3,8 @@ import vm from 'node:vm';
 import assert from 'node:assert/strict';
 
 const source = fs.readFileSync(new URL('../assets/reader.js', import.meta.url), 'utf8');
-const pageUrl = new URL('https://medlib.example/reader/2054682f-fe16-43d9-9907-e1db5fe816fd');
+const bookId = '2054682f-fe16-43d9-9907-e1db5fe816fd';
+const pageUrl = new URL(`https://medlib.example/reader/${bookId}`);
 const window = { MedLibraryConfig: {} };
 const document = {
   currentScript: { src: 'https://medlib.example/assets/reader.js' },
@@ -17,6 +18,7 @@ const context = {
     href: pageUrl.href,
     origin: pageUrl.origin,
     protocol: pageUrl.protocol,
+    pathname: pageUrl.pathname,
     search: pageUrl.search,
     reload() {},
   },
@@ -30,11 +32,20 @@ const context = {
 };
 vm.createContext(context);
 vm.runInContext(source, context, { filename: 'assets/reader.js' });
-const resolvePdfUrl = window.MedLibraryReader.resolvePdfUrl;
+const { resolveBookId, resolvePdfUrl } = window.MedLibraryReader;
 
 assert.equal(
-  resolvePdfUrl({ pdfPath: 'BooksDB/707. 1429.pdf' }, '2054682f-fe16-43d9-9907-e1db5fe816fd'),
-  'https://medlib.example/api/books/2054682f-fe16-43d9-9907-e1db5fe816fd/pdf',
+  resolveBookId(),
+  bookId,
+  '/reader/:bookId must resolve the book id without requiring query parameters',
+);
+context.location.search = '?book=query-book-id';
+assert.equal(resolveBookId(), 'query-book-id', 'query book id must retain precedence for legacy reader links');
+context.location.search = '';
+
+assert.equal(
+  resolvePdfUrl({ pdfPath: 'BooksDB/707. 1429.pdf' }, bookId),
+  `https://medlib.example/api/books/${bookId}/pdf`,
   'BooksDB storage keys must use the protected API endpoint',
 );
 assert.equal(
