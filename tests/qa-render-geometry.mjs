@@ -1,5 +1,9 @@
 import assert from 'node:assert/strict';
-import { computeRenderGeometry, pixelSamplesLookBlank } from '../assets/pdf-render-recovery.mjs';
+import {
+  computeRenderGeometry,
+  pixelSamplesLookBlank,
+  shouldRetryBlankCanvas,
+} from '../assets/pdf-render-recovery.mjs';
 
 const normal = computeRenderGeometry({ viewportWidth: 800, viewportHeight: 1200, devicePixelRatio: 2 });
 assert.equal(normal.pixelWidth, 1600);
@@ -15,5 +19,26 @@ assert.equal(pixelSamplesLookBlank(white), true);
 const ink = white.slice();
 ink[0] = 20;
 assert.equal(pixelSamplesLookBlank(ink), false);
+
+assert.equal(
+  shouldRetryBlankCanvas({ samples: white, hasText: true, operatorCount: 0 }),
+  true,
+  'blank text pages should trigger render recovery',
+);
+assert.equal(
+  shouldRetryBlankCanvas({ samples: white, hasText: false, operatorCount: 12 }),
+  true,
+  'blank scanned/image-only pages with PDF operators should trigger render recovery',
+);
+assert.equal(
+  shouldRetryBlankCanvas({ samples: white, hasText: false, operatorCount: 0 }),
+  false,
+  'genuinely empty pages should not be re-rendered',
+);
+assert.equal(
+  shouldRetryBlankCanvas({ samples: ink, hasText: false, operatorCount: 12 }),
+  false,
+  'visible image content should not trigger a redundant recovery render',
+);
 
 console.log('qa-render-geometry: PASS');
