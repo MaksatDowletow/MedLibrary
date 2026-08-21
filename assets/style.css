@@ -102,6 +102,27 @@ dl div { display: flex; gap: 0.5rem; }
 dt { color: var(--muted); font-weight: 700; }
 dd { margin: 0; }
 
+.reader-availability {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0.55rem 0.75rem 0;
+  border-radius: 999px;
+  padding: 0.3rem 0.62rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+.reader-availability--ok { color: #166534; background: #dcfce7; }
+.reader-availability--off { color: #991b1b; background: #fee2e2; }
+.reader-unavailable {
+  margin-top: 1rem;
+  border: 1px solid #fecaca;
+  border-radius: 16px;
+  background: #fff7f7;
+  color: #7f1d1d;
+  padding: 0.9rem 1rem;
+}
+.reader-unavailable p { margin: 0.35rem 0 0; color: #991b1b; }
+
 .empty-state {
   color: var(--muted);
   font-weight: 700;

@@ -45,6 +45,16 @@
     return book.author || book.authors || book.authorName || '';
   }
 
+  function isReaderAvailable(book) {
+    const checker = window.MedLibraryCatalog?.isReaderAvailable;
+    return typeof checker === 'function' ? checker(book) : Boolean(book?.pdfAvailable !== false && book?.readAvailable !== false);
+  }
+
+  function readerUnavailableReason(book) {
+    const getter = window.MedLibraryCatalog?.readerUnavailableReason;
+    return typeof getter === 'function' ? getter(book) : 'PDF häzir elýeterli däl.';
+  }
+
   function renderBookList(container, books) {
     container.innerHTML = '';
     if (!books.length) {
@@ -59,6 +69,7 @@
       card.className = 'catalog-card';
       const title = getBookTitle(book);
       const author = getBookAuthor(book);
+      const readable = isReaderAvailable(book);
       card.innerHTML = `
         <h3>${escapeHtml(title)}</h3>
         ${author ? `<p>${escapeHtml(author)}</p>` : ''}
@@ -66,6 +77,9 @@
           ${book.category ? `<div><dt>Kategoriýa</dt><dd>${escapeHtml(book.category)}</dd></div>` : ''}
           ${book.language ? `<div><dt>Dil</dt><dd>${escapeHtml(book.language)}</dd></div>` : ''}
         </dl>
+        ${readable
+          ? '<span class="reader-availability reader-availability--ok">PDF taýýar</span>'
+          : `<span class="reader-availability reader-availability--off" title="${escapeHtml(readerUnavailableReason(book))}">PDF elýeterli däl</span>`}
         <a class="button button--small" href="book.html?id=${encodeURIComponent(book.id || index)}">Giňişleýin</a>
       `;
       list.appendChild(card);
@@ -154,12 +168,18 @@
       container.appendChild(emptyBlock(emptyMessage));
       return;
     }
+
     const title = getBookTitle(book);
+    const readable = isReaderAvailable(book);
+    const readerAction = readable
+      ? `<a class="button" href="reader.html?id=${encodeURIComponent(book.id || id || '')}">PDF okaýjyny aç</a>`
+      : `<div class="reader-unavailable" role="status"><strong>PDF okaýjy elýeterli däl.</strong><p>${escapeHtml(readerUnavailableReason(book))}</p></div>`;
+
     container.innerHTML = `
       <article class="detail-card">
         <h2>${escapeHtml(title)}</h2>
         ${getBookAuthor(book) ? `<p>${escapeHtml(getBookAuthor(book))}</p>` : ''}
-        <a class="button" href="reader.html?id=${encodeURIComponent(book.id || id || '')}">Oka</a>
+        ${readerAction}
       </article>
     `;
   }

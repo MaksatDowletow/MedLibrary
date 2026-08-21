@@ -122,7 +122,17 @@
     if (response.status === 401) throw new Error('Kitaby açmak üçin giriş etmeli.');
     if (response.status === 403) throw new Error('Bu kitaba giriş rugsady ýok ýa-da abuna möhleti gutardy.');
     if (response.status === 404) throw new Error('Bu kitap üçin PDF faýly tapylmady.');
+    if (response.status === 416) throw new Error('PDF byte-range jogaby nädogry.');
     if (!response.ok && response.status !== 206) throw new Error(`PDF serweri ${response.status} jogabyny berdi.`);
+
+    const contentType = String(response.headers.get('Content-Type') || '').toLowerCase();
+    if (contentType && !contentType.includes('application/pdf') && !contentType.includes('octet-stream')) {
+      throw new Error(`PDF endpoint nädogry Content-Type berdi: ${contentType}`);
+    }
+    if (response.status === 206 && !response.headers.get('Content-Range')) {
+      throw new Error('206 jogaby bar, emma Content-Range ýok.');
+    }
+
     let prefix = new Uint8Array(0);
     if (response.body?.getReader) {
       const reader = response.body.getReader();
@@ -196,7 +206,6 @@
     const text = result.textContent?.items?.map((item) => item.str || '').join(' ').replace(/\s+/g, ' ').trim() || '';
     state.currentText = text;
 
-    // Translation/OCR is secondary. The PDF canvas has already been painted.
     window.dispatchEvent(new CustomEvent('medlibrary:pdf-page-text', {
       detail: { pageNumber: state.page, text, book: state.book },
     }));
@@ -255,6 +264,13 @@
     const title = cleanText(book?.title || book?.name || new URLSearchParams(location.search).get('title') || 'PDF okyjy');
     const titleEl = $('[data-reader-title]');
     if (titleEl) titleEl.textContent = title;
+
+    const availabilityChecker = window.MedLibraryCatalog?.isReaderAvailable;
+    if (book && typeof availabilityChecker === 'function' && !availabilityChecker(book)) {
+      const reason = window.MedLibraryCatalog?.readerUnavailableReason?.(book) || 'PDF elýeterliligi tassyklanmady.';
+      showError(reason, 'PDF_NOT_AVAILABLE');
+      return;
+    }
 
     const pdfUrl = resolvePdfUrl(book, id);
     if (!pdfUrl) {

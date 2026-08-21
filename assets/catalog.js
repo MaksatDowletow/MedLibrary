@@ -24,6 +24,54 @@
     };
   }
 
+  function normalizedStatus(book) {
+    return String(book?.pdfStatus || book?.storageStatus || '').trim().toLowerCase();
+  }
+
+  function hasMissingPdfEvidence(book) {
+    const status = normalizedStatus(book);
+    if (['missing', 'unavailable', 'deleted', 'not_found', 'not-found', 'broken'].includes(status)) return true;
+    if (String(book?.readerUnavailableReason || '').trim()) return true;
+
+    const summaryMeta = String(book?.summaryMeta || '').toLocaleLowerCase();
+    const summary = String(book?.summary || '').toLocaleLowerCase();
+    return summaryMeta.includes('pdf baglanyşygy tapylmady')
+      || summaryMeta.includes('pdf faýly tapylmady')
+      || summary.includes('pdf faýly tapylmady');
+  }
+
+  function isReaderAvailable(book) {
+    if (!book || typeof book !== 'object') return false;
+
+    const status = normalizedStatus(book);
+    if (['ready', 'verified', 'available'].includes(status)) return true;
+    if (book.storageVerified === true || book.pdfVerified === true) return true;
+
+    if (book.pdfAvailable === false || book.readAvailable === false) return false;
+    if (hasMissingPdfEvidence(book)) return false;
+
+    return Boolean(
+      book.pdfAvailable === true
+      || book.readAvailable === true
+      || book.pdfUrl
+      || book.pdfURL
+      || book.pdfPath
+      || book.pdf
+      || book.fileUrl
+      || book.legacy?.pdfPath
+      || book.links?.pdf
+      || book.links?.reader
+    );
+  }
+
+  function readerUnavailableReason(book) {
+    const explicit = String(book?.readerUnavailableReason || '').trim();
+    if (explicit) return explicit;
+    if (hasMissingPdfEvidence(book)) return 'Bu kitap üçin tassyklanan PDF faýly tapylmady.';
+    if (book?.pdfAvailable === false || book?.readAvailable === false) return 'Bu kitap häzir PDF okaýjyda elýeterli däl.';
+    return 'PDF elýeterliligi tassyklanmady.';
+  }
+
   async function loadCatalog() {
     try {
       const response = await fetch(catalogUrl, { cache: 'no-cache' });
@@ -56,5 +104,7 @@
     loadCatalog,
     normalizeCatalog,
     bookMatches,
+    isReaderAvailable,
+    readerUnavailableReason,
   };
 }());
