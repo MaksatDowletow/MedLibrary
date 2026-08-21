@@ -84,6 +84,12 @@
     }
   }
 
+  function isStorageKey(value) {
+    const raw = String(value ?? '').trim();
+    if (!raw) return false;
+    return /^(?:BooksDB[\\/]|vault[\\/]books[\\/])/i.test(raw);
+  }
+
   function resolvePdfUrl(book, id) {
     const params = new URLSearchParams(location.search);
     const explicit = safeUrl(params.get('src'));
@@ -98,6 +104,10 @@
       book?.legacy?.pdfPath,
     ];
     for (const candidate of candidates) {
+      // BooksDB/... and vault/books/... are storage keys, not browser URLs.
+      // Resolving them against /reader/<id> creates a false URL such as
+      // /reader/BooksDB/... and bypasses the protected PDF API/R2 proxy.
+      if (isStorageKey(candidate)) continue;
       const url = safeUrl(candidate);
       if (url) return url;
     }
@@ -309,5 +319,6 @@
   window.MedLibraryReader = {
     getCurrentPageText: () => state.currentText,
     getCurrentPage: () => state.page,
+    resolvePdfUrl,
   };
 }());
