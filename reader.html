@@ -12,12 +12,37 @@
 </head>
 <body data-page="reader">
   <header class="site-header">
-    <div class="container header-row"><div class="brand"><p class="brand__eyebrow">MedLibrary</p><h1 class="brand__title">Okyjy</h1></div><a class="button button--ghost" href="books.html">Kitaplar</a></div>
+    <div class="container header-row">
+      <div class="brand"><p class="brand__eyebrow">MedLibrary</p><h1 class="brand__title" data-reader-title>PDF okaýjy</h1></div>
+      <a class="button button--ghost" href="books.html">Kitaplar</a>
+    </div>
     <nav class="container site-nav" aria-label="Esasy navigasiýa"><a href="index.html">Baş sahypa</a><a href="books.html">Kitaplar</a><a href="categories.html">Kategoriýalar</a><a href="languages.html">Diller</a></nav>
   </header>
   <main class="container">
-    <section class="reader-toolbar"><a class="button button--ghost" href="books.html">← Kataloga dolan</a></section>
-    <section class="reader-content" data-reader-content><div class="empty-state" role="status">Häzirlikçe maglumat ýok</div></section>
+    <section class="reader-toolbar" aria-label="PDF dolandyryş gurallary">
+      <div class="reader-toolbar__group">
+        <a class="button button--ghost" href="books.html">← Kataloga dolan</a>
+        <button class="button button--ghost" type="button" data-reader-prev>← Öňki</button>
+        <label>Sahypa <input type="number" min="1" value="1" data-reader-page-input aria-label="Sahypa belgisi"></label>
+        <span>/ <span data-reader-page-total>—</span></span>
+        <button class="button button--ghost" type="button" data-reader-next>Indiki →</button>
+      </div>
+      <div class="reader-toolbar__group">
+        <button class="button button--ghost" type="button" data-reader-zoom-out aria-label="Kiçelt">−</button>
+        <button class="button button--ghost" type="button" data-reader-zoom-in aria-label="Ulalt">+</button>
+        <button class="button" type="button" data-reader-fit>Giňlige laýyk</button>
+      </div>
+    </section>
+
+    <section class="reader-content" data-reader-content>
+      <div class="reader-status" role="status" aria-live="polite" data-reader-status>PDF taýýarlanýar…</div>
+      <div class="reader-error" role="alert" data-reader-error hidden></div>
+      <div class="reader-stage" data-reader-stage>
+        <div class="reader-page-shell" data-reader-page-shell>
+          <canvas id="pdfCanvas" data-reader-canvas aria-label="PDF sahypasy"></canvas>
+        </div>
+      </div>
+    </section>
   </main>
 </body>
 </html>
