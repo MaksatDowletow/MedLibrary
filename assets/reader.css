@@ -1,15 +1,83 @@
 .reader-toolbar {
   display: flex;
-  gap: 0.75rem;
+  gap: .65rem;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   margin-bottom: 1rem;
 }
+.reader-toolbar__group { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; }
+.reader-toolbar input[type="number"] { width:5.5rem; }
 .reader-content {
-  min-height: 55vh;
-  padding: clamp(1rem, 4vw, 2rem);
+  min-height: 62vh;
+  padding: clamp(.6rem, 2vw, 1.25rem);
+  background: #0f172a;
+  border: 1px solid #243247;
+  border-radius: 20px;
+  overflow: auto;
+  position: relative;
+}
+.reader-status {
+  margin: 0 0 .75rem;
+  padding: .7rem .85rem;
+  border-radius: 12px;
+  background: #e8f1ff;
+  color: #12335d;
+  font-size: .92rem;
+}
+.reader-status[data-kind="error"] { background:#fff1f2; color:#8a1c28; }
+.reader-status[data-kind="ok"] { background:#ecfdf3; color:#166534; }
+.reader-stage {
+  min-width: 100%;
+  min-height: 52vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow: auto;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+.reader-page-shell {
+  position: relative;
+  display: inline-block;
   background: #fff;
-  border: 1px solid #dbe3ef;
-  border-radius: 24px;
+  box-shadow: 0 14px 44px rgba(0,0,0,.32);
+  line-height: 0;
+}
+.reader-page-shell canvas,
+.reader-stage canvas,
+#pdfCanvas,
+[data-reader-canvas] {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  background: #fff !important;
+  max-width: none;
+  position: relative;
+  z-index: 1;
+}
+/* Text/translation layers must never paint an opaque panel over the PDF canvas. */
+.reader-page-shell .textLayer,
+.reader-page-shell [data-text-layer],
+.reader-page-shell [data-translation-layer] {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: transparent !important;
+  pointer-events: none;
+}
+.reader-error {
+  max-width: 46rem;
+  margin: 2rem auto;
+  padding: 1rem;
+  border-radius: 14px;
+  background: #fff1f2;
+  color: #881337;
+  line-height: 1.5;
+}
+.reader-error button { margin-top:.75rem; }
+@media (max-width: 720px) {
+  .reader-content { border-radius: 14px; padding:.35rem; }
+  .reader-stage { padding:.5rem; }
+  .reader-toolbar { align-items: stretch; }
 }
