@@ -89,6 +89,10 @@ export function pixelSamplesLookBlank(samples, threshold = 248) {
   return true;
 }
 
+export function shouldRetryBlankCanvas({ samples, hasText = false, operatorCount = 0 }) {
+  return pixelSamplesLookBlank(samples) && (Boolean(hasText) || Number(operatorCount) > 0);
+}
+
 function isRenderingCancelled(error) {
   return error?.name === 'RenderingCancelledException' || /cancelled/i.test(String(error?.message || ''));
 }
@@ -102,6 +106,16 @@ function applyGeometry(canvas, ctx, viewport, geometry) {
   ctx.fillStyle = '#fff';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   return geometry.outputScale === 1 ? null : [geometry.outputScale, 0, 0, geometry.outputScale, 0, 0];
+}
+
+async function getOperatorCount(page) {
+  if (!page?.getOperatorList) return 0;
+  try {
+    const operatorList = await page.getOperatorList();
+    return Array.isArray(operatorList?.fnArray) ? operatorList.fnArray.length : 0;
+  } catch (_) {
+    return 0;
+  }
 }
 
 export async function renderPdfPageRobust({
@@ -176,8 +190,16 @@ export async function renderPdfPageRobust({
 
   const hasText = Boolean(textContent?.items?.some((item) => String(item?.str || '').trim()));
   const samples = sampleCanvas(ctx, activeCanvas);
-  if (hasText && pixelSamplesLookBlank(samples)) {
-    onState?.({ phase: 'retry-low-resolution', reason: 'blank-canvas' });
+  let operatorCount = 0;
+  if (!hasText && pixelSamplesLookBlank(samples)) {
+    // Scanned/image-only PDFs often have no text layer. Inspect the PDF.js
+    // operator list only when the rendered canvas looks blank so image pages
+    // still receive the low-resolution recovery pass.
+    operatorCount = await getOperatorCount(page);
+  }
+
+  if (shouldRetryBlankCanvas({ samples, hasText, operatorCount })) {
+    onState?.({ phase: 'retry-low-resolution', reason: hasText ? 'blank-canvas' : 'blank-image-canvas' });
     const retryGeometry = computeRenderGeometry({
       viewportWidth: viewport.width,
       viewportHeight: viewport.height,
